@@ -140,6 +140,7 @@ function sanitizeAndStandardizeOptionsInput(options) {
  * Process user supplied options and merge with default options.
  *
  * @param {mixed} options
+ * @param {boolean} writeFiles Default value for `options.writeFiles`.
  *
  * @throws OptionError on invalid, missing or incompatible options.
  *
