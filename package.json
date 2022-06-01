@@ -1,0 +1,56 @@
+{
+  "name": "fill-pot-po",
+  "version": "0.3.0",
+  "description": "Create pre-filled PO files from POT file, using previous PO files.",
+  "main": "src/index.js",
+  "scripts": {
+    "lint": "eslint src/*.js test/*.js",
+    "lint:fix": "eslint --fix src/*.js test/*.js",
+    "test": "jest",
+    "preversion": "npm run lint && npm test",
+    "postversion": "git push && git push --tags"
+  },
+  "keywords": [
+    "pot",
+    "po",
+    "fill",
+    "merge",
+    "auto-fill",
+    "prefill",
+    "pre-fill",
+    "generate",
+    "create",
+    "i18n",
+    "l10n",
+    "gettext",
+    "translation"
+  ],
+  "repository": "https://github.com/vheemstra/fill-pot-po.git",
+  "homepage": "https://github.com/vheemstra/fill-pot-po",
+  "bugs": "https://github.com/vheemstra/fill-pot-po/issues",
+  "author": {
+    "name": "Philip van Heemstra",
+    "url": "https://github.com/vheemstra"
+  },
+  "engines": {
+    "node": ">=12"
+  },
+  "files": [
+    "src"
+  ],
+  "license": "MIT",
+  "dependencies": {
+    "ansi-colors": "^4.1.3",
+    "color-support": "^1.1.3",
+    "gettext-parser": "^5.1.2",
+    "matched": "^5.0.1",
+    "vinyl": "^2.2.1"
+  },
+  "devDependencies": {
+    "eslint": "^8.16.0",
+    "eslint-plugin-jest": "^26.4.5",
+    "gulp": "^4.0.2",
+    "gulp-wp-pot": "^2.5.0",
+    "jest": "^28.1.0"
+  }
+}
