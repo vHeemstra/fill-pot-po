@@ -2,8 +2,8 @@
 
 ## Information
 
-| Package     | wp-pot                                               |
-| ----------- | ---------------------------------------------------- |
+| Package     | fill-pot-po                                                        |
+| ----------- | ------------------------------------------------------------------ |
 | Description | Generate pre-filled PO files from POT file, using source PO files. |
 
 ## Install
@@ -14,14 +14,47 @@ npm install --save-dev fill-pot-po
 
 ## Example usage
 
-### Basic
+### Basic - Asynchronous using callback (recommended default)
 
 ```js
 const fillPotPo = require('fill-pot-po');
 
-fillPotPo({
-  ...
-});
+const cb = results => {
+    // results[0] - (bool) Processed successfull
+    // results[1] - (array) Array of arrays with processed PO files, like:
+    //              [
+    //                  [
+    //                      (string) po_file_name,
+    //                      (Buffer) po_file_contents
+    //                  ],
+    //                  ..etc
+    //              ]
+};
+
+fillPotPo( cb, {
+    // options
+} );
+```
+
+### Basic - Synchronous
+
+```js
+const fillPotPo = require('fill-pot-po').sync;
+
+const results = fillPotPo( {
+    // options
+} );
+
+// results[0] - (bool) Processed successfull
+// results[1] - (array) Array of arrays with processed PO files, like:
+//              [
+//                  [
+//                      (string) po_file_name,
+//                      (Buffer) po_file_contents
+//                  ],
+//                  ..etc
+//              ]
+
 ```
 
 ## Options
