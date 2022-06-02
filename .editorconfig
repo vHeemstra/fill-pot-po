@@ -12,15 +12,12 @@ insert_final_newline = true
 [**.{po,mo,pot}]
 insert_final_newline = false
 
-# Matches multiple files with brace expansion notation
-# Set default charset
 [**.js]
 charset = utf-8
 trim_trailing_whitespace = true
 indent_style = tab
 indent_size = 2
 
-# Matches the exact files either package.json or .travis.yml
 [*.json]
 indent_style = space
 indent_size = 2
