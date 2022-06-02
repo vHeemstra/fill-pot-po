@@ -169,6 +169,7 @@ function prepareOptions(options, writeFiles) {
 		defaultContextAsFallback: false,
 		appendNonIncludedFromPO: false,
 		includePORevisionDate: false,
+		includeGenerator: true,
 		logResults: false,
 	};
 

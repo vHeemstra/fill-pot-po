@@ -243,7 +243,9 @@ function fillPO(new_po_object, po_object, options) {
 		new_po_object.headers['po-revision-date'] = po_rev_date_string;
 	}
 
-	new_po_object.headers['X-Generator'] = `${packageJSON.name}/${packageJSON.version}`;
+	if (options.includeGenerator) {
+		new_po_object.headers['X-Generator'] = `${packageJSON.name}/${packageJSON.version}`;
+	}
 
 	return new_po_object;
 }

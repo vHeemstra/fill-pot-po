@@ -16,7 +16,6 @@ msgstr ""
 "X-Poedit-SourceCharset: UTF-8\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "X-Domain: text-domain\n"
-"X-Generator: fill-pot-po/0.3.0\n"
 
 # Basic context single string
 #: some/context/file.php:10

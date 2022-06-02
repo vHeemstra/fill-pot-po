@@ -55,6 +55,7 @@ describe('async.js - single POT', () => {
 			defaultContextAsFallback: true,
 			appendNonIncludedFromPO: true,
 			includePORevisionDate: false,
+			includeGenerator: false,
 		};
 
 		function cb(result_array) {
@@ -101,6 +102,7 @@ describe('async.js - single POT', () => {
 			defaultContextAsFallback: true,
 			appendNonIncludedFromPO: true,
 			includePORevisionDate: false,
+			includeGenerator: false,
 		};
 
 		function cb(result_array) {
@@ -147,6 +149,7 @@ describe('async.js - single POT', () => {
 			defaultContextAsFallback: true,
 			appendNonIncludedFromPO: true,
 			includePORevisionDate: false,
+			includeGenerator: false,
 		};
 
 		function cb(result_array) {
@@ -196,6 +199,7 @@ describe('async.js - single POT', () => {
 			defaultContextAsFallback: true,
 			appendNonIncludedFromPO: true,
 			includePORevisionDate: false,
+			includeGenerator: false,
 		};
 
 		function cb(result_array) {
@@ -246,6 +250,7 @@ describe('async.js - single POT', () => {
 			defaultContextAsFallback: true,
 			appendNonIncludedFromPO: true,
 			includePORevisionDate: false,
+			includeGenerator: false,
 		};
 
 		function cb(result_array) {
@@ -296,6 +301,7 @@ describe('async.js - single POT', () => {
 			defaultContextAsFallback: true,
 			appendNonIncludedFromPO: true,
 			includePORevisionDate: false,
+			includeGenerator: false,
 		};
 
 		function cb(result_array) {

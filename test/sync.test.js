@@ -53,6 +53,7 @@ describe('sync.js - single POT', () => {
 			defaultContextAsFallback: true,
 			appendNonIncludedFromPO: true,
 			includePORevisionDate: false,
+			includeGenerator: false,
 		};
 
 		// Errorless execution
@@ -89,6 +90,7 @@ describe('sync.js - single POT', () => {
 			defaultContextAsFallback: true,
 			appendNonIncludedFromPO: true,
 			includePORevisionDate: false,
+			includeGenerator: false,
 		};
 
 		// Errorless execution
@@ -125,6 +127,7 @@ describe('sync.js - single POT', () => {
 			defaultContextAsFallback: true,
 			appendNonIncludedFromPO: true,
 			includePORevisionDate: false,
+			includeGenerator: false,
 		};
 
 		// Errorless execution
@@ -164,6 +167,7 @@ describe('sync.js - single POT', () => {
 			defaultContextAsFallback: true,
 			appendNonIncludedFromPO: true,
 			includePORevisionDate: false,
+			includeGenerator: false,
 		};
 
 		// Errorless execution
@@ -205,6 +209,7 @@ describe('sync.js - single POT', () => {
 			defaultContextAsFallback: true,
 			appendNonIncludedFromPO: true,
 			includePORevisionDate: false,
+			includeGenerator: false,
 		};
 
 		// Errorless execution
@@ -246,6 +251,7 @@ describe('sync.js - single POT', () => {
 			defaultContextAsFallback: true,
 			appendNonIncludedFromPO: true,
 			includePORevisionDate: false,
+			includeGenerator: false,
 		};
 
 		// Errorless execution
