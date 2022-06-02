@@ -49,8 +49,6 @@
   "devDependencies": {
     "eslint": "^8.16.0",
     "eslint-plugin-jest": "^26.4.5",
-    "gulp": "^4.0.2",
-    "gulp-wp-pot": "^2.5.0",
     "jest": "^28.1.0"
   }
 }
