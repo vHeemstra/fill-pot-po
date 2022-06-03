@@ -1,0 +1,27 @@
+# .github/release.yml
+# see: https://docs.github.com/en/repositories/releasing-projects-on-github/automatically-generated-release-notes
+
+changelog:
+  exclude:
+    labels:
+      - ignore-for-release
+    authors:
+      - octocat
+  categories:
+    - title: 📢 Breaking Changes 🚨
+      labels:
+        - Semver-Major
+        - breaking-change
+    - title: 🚀 New Features 🥳
+      labels:
+        - Semver-Minor
+        - enhancement
+        - feature
+    - title: 🩹 Patches & Fixes 🛠
+      labels:
+        - Semver-Patch
+        - patch
+        - fix
+    - title: ✏ Other Changes 🎨
+      labels:
+        - "*"
