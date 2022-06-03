@@ -116,6 +116,7 @@ function sanitizeAndStandardizeOptionsInput(options) {
 		options.srcDir = `${relative(cwd, options.srcDir)}/` // add trailing slash
 			.replaceAll(/\\/g, '/') // only forward slashes
 			.replaceAll(/\/+/g, '/') // remove duplicate slashes
+			.replaceAll(/(?<!\.)\.\//g, '') // remove current dirs
 			.replaceAll(/^\//g, '') // remove leading slash
 		;
 	}
@@ -125,6 +126,7 @@ function sanitizeAndStandardizeOptionsInput(options) {
 		options.destDir = `${relative(cwd, options.destDir)}/` // add trailing slash
 			.replaceAll(/\\/g, '/') // only forward slashes
 			.replaceAll(/\/+/g, '/') // remove duplicate slashes
+			.replaceAll(/(?<!\.)\.\//g, '') // remove current dirs
 			.replaceAll(/^\//g, '') // remove leading slash
 		;
 	}

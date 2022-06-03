@@ -17,7 +17,7 @@ function clearOutputFolder() {
 		return b_len - a_len;
 	});
 	for (const file of files) {
-		rmSync(file, { recursive: true });
+		rmSync(file, {recursive: true});
 	}
 }
 
@@ -44,7 +44,7 @@ describe('async.js - single POT', () => {
 		folder_i++;
 		let folder_path = `${test_dir}${folder_i}`;
 		if (!existsSync(folder_path)) {
-			mkdirSync(folder_path);
+			mkdirSync(folder_path, {recursive: true});
 		}
 
 		const options = {
@@ -90,7 +90,7 @@ describe('async.js - single POT', () => {
 		folder_i++;
 		let folder_path = `${test_dir}${folder_i}`;
 		if (!existsSync(folder_path)) {
-			mkdirSync(folder_path);
+			mkdirSync(folder_path, {recursive: true});
 		}
 
 		const options = {
@@ -137,7 +137,7 @@ describe('async.js - single POT', () => {
 		folder_i++;
 		let folder_path = `${test_dir}${folder_i}`;
 		if (!existsSync(folder_path)) {
-			mkdirSync(folder_path);
+			mkdirSync(folder_path, {recursive: true});
 		}
 
 		const options = {
@@ -189,7 +189,7 @@ describe('async.js - single POT', () => {
 		folder_i++;
 		let folder_path = `${test_dir}${folder_i}`;
 		if (!existsSync(folder_path)) {
-			mkdirSync(folder_path);
+			mkdirSync(folder_path, {recursive: true});
 		}
 
 		const options = {
@@ -239,7 +239,7 @@ describe('async.js - single POT', () => {
 		folder_i++;
 		let folder_path = `${test_dir}${folder_i}`;
 		if (!existsSync(folder_path)) {
-			mkdirSync(folder_path);
+			mkdirSync(folder_path, {recursive: true});
 		}
 
 		const options = {
@@ -290,7 +290,7 @@ describe('async.js - single POT', () => {
 		folder_i++;
 		let folder_path = `${test_dir}${folder_i}`;
 		if (!existsSync(folder_path)) {
-			mkdirSync(folder_path);
+			mkdirSync(folder_path, {recursive: true});
 		}
 
 		const options = {
