@@ -15,7 +15,7 @@ jobs:
         with:
           node-version: 16.x
           registry-url: https://registry.npmjs.org/
-      - run: npm ci
+      - run: npm install
       - run: echo "publish"
       - run: echo "create release ${{ github.ref_name }}"
       # - run: npm publish
