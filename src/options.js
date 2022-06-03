@@ -127,7 +127,7 @@ function sanitizeAndStandardizeOptionsInput(options) {
 			.replaceAll(/\\/g, '/') // only forward slashes
 			.replaceAll(/\/+/g, '/') // remove duplicate slashes
 			.replaceAll(/(?<!\.)\.\//g, '') // remove current dirs
-			.replaceAll(/^\//g, '') // remove leading slash
+			 .replaceAll(/^\//g, '') // remove leading slash
 		;
 	}
 	if (options.wrapLength) {
