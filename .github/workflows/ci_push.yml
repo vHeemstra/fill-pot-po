@@ -35,11 +35,9 @@ jobs:
         with:
           node-version: ${{ matrix.node-version }}
           # cache: 'npm'
-      - name: Lint & Test package
-        run: |
-        npm install
-        npm run lint
-        npm test
+      - run: npm install
+      - run: npm run lint
+      - run: npm test
 
   version:
     name: Bump version
