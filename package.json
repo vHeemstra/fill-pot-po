@@ -6,9 +6,7 @@
   "scripts": {
     "lint": "eslint src/*.js test/*.js",
     "lint:fix": "eslint --fix src/*.js test/*.js",
-    "test": "jest",
-    "preversion": "npm run lint && npm test",
-    "postversion": "git push && git push --tags"
+    "test": "jest"
   },
   "keywords": [
     "pot",
