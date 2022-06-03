@@ -52,32 +52,18 @@ jobs:
           registry-url: https://registry.npmjs.org/
       - run: git config --global user.name 'Philip van Heemstra'
       - run: git config --global user.email 'info@vanheemstra.com'
-      - run: echo "MAJOR"
+      - run: npm version major -m "[RELEASE] %s"
         if: |
           startsWith(github.event.head_commit.message, 'breaking') ||
           startsWith(github.event.head_commit.message, 'major:')
-      - run: echo "MINOR"
+      - run: npm version minor -m "[RELEASE] %s"
         if: |
           startsWith(github.event.head_commit.message, 'feat') ||
           startsWith(github.event.head_commit.message, 'minor:')
-      - run: echo "PATCH"
+      - run: npm version patch -m "[RELEASE] %s"
         if: |
           !startsWith(github.event.head_commit.message, 'breaking') &&
           !startsWith(github.event.head_commit.message, 'major:') &&
           !startsWith(github.event.head_commit.message, 'feat') &&
           !startsWith(github.event.head_commit.message, 'minor:')
-      # - run: npm version major -m "[RELEASE] %s"
-      #   if: |
-      #     startsWith(github.event.head_commit.message, 'breaking') ||
-      #     startsWith(github.event.head_commit.message, 'major:')
-      # - run: npm version minor -m "[RELEASE] %s"
-      #   if: |
-      #     startsWith(github.event.head_commit.message, 'feat') ||
-      #     startsWith(github.event.head_commit.message, 'minor:')
-      # - run: npm version patch -m "[RELEASE] %s"
-      #   if: |
-      #     !startsWith(github.event.head_commit.message, 'breaking') &&
-      #     !startsWith(github.event.head_commit.message, 'major:') &&
-      #     !startsWith(github.event.head_commit.message, 'feat') &&
-      #     !startsWith(github.event.head_commit.message, 'minor:')
-      # - run: git push --follow-tags
+      - run: git push --follow-tags

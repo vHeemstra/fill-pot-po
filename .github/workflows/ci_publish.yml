@@ -18,7 +18,7 @@ jobs:
       - run: npm install
       - run: echo "publish"
       - run: echo "create release ${{ github.ref_name }}"
-      # - run: npm publish
-      #   env:
-      #     NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
-      # - run: gh release create ${{ github.ref_name }} --generate-notes
+      - run: npm publish
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+      - run: gh release create ${{ github.ref_name }} --generate-notes --draft
