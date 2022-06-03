@@ -16,9 +16,14 @@ jobs:
           node-version: 16.x
           registry-url: https://registry.npmjs.org/
       - run: npm install
+      - name: get-npm-version
+        id: package-version
+        uses: martinbeentjes/npm-get-version-action@main
       - run: echo "publish"
-      - run: echo "create release ${{ github.ref_name }}"
+      - run: echo "create release v${{ steps.package-version.outputs.current-version}}"
       - run: npm publish
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
-      - run: gh release create ${{ github.ref_name }} --generate-notes --draft
+      - run: gh release create v${{ steps.package-version.outputs.current-version}} --generate-notes --draft
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
