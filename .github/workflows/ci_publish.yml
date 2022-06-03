@@ -8,7 +8,6 @@ jobs:
   publish-npm:
     name: Node.js 16.x on ubuntu-latest
     if: "startsWith(github.event.head_commit.message, '[RELEASE]')"
-    needs: test
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
