@@ -6,7 +6,7 @@ on:
 
 jobs:
   test:
-    name: Node.js ${{ matrix.node-version }} on ${{ matrix.platform.os }}
+    name: Lint & Test (Node.js ${{ matrix.node-version }} on ${{ matrix.platform.os }})
     if: "!startsWith(github.event.head_commit.message, '[RELEASE]')"
 
     strategy:
@@ -35,11 +35,14 @@ jobs:
         with:
           node-version: ${{ matrix.node-version }}
           # cache: 'npm'
-      - run: npm install
-      - run: npm run lint
-      - run: npm test
+      - name: Lint & Test package
+        run: |
+        npm install
+        npm run lint
+        npm test
 
   version:
+    name: Bump version
     needs: test
     runs-on: ubuntu-latest
     steps:
