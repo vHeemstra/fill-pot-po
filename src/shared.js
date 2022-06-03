@@ -54,7 +54,7 @@ function getPOFilepaths(pot_filepath, options) {
 	// TODO? also search subdirectories?
 	//       preserving glob base for re-use at write and/or return paths
 	//       use: https://github.com/gulpjs/glob-parent
-	// options.srcSearchSubdirectories = true/false
+	// options.srcSearchRecursive = true/false
 	
 	// TODO?
 	// const srcDirs = matchedSync(`${po_dir}`); // Always has trailing separator
@@ -69,7 +69,7 @@ function getPOFilepaths(pot_filepath, options) {
 		const domain_glob = options.domainInPOPath ? `${domain}-`: '';
 		po_files_glob.push(`${po_dir}${domain_glob}${locale_glob}.po`);
 		// TODO?
-		// const sub_dirs = options.srcSearchSubdirectories ? '**/': '';
+		// const sub_dirs = options.srcSearchRecursive ? '**/': '';
 		// po_files_glob.push(`${po_dir}${sub_dirs}${domain_glob}${locale_glob}.po`);
 	}
 
@@ -95,8 +95,8 @@ function getPOFilepaths(pot_filepath, options) {
  * @param  {object} options
  *
  * @return {array} [
- *                   New PO filepath
- *                   New PO compiled content
+ *                   {string} New PO filepath
+ *                   {Buffer} New PO compiled content
  *                 ]
  */
 function generatePO(pot_object, po_object, po_filepath, options) {

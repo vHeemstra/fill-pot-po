@@ -2,7 +2,6 @@
 /other
 .editorconfig
 .gitattributes
-.gitignore
 .eslintrc.js
 jest.config.js
 *.bak
