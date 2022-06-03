@@ -120,6 +120,7 @@ function sanitizeAndStandardizeOptionsInput(options) {
 			.replaceAll(/^\//g, '') // remove leading slash
 		;
 	}
+	//TO-REMOVE
 	if (options.destDir) {
 		// NOTE: all paths starting with a slash are considered absolute paths
 		options.destDir = resolve(options.destDir.trim());
@@ -127,7 +128,7 @@ function sanitizeAndStandardizeOptionsInput(options) {
 			.replaceAll(/\\/g, '/') // only forward slashes
 			.replaceAll(/\/+/g, '/') // remove duplicate slashes
 			.replaceAll(/(?<!\.)\.\//g, '') // remove current dirs
-			 .replaceAll(/^\//g, '') // remove leading slash
+			.replaceAll(/^\//g, '') // remove leading slash
 		;
 	}
 	if (options.wrapLength) {
