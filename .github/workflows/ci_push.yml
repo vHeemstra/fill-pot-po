@@ -1,0 +1,83 @@
+name: CI - Test & Version
+
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  test:
+    name: Node.js ${{ matrix.node-version }} on ${{ matrix.platform.os }}
+    if: "!startsWith(github.event.head_commit.message, '[RELEASE]')"
+
+    strategy:
+      fail-fast: false
+      matrix:
+        node-version:
+          # - 12.x
+          # - 14.x
+          - 16.x
+        platform:
+          - os: ubuntu-latest
+            shell: bash
+          # - os: macos-latest
+          #   shell: bash
+          # - os: windows-latest
+          #   shell: cmd
+
+    runs-on: ${{ matrix.platform.os }}
+    defaults:
+      run:
+        shell: ${{ matrix.platform.shell }}
+
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: 'npm'
+      - run: npm ci
+      - run: npm run lint
+      - run: npm test
+
+  version:
+    needs: test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 16.x
+          registry-url: https://registry.npmjs.org/
+      - run: git config --global user.name 'Philip van Heemstra'
+      - run: git config --global user.email 'info@vanheemstra.com'
+      - run: echo "MAJOR"
+        if: |
+          startsWith(github.event.head_commit.message, 'breaking') ||
+          startsWith(github.event.head_commit.message, 'major:')
+      - run: echo "MINOR"
+        if: |
+          startsWith(github.event.head_commit.message, 'feat') ||
+          startsWith(github.event.head_commit.message, 'minor:')
+      - run: echo "PATCH"
+        if: |
+          !startsWith(github.event.head_commit.message, 'breaking') &&
+          !startsWith(github.event.head_commit.message, 'major:') &&
+          !startsWith(github.event.head_commit.message, 'feat') &&
+          !startsWith(github.event.head_commit.message, 'minor:')
+      # - run: npm version major -m "[RELEASE] %s"
+      #   if: |
+      #     startsWith(github.event.head_commit.message, 'breaking') ||
+      #     startsWith(github.event.head_commit.message, 'major:')
+      # - run: npm version minor -m "[RELEASE] %s"
+      #   if: |
+      #     startsWith(github.event.head_commit.message, 'feat') ||
+      #     startsWith(github.event.head_commit.message, 'minor:')
+      # - run: npm version patch -m "[RELEASE] %s"
+      #   if: |
+      #     !startsWith(github.event.head_commit.message, 'breaking') &&
+      #     !startsWith(github.event.head_commit.message, 'major:') &&
+      #     !startsWith(github.event.head_commit.message, 'feat') &&
+      #     !startsWith(github.event.head_commit.message, 'minor:')
+      # - run: git push --follow-tags
