@@ -28,7 +28,7 @@ jobs:
       - run: npm run lint
 
   test:
-    name: Test (Node.js ${{ matrix.node-version }} on ${{ runner.os }})
+    name: Test (Node.js ${{ matrix.node-version }} on ${{ matrix.os }})
     needs: lint
     strategy:
       fail-fast: false
