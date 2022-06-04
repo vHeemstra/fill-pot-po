@@ -1,14 +1,34 @@
-name: CI - Test & Version
+name: CI - Lint / Test / Version
 
 on:
   push:
-    branches: [ main ]
+    branches:
+      - main
+    # Ignore version bumps
+    tags-ignore:
+      - 'v*'
+    # Ignore workflow exclusive pushes
+    paths-ignore:
+      - '.github/**'
 
 jobs:
-  test:
-    name: Lint & Test (Node.js ${{ matrix.node-version }} on ${{ matrix.platform.os }})
-    if: "!startsWith(github.event.head_commit.message, '[RELEASE]')"
+  lint:
+    name: Lint
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v3
+      - name: Install Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 16.x
+          # cache: 'npm'
+      - run: npm install
+      - run: npm run lint
 
+  test:
+    name: Test (Node.js ${{ matrix.node-version }} on ${{ runner.os }})
+    needs: lint
     strategy:
       fail-fast: false
       matrix:
@@ -16,52 +36,50 @@ jobs:
           # - 12.x
           # - 14.x
           - 16.x
-        platform:
-          - os: ubuntu-latest
-            shell: bash
-          # - os: macos-latest
-          #   shell: bash
-          # - os: windows-latest
-          #   shell: cmd
-
-    runs-on: ${{ matrix.platform.os }}
+        os:
+         - ubuntu-latest
+         - windows-latest
+         # - macos-latest
+    runs-on: ${{ matrix.os }}
     defaults:
       run:
-        shell: ${{ matrix.platform.shell }}
-
+        shell: bash
     steps:
-      - uses: actions/checkout@v3
-      - uses: actions/setup-node@v3
+      - name: Check out repository
+        uses: actions/checkout@v3
+      - name: Install Node.js
+        uses: actions/setup-node@v3
         with:
           node-version: ${{ matrix.node-version }}
           # cache: 'npm'
       - run: npm install
-      - run: npm run lint
       - run: npm test
 
   version:
-    name: Bump version
+    name: Version
     needs: test
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - name: Check out repository
+        uses: actions/checkout@v3
         with:
           token: ${{ secrets.GH_PERSONAL_ACCESS_TOKEN }}
-      - uses: actions/setup-node@v3
+      - name: Install Node.js
+        uses: actions/setup-node@v3
         with:
           node-version: 16.x
           registry-url: https://registry.npmjs.org/
-      # - run: git config --global user.name 'vHeemstra'
-      # - run: git config --global user.email 'info@vanheemstra.com'
-      - run: npm version major -m "[RELEASE] %s"
+      - run: git config --global user.name 'vHeemstra'
+      - run: git config --global user.email '17368112+vHeemstra@users.noreply.github.com'
+      - run: npm version major -m "Major release v%s"
         if: |
           startsWith(github.event.head_commit.message, 'breaking') ||
           startsWith(github.event.head_commit.message, 'major:')
-      - run: npm version minor -m "[RELEASE] %s"
+      - run: npm version minor -m "Minor release v%s"
         if: |
           startsWith(github.event.head_commit.message, 'feat') ||
           startsWith(github.event.head_commit.message, 'minor:')
-      - run: npm version patch -m "[RELEASE] %s"
+      - run: npm version patch -m "Patch release v%s"
         if: |
           !startsWith(github.event.head_commit.message, 'breaking') &&
           !startsWith(github.event.head_commit.message, 'major:') &&
