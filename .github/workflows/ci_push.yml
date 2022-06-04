@@ -4,16 +4,17 @@ on:
   push:
     branches:
       - main
-    # Ignore version bumps
-    tags-ignore:
-      - 'v*'
     # Ignore workflow exclusive pushes
-    paths-ignore:
-      - '.github/**'
+    # paths-ignore:
+    #   - '.github/**'
 
 jobs:
   lint:
     name: Lint
+    if: |
+      !startsWith(github.event.head_commit.message, 'Major release v') &&
+      !startsWith(github.event.head_commit.message, 'Minor release v') &&
+      !startsWith(github.event.head_commit.message, 'Patch release v')
     runs-on: ubuntu-latest
     steps:
       - name: Check out repository
@@ -69,6 +70,8 @@ jobs:
         with:
           node-version: 16.x
           registry-url: https://registry.npmjs.org/
+      # - run: git config --global user.name 'github-actions'
+      # - run: git config --global user.email 'github-actions@github.com'
       - run: git config --global user.name 'vHeemstra'
       - run: git config --global user.email '17368112+vHeemstra@users.noreply.github.com'
       - run: npm version major -m "Major release v%s"
