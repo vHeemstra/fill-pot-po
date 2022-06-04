@@ -1,4 +1,4 @@
-name: CI - Lint / Test / Version / Publish / Release
+name: push > Lint / Test / Version / Publish / Release
 
 on:
   push:
