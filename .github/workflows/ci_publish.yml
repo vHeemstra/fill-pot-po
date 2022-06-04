@@ -4,16 +4,20 @@ on:
   push:
     branches:
       - main
+    # Only version bumps
     tags:
       - 'v*'
+    # # Ignore workflow exclusive pushes
+    # paths-ignore:
+    #   - '.github/**'
 
 jobs:
   publish-n-release:
     name: Publish to NPM and create GitHub release
-    # if: |
-    #   startsWith(github.event.head_commit.message, 'Major release v') ||
-    #   startsWith(github.event.head_commit.message, 'Minor release v') ||
-    #   startsWith(github.event.head_commit.message, 'Patch release v')
+    if: |
+      startsWith(github.event.head_commit.message, 'Major release v') ||
+      startsWith(github.event.head_commit.message, 'Minor release v') ||
+      startsWith(github.event.head_commit.message, 'Patch release v')
     runs-on: ubuntu-latest
     steps:
       - name: Check out repository
@@ -33,7 +37,7 @@ jobs:
           CUSTOM_VERSION: ${{ steps.package-version.outputs.current-version }}
         run: |
           shopt -s extglob
-          echo "::set-output name=clean-version::${CUSTOM_VERSION/%+(.0)/}\n"
+          echo "::set-output name=clean-version::${CUSTOM_VERSION/%+(.0)/}"
       - run: echo "publish v${{ steps.get-clean-verion.outputs.clean-version }}"
 
       # - run: npm publish
