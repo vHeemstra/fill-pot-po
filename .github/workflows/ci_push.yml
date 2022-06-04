@@ -51,8 +51,8 @@ jobs:
         with:
           node-version: 16.x
           registry-url: https://registry.npmjs.org/
-      - run: git config --global user.name 'vHeemstra'
-      - run: git config --global user.email 'info@vanheemstra.com'
+      # - run: git config --global user.name 'vHeemstra'
+      # - run: git config --global user.email 'info@vanheemstra.com'
       - run: npm version major -m "[RELEASE] %s"
         if: |
           startsWith(github.event.head_commit.message, 'breaking') ||
