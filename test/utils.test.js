@@ -612,6 +612,11 @@ describe('utils.js - pathLineSort', () => {
 		'different_file.ext:10',
 		'different_file.ext:20',
 		'different_file.ext:100',
+		'file.a',
+		'file.b',
+		'file.c',
+		'file.d',
+		'file.e',
 		'file.ext',
 		'file.ext:10',
 		'file.ext:20',
@@ -631,5 +636,18 @@ describe('utils.js - pathLineSort', () => {
 
 	test('used as callback for array.sort()', () => {
 		expect( shuffled.sort(pathLineSort) ).toEqual(sorted);
+	});
+
+	test('handles only strings', () => {
+		expect(() => {
+			pathLineSort('test.txt', {});
+		}).toThrow(new RegExp('pathLineSort: a or b not a string'));
+		expect(() => {
+			pathLineSort([], 'test.txt');
+		}).toThrow(new RegExp('pathLineSort: a or b not a string'));
+	});
+
+	test('return 0 when the same', () => {
+		expect( pathLineSort('some/path/file.ext:10', 'some/path/file.ext:10') ).toEqual(0);
 	});
 });
