@@ -6,6 +6,7 @@
   "scripts": {
     "lint": "eslint src/*.js test/*.js",
     "lint:fix": "eslint --fix src/*.js test/*.js",
+    "wintest": "jest test/experiment.test.js",
     "test": "jest"
   },
   "keywords": [
