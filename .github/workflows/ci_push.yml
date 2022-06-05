@@ -11,6 +11,7 @@ on:
       - 'LICENSE'
       - 'package.json'
       - 'readme.md'
+      - 'test/**' # TODO: delete!
 
 jobs:
   # lint:
