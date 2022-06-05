@@ -388,6 +388,48 @@ describe('sync.js - single POT', () => {
 		).toBe(true);
 	});
 
+	test('extras - auto domain PO - write - content optionals', () => {
+		folder_i++;
+		let folder_path = `${test_dir}${folder_i}`;
+
+		const options = {
+			...shared_options,
+			potSources: [ potSource ],
+			srcDir: input_dir,
+			logResults: true,
+			writeFiles: true,
+			destDir: folder_path,
+			appendNonIncludedFromPO: false,
+			includePORevisionDate: true,
+			includeGenerator: true,
+		};
+
+		// Errorless execution
+		let result;
+		expect(() => {
+			result = fillPotPo(options);
+		}).not.toThrow();
+
+		// Check returned array
+		expect(result).toHaveLength(1);
+		expect(result[0]).toBeInstanceOf(Vinyl);
+		expect(result[0].isBuffer()).toBe(true);
+		expect(result[0].path).toEqual('text-domain-nl_NL.po');
+
+		// Check if folder and file exist
+		expect(existsSync(folder_path)).toBe(true);
+		const files = matchedSync([`${folder_path}/*`]);
+		expect(files).toHaveLength(1);
+		expect(files).toEqual([
+			`${folder_path}/text-domain-nl_NL.po`
+		]);
+
+		// Check contents
+		const buffer_contents = result[0].contents.toString();
+		expect(buffer_contents).not.toMatch(/^# DEPRECATED$/m);
+		expect(buffer_contents).toMatch(/^"PO-Revision-Date: \d{4}-\d{2}-\d{2} \d{2}:\d{2}\+0000\\n"$/m);
+		expect(buffer_contents).toMatch(/^"X-Generator: fill-pot-po\/\d+\.\d+\.\d+\\n"$/m);
+	});
 });
 
 // TODO? potSources: Vinyl or Array-of

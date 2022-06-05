@@ -3,9 +3,15 @@
 const { resolvePOTFilepaths } = require('../src/shared');
 const prepareOptions = require('../src/options');
 
-const potSource = ['./test/examples/text-domain.pot'];
+const Vinyl = require('vinyl');
 
-describe('shared.js - logic', () => {
+const potSource = ['./test/examples/text-domain.pot'];
+const vinyl_file = new Vinyl({
+	contents: Buffer.from('some contents'),
+	path: 'filename.pot',
+});
+
+describe('shared.js - resolvePOTFilepaths()', () => {
 	test('leave poSources empty if multiple potSources', () => {
 		const re = new RegExp('leave option poSources empty');
 		expect(() => {
@@ -53,5 +59,21 @@ describe('shared.js - logic', () => {
 				prepareOptions({ potSources: ['NON_EXISTING.pot'] })
 			);
 		}).toThrow(re);
+	});
+
+	test('store POT filenames', () => {
+		let options = null;
+		expect(() => {
+			options = resolvePOTFilepaths({ potSources: [vinyl_file] });
+		}).not.toThrow();
+		expect(options).not.toBeNull();
+		expect(options).toHaveProperty('_potFilenames', [vinyl_file.path]);
+
+		options = null;
+		expect(() => {
+			options = resolvePOTFilepaths({ potSources: ['test/examples/text-domain.pot'] });
+		}).not.toThrow();
+		expect(options).not.toBeNull();
+		expect(options).toHaveProperty('_potFilenames', ['test/examples/text-domain.pot']);
 	});
 });
