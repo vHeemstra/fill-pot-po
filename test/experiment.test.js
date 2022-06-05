@@ -105,7 +105,7 @@ describe('sync.js - single POT', () => {
 		}).not.toThrow();
 
 		// Check returned array
-		expect(result).toHaveLength(1);
+		expect(result).toHaveLength(1 );
 		expect(result[0]).toHaveLength(2);
 		expect(result[0][0]).toEqual('text-domain-nl_NL.po');
 		expect(result[0][1]).toBeInstanceOf(Buffer);
