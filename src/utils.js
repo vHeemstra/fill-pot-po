@@ -113,10 +113,10 @@ function pathLineSort(a, b) {
 	// line numbers ascending for same paths
 	if (a == b) {
 		// no line number first
-		if ((!a_line || '' === a_line) && b_line.length) return -1;
-		if ((!b_line || '' === b_line) && a_line.length) return +1;
+		if ((!a_line || '' === a_line) && b_line && b_line.length) return -1;
+		if ((!b_line || '' === b_line) && a_line && a_line.length) return +1;
 
-		if (a_line.length && b_line.length) {
+		if (a_line && a_line.length && b_line && b_line.length) {
 			return (parseInt(a_line) - parseInt(b_line));
 		}
 	}
