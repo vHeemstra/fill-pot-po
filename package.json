@@ -1,6 +1,6 @@
 {
   "name": "fill-pot-po",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "description": "Create pre-filled PO files from POT file, using previous PO files.",
   "main": "src/index.js",
   "scripts": {
