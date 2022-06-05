@@ -136,6 +136,8 @@ Default: `true`
 > Whether or not to get the text domain from the POT filename (excluding extension).
 > 
 > If set to `false` and `domainInPOPath` is `true`, a domain must be set using the `domain` option.
+> 
+> See also [`domainInPOPath`](#domaininpopath) and [`domain`](#domain).
 
 Default: `true`
 

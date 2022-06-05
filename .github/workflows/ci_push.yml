@@ -10,7 +10,6 @@ on:
       - '.npmignore'
       - 'LICENSE'
       - 'package.json'
-      - 'readme.md'
 
 jobs:
   lint:
