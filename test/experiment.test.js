@@ -75,8 +75,8 @@ describe('sync.js - single POT', () => {
 		// Check contents
 		const received = result[0][1];
 		const expected = readFileSync('test/examples/output_correct/text-domain-nl_NL.po');
-		console.log( 'received.length =', received.length );
-		console.log( 'expected.length =', expected.length );
+		console.log( 'received.length =', received.match('\r'), received.length );
+		console.log( 'expected.length =', expected.match('\r'), expected.length );
 		expect(received)
 			.toEqual(expected);
 	});
