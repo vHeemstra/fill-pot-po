@@ -123,8 +123,8 @@ function sanitizeAndStandardizeOptionsInput(options) {
 			options.poSources = [options.poSources];
 		}
 		options.poSources = options.poSources
-			.map(v => (typeof v === 'string' ? v.trim() : v))
-			.filter(v => (typeof v === 'string' && v.length > 0))
+			.map(v => v.trim())
+			.filter(v => (v.length > 0))
 		;
 	}
 
