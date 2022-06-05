@@ -116,7 +116,9 @@ function pathLineSort(a, b) {
 		if ((!a_line || '' === a_line) && b_line.length) return -1;
 		if ((!b_line || '' === b_line) && a_line.length) return +1;
 
-		return (parseInt(a_line) - parseInt(b_line));
+		if (a_line.length && b_line.length) {
+			return (parseInt(a_line) - parseInt(b_line));
+		}
 	}
 
 	// split by directory

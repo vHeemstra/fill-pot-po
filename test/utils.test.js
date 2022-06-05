@@ -650,4 +650,26 @@ describe('utils.js - pathLineSort', () => {
 	test('return 0 when the same', () => {
 		expect( pathLineSort('some/path/file.ext:10', 'some/path/file.ext:10') ).toEqual(0);
 	});
+
+	test('return -1', () => {
+		expect( pathLineSort('some/path/file.ext:1', 'some/path/file.ext:2') ).toEqual(-1);
+		expect( pathLineSort('some/path/file.ext', 'some/path/file.ext:10') ).toEqual(-1);
+		expect( pathLineSort('some/path/file.aaa', 'some/path/file.bbb') ).toEqual(-1);
+		expect( pathLineSort('some/path/aaaa.ext', 'some/path/bbbb.ext') ).toEqual(-1);
+		expect( pathLineSort('some/path/aaaa', 'some/path/bbbb') ).toEqual(-1);
+		expect( pathLineSort('some/path/file/', 'some/path/file.ext:10') ).toEqual(-1);
+		expect( pathLineSort('some/path/', 'some//') ).toEqual(-1);
+		expect( pathLineSort('some/path', 'some') ).toEqual(-1);
+	});
+
+	test('return 1', () => {
+		expect( pathLineSort('some/path/file.ext:2', 'some/path/file.ext:1') ).toEqual(1);
+		expect( pathLineSort('some/path/file.ext:10', 'some/path/file.ext') ).toEqual(1);
+		expect( pathLineSort('some/path/file.bbb', 'some/path/file.aaa') ).toEqual(1);
+		expect( pathLineSort('some/path/bbbb.ext', 'some/path/aaaa.ext') ).toEqual(1);
+		expect( pathLineSort('some/path/bbbb', 'some/path/aaaa') ).toEqual(1);
+		expect( pathLineSort('some/path/file.ext:10', 'some/path/file/') ).toEqual(1);
+		expect( pathLineSort('some//', 'some/path/') ).toEqual(1);
+		expect( pathLineSort('some', 'some/path') ).toEqual(1);
+	});
 });
