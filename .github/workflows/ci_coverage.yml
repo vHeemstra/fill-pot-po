@@ -2,6 +2,15 @@ name: push/pull_request > Test coverage
 
 on:
   push:
+    branches:
+      - main
+    # Only run when push includes commits with changes to:
+    paths:
+      - 'src/**/*.js'
+      - 'test/**/*.js'
+      - 'jest.config.js'
+      - 'package.json'
+
   pull_request:
     branches:
       - main
