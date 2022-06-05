@@ -28,12 +28,12 @@ Processes the POT files and found PO files in parallel.
     <tr>
         <td><strong>cb</strong></td>
         <td><code>required</code></td>
-        <td><code>function</code> Callback function, with one argument containing the results (see <a href="#Results-Async-mode">Results</a>).</td>
+        <td><code>function</code> Callback function, with one argument containing the results (see <a href="#results---async-mode">Results</a>).</td>
     </tr>
     <tr>
         <td rowspan="2"><strong>options</strong></td>
         <td rowspan="2"><code>optional</code></td>
-        <td><code>object</code> Options object (see <a href="#Options">Options</a>).</td>
+        <td><code>object</code> Options object (see <a href="#options">Options</a>).</td>
     </tr>
     <tr>
         <td><code>string|array</code> Alternatively, a glob string or array can be provided that will be used as <strong>options.poSources</strong>. All other options will have their default values.</td>
@@ -62,14 +62,14 @@ Processes the POT files and found PO files in series (slower).
     <tr>
         <td rowspan="2"><strong>options</strong></td>
         <td rowspan="2"><code>optional</code></td>
-        <td><code>object</code> Options object (see <a href="#Options">Options</a>).</td>
+        <td><code>object</code> Options object (see <a href="#options">Options</a>).</td>
     </tr>
     <tr>
         <td><code>string|array</code> Alternatively, a glob string or array can be provided that will be used as <strong>options.poSources</strong>. All other options will have their default values.</td>
     </tr>
     <tr>
         <td colspan="2"><strong><em>returns</em></strong></td>
-        <td><code>array</code> Results array on success (see <a href="#Results-Sync-mode">Results</a>).</td>
+        <td><code>array</code> Results array on success (see <a href="#results---sync-mode">Results</a>).</td>
     </tr>
     <tr>
         <td colspan="2"><strong><em>throws</em></strong></td>
@@ -111,7 +111,7 @@ Default: `['**/*.pot', '!node_modules/**']`
 > 
 > `{text-domain}` is either the POT filename or the value set in the `domain` option.
 > 
-> See also `domainInPOPath`, `domainFromPOTPath` and `domain`.
+> See also [`domainInPOPath`](#domaininpopath), [`domainFromPOTPath`](#domainfrompotpath) and [`domain`](#domain).
 
 Default: `null`
 
@@ -127,7 +127,7 @@ Default: `''`
 `boolean`
 > Match source PO files with the text domain name in the filename. For example: `text-domain-en_EN.po` and `text-domain-nl_NL.po`.
 > 
-> See also `domainFromPOTPath` and `domain`.
+> See also [`domainFromPOTPath`](#domainfrompotpath) and [`domain`](#domain).
 
 Default: `true`
 
@@ -145,7 +145,7 @@ Default: `true`
 > 
 > By default this is the POT filename excluding extension and is used to find the right PO source files.
 > 
-> See also `domainInPOPath` and `domainFromPOTPath`.
+> See also [`domainInPOPath`](#domaininpopath) and [`domainFromPOTPath`](#domainfrompotpath).
 
 Default: `''`
 
