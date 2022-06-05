@@ -36,7 +36,7 @@ Processes the POT files and found PO files in parallel.
         <td><code>object</code> Options object (see <a href="#options">Options</a>).</td>
     </tr>
     <tr>
-        <td><code>string|array</code> Alternatively, a glob string or array can be provided that will be used as <strong>options.poSources</strong>. All other options will have their default values.</td>
+        <td><code>string|array</code> Alternatively, a glob string or array can be provided that will be used as <a href="#posources"><code>options.poSources</code></a>. All other options will have their default values.</td>
     </tr>
 </table>
 
@@ -65,7 +65,7 @@ Processes the POT files and found PO files in series (slower).
         <td><code>object</code> Options object (see <a href="#options">Options</a>).</td>
     </tr>
     <tr>
-        <td><code>string|array</code> Alternatively, a glob string or array can be provided that will be used as <strong>options.poSources</strong>. All other options will have their default values.</td>
+        <td><code>string|array</code> Alternatively, a glob string or array can be provided that will be used as <a href="#posources"><code>options.poSources</code></a>. All other options will have their default values.</td>
     </tr>
     <tr>
         <td colspan="2"><strong><em>returns</em></strong></td>
@@ -167,7 +167,7 @@ Default: `{}`
 > 
 > By default, it will return the generated PO files.
 > 
-> _**NOTE**_: If `returnPOT` is `true`, you need to set [`writeFiles`](#writefiles) to `true` or else no PO files will be generated and the plugin throws an error.
+> _**NOTE**_: If set to `true`, you need to set [`writeFiles`](#writefiles) to `true` as well or else no PO files will be generated and the plugin throws an error.
 
 Default: `false`
 
@@ -177,13 +177,15 @@ Default: `false`
 > 
 > If you wish to process the results array and content buffers yourself, you could set this to `false`.
 > 
-> _**NOTE**_: When using `gulp-fill-pot-po`, the default is `false`, since the resulting buffers will probably be `.pipe()`'d to a `.dest()` which writes them to disk instead.
+> _**NOTE**_: When using [**gulp-fill-pot-po**](https://github.com/vHeemstra/gulp-fill-pot-po), the default is `false`, since the resulting buffers will probably be `.pipe( dest() )`'d, which writes them to disk instead.
 
 Default: `true` (for gulp-fill-pot-po: `false`)
 
 #### destDir
 `string`
-> (Only if [`writeFiles`](#writefiles) is `true`) Relative path from current working directory or absolute path to the folder where the PO files should be written.
+> _Only if [`writeFiles`](#writefiles) is `true`._
+> 
+> Relative path from current working directory or absolute path to the folder where the PO files should be written.
 
 Default: `''`
 
