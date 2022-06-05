@@ -1,5 +1,11 @@
 # fill-pot-po
 
+[![GitHub release (latest SemVer)][release-image]][release-url]
+[![Build Status][ci-image]][ci-url]
+[![Dependencies Status][deps-image]][deps-url]
+[![NPM version][npm-image]][npm-url]
+[![Downloads][downloads-image]][npm-url]
+
 > Generate pre-filled PO files from POT file, using source PO files.
 > 
 > *Based on the POT filename or set options, it looks for source PO files. For each PO file, it will create a new one, based on the contents of the POT file. The source PO file is used to fill in the matching translated strings.*
@@ -289,3 +295,17 @@ On error, `fillPotPoSync()` will throw an error.
 ## License
 
 MIT © [Philip van Heemstra](https://github.com/vheemstra)
+
+[npm-url]: https://www.npmjs.com/package/fill-pot-po
+[npm-image]: https://img.shields.io/npm/v/fill-pot-po.svg?color=cb0000&labelColor=444D56&logo=data:image/svg+xml;base64,PHN2ZyByb2xlPSJpbWciIHZpZXdCb3g9IjAgMCAyNCAyNCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBmaWxsPSIjOTU5REE1IiBkPSJNMS43NjMgMEMuNzg2IDAgMCAuNzg2IDAgMS43NjN2MjAuNDc0QzAgMjMuMjE0Ljc4NiAyNCAxLjc2MyAyNGgyMC40NzRjLjk3NyAwIDEuNzYzLS43ODYgMS43NjMtMS43NjNWMS43NjNDMjQgLjc4NiAyMy4yMTQgMCAyMi4yMzcgMHpNNS4xMyA1LjMyM2wxMy44MzcuMDE5LS4wMDkgMTMuODM2aC0zLjQ2NGwuMDEtMTAuMzgyaC0zLjQ1NkwxMi4wNCAxOS4xN0g1LjExM3oiPjwvcGF0aD48L3N2Zz4=
+[downloads-image]: https://img.shields.io/npm/dm/fill-pot-po.svg?color=34D058&logo=data:image/svg+xml;base64,PHN2ZyByb2xlPSJpbWciIHZpZXdCb3g9IjAgMCAyNCAyNCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBmaWxsPSIjOTU5REE1IiBkPSJNMS43NjMgMEMuNzg2IDAgMCAuNzg2IDAgMS43NjN2MjAuNDc0QzAgMjMuMjE0Ljc4NiAyNCAxLjc2MyAyNGgyMC40NzRjLjk3NyAwIDEuNzYzLS43ODYgMS43NjMtMS43NjNWMS43NjNDMjQgLjc4NiAyMy4yMTQgMCAyMi4yMzcgMHpNNS4xMyA1LjMyM2wxMy44MzcuMDE5LS4wMDkgMTMuODM2aC0zLjQ2NGwuMDEtMTAuMzgyaC0zLjQ1NkwxMi4wNCAxOS4xN0g1LjExM3oiPjwvcGF0aD48L3N2Zz4=
+
+[release-url]: https://github.com/vHeemstra/fill-pot-po/releases
+[release-image]: https://img.shields.io/github/v/release/vHeemstra/fill-pot-po?sort=semver&logo=github&logoColor=959DA5&labelColor=444D56
+
+[ci-url]: https://github.com/vHeemstra/fill-pot-po/actions/workflows/ci_push.yml
+[ci-image]: https://img.shields.io/static/v1?logo=github&logoColor=959DA5&label=eslint%20%2F%20tests&labelColor=444D56&message=passing&color=34D058
+[ci-image2]: https://github.com/vHeemstra/fill-pot-po/actions/workflows/ci_push.yml/badge.svg
+
+[deps-url]: https://libraries.io/npm/fill-pot-po
+[deps-image]: https://img.shields.io/librariesio/release/npm/gulp-fill-pot-po?color=34D058&logo=Libraries.io&logoColor=959DA5
