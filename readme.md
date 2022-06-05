@@ -107,9 +107,9 @@ Default: `['**/*.pot', '!node_modules/**']`
 `string|array`
 > The PO source files to use. Can be a path or glob string, or an array of paths/globs.
 > 
-> By default, or if falsy, the module will look for PO files with filenames like `{text-domain}-{locale}.po` or `{locale}.po` if `domainInPOPath` is set to false.
+> By default, or if falsy, the module will look for PO files with filenames like `{text-domain}-{locale}.po` or `{locale}.po` if [`domainInPOPath`](#domaininpopath) is set to false.
 > 
-> `{text-domain}` is either the POT filename or the value set in the `domain` option.
+> `{text-domain}` is either the POT filename or the value set in the [`domain`](#domain) option.
 > 
 > See also [`domainInPOPath`](#domaininpopath), [`domainFromPOTPath`](#domainfrompotpath) and [`domain`](#domain).
 
@@ -125,7 +125,9 @@ Default: `''`
 
 #### domainInPOPath
 `boolean`
-> Match source PO files with the text domain name in the filename. For example: `text-domain-en_EN.po` and `text-domain-nl_NL.po`.
+> Match source PO files with the text domain name in the filename.
+> 
+> For example: `text-domain-en_EN.po` and `text-domain-nl_NL.po`.
 > 
 > See also [`domainFromPOTPath`](#domainfrompotpath) and [`domain`](#domain).
 
@@ -135,7 +137,7 @@ Default: `true`
 `boolean`
 > Whether or not to get the text domain from the POT filename (excluding extension).
 > 
-> If set to `false` and `domainInPOPath` is `true`, a domain must be set using the `domain` option.
+> If set to `false` and [`domainInPOPath`](#domaininpopath) is `true`, a text domain must be set using the [`domain`](#domain) option.
 > 
 > See also [`domainInPOPath`](#domaininpopath) and [`domain`](#domain).
 
@@ -165,7 +167,7 @@ Default: `{}`
 > 
 > By default, it will return the generated PO files.
 > 
-> _**NOTE**_: If `returnPOT` is `true`, you need to set `writeFiles` to `true` or else no PO files will be generated and the plugin throws an error.
+> _**NOTE**_: If `returnPOT` is `true`, you need to set [`writeFiles`](#writefiles) to `true` or else no PO files will be generated and the plugin throws an error.
 
 Default: `false`
 
@@ -181,7 +183,7 @@ Default: `true` (for gulp-fill-pot-po: `false`)
 
 #### destDir
 `string`
-> (Only if `writeFiles` is `true`) Relative path from current working directory or absolute path to the folder where the PO files should be written.
+> (Only if [`writeFiles`](#writefiles) is `true`) Relative path from current working directory or absolute path to the folder where the PO files should be written.
 
 Default: `''`
 
@@ -195,7 +197,9 @@ Default: `false`
 
 #### wrapLength
 `integer`
-> Line wrapping length excluding quotation marks. The is forwarded as `foldLength` to [`gettext-parser`](https://github.com/smhg/gettext-parser#compile-po-from-a-translation-object).
+> Line wrapping length excluding quotation marks.
+> 
+> This is forwarded as `foldLength` to [`gettext-parser`](https://github.com/smhg/gettext-parser#compile-po-from-a-translation-object).
 
 Default: `77`
 
@@ -237,7 +241,7 @@ The first argument of the callback function will be the results array:
 `boolean` True on success, false on error.
 
 #### results[1] (on success)
-`array` Array of [Vinyl](https://github.com/gulpjs/vinyl) file objects, depending on the value of `options.returnPOT`:
+`array` Array of [Vinyl](https://github.com/gulpjs/vinyl) file objects, depending on the value of [`options.returnPOT`](#returnpot):
 <ul><table>
     <tr>
         <td><code>false</code></td>
@@ -256,7 +260,7 @@ The first argument of the callback function will be the results array:
 ### Results - Sync mode
 
 #### On success
-`array` Returns an array of [Vinyl](https://github.com/gulpjs/vinyl) file objects, depending on the value of `options.returnPOT`:
+`array` Returns an array of [Vinyl](https://github.com/gulpjs/vinyl) file objects, depending on the value of [`options.returnPOT`](#returnpot):
 <ul><table>
     <tr>
         <td><code>false</code></td>
