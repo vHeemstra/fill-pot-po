@@ -11,6 +11,9 @@ const gettextParser = require('gettext-parser');
 const prepareOptions = require('./options');
 const { resolvePOTFilepaths, getPOFilepaths, generatePO, logResults } = require('./shared');
 
+let pot_input_files = [];
+let po_input_files = [];
+
 /**
  * Reads and parses PO file.
  *
@@ -58,13 +61,25 @@ function processPOT(pot_file, options, resolve, reject) {
 
 	if (po_filepaths.length) {
 		if (isVinyl) {
+			if (options.returnPOT) {
+				pot_input_files.push(pot_file);
+			}
+
 			const pot_object = gettextParser.po.parse(pot_file.contents);
 			resolve([pot_object, po_filepaths]);
 		} else {
 			// Async - Read and parse POT file
-			readFile(pot_filepath, (err, file_content) => {
+			readFile(pot_filepath, (err, pot_content) => {
 				if (err) reject(err);
-				const pot_object = gettextParser.po.parse(file_content);
+
+				if (options.returnPOT) {
+					pot_input_files.push(new Vinyl({
+						contents: Buffer.from(pot_content),
+						path: pot_filepath
+					}));
+				}
+
+				const pot_object = gettextParser.po.parse(pot_content);
 				resolve([pot_object, po_filepaths]);
 			});
 		}
@@ -87,7 +102,8 @@ function fillPotPo(cb, options) {
 		return;
 	}
 
-	const po_input_files = [];
+	pot_input_files = [];
+	po_input_files = [];
 
 	// Process all POT files
 	Promise.all( options.potSources.map(pot_file => {
@@ -131,7 +147,12 @@ function fillPotPo(cb, options) {
 
 	}) ).then(pot_results => {
 		if (options.logResults) {
-			logResults(options._potFiles, po_input_files, pot_results, options.destDir);
+			logResults(options._potFilenames, po_input_files, pot_results, options.destDir);
+		}
+
+		if (options.returnPOT) {
+			cb([true, pot_input_files]);
+			return;
 		}
 
 		// Flatten into array with all PO files

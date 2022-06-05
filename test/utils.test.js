@@ -1,6 +1,12 @@
 'use strict';
 
-const { isArray, isObject, isString, isBool, isArrayOfStrings, pathLineSort } = require('../src/utils');
+const { isArray, isObject, isString, isBool, isArrayOfStrings, isArrayOfVinyls, pathLineSort } = require('../src/utils');
+const Vinyl = require('vinyl');
+
+const vinyl_file = new Vinyl({
+	contents: Buffer.from('some contents'),
+	path: 'filename.pot',
+});
 
 class SomeClass {
 	constructor() {}
@@ -376,6 +382,108 @@ describe('utils.js - isArrayOfStrings', () => {
 
 	test('false on array w/ array', () => {
 		expect( isArrayOfStrings([[]]) ).toEqual(false);
+	});
+});
+
+describe('utils.js - isArrayOfVinyls', () => {
+	test('false on null', () => {
+		expect( isArrayOfVinyls(null) ).toEqual(false);
+	});
+
+	test('false on undefined', () => {
+		expect( isArrayOfVinyls(undefined) ).toEqual(false);
+	});
+
+	test('false on number', () => {
+		expect( isArrayOfVinyls(1) ).toEqual(false);
+	});
+
+	test('false on boolean true', () => {
+		expect( isArrayOfVinyls(true) ).toEqual(false);
+	});
+
+	test('false on boolean false', () => {
+		expect( isArrayOfVinyls(false) ).toEqual(false);
+	});
+
+	test('false on string', () => {
+		expect( isArrayOfVinyls('string') ).toEqual(false);
+	});
+
+	test('false on class instance', () => {
+		expect( isArrayOfVinyls(new SomeClass()) ).toEqual(false);
+	});
+
+	test('false on class', () => {
+		expect( isArrayOfVinyls(SomeClass) ).toEqual(false);
+	});
+
+	test('false on arrow function', () => {
+		expect( isArrayOfVinyls(() => {}) ).toEqual(false);
+	});
+
+	test('false on function', () => {
+		expect( isArrayOfVinyls(someFunction) ).toEqual(false);
+	});
+
+	test('false on object', () => {
+		expect( isArrayOfVinyls({}) ).toEqual(false);
+	});
+
+	test('true on array', () => {
+		expect( isArrayOfVinyls([]) ).toEqual(true);
+	});
+
+	test('false on array w/ null', () => {
+		expect( isArrayOfVinyls([null]) ).toEqual(false);
+	});
+
+	test('false on array w/ undefined', () => {
+		expect( isArrayOfVinyls([undefined]) ).toEqual(false);
+	});
+
+	test('false on array w/ boolean true', () => {
+		expect( isArrayOfVinyls([true]) ).toEqual(false);
+	});
+
+	test('false on array w/ boolean false', () => {
+		expect( isArrayOfVinyls([false]) ).toEqual(false);
+	});
+
+	test('false on array w/ number', () => {
+		expect( isArrayOfVinyls([1]) ).toEqual(false);
+	});
+
+	test('false on array w/ string', () => {
+		expect( isArrayOfVinyls(['']) ).toEqual(false);
+	});
+
+	test('true on array w/ Vinyls', () => {
+		expect( isArrayOfVinyls([vinyl_file]) ).toEqual(true);
+	});
+
+	test('false on array w/ class instance', () => {
+		expect( isArrayOfVinyls([new SomeClass()]) ).toEqual(false);
+	});
+
+	test('false on array w/ class', () => {
+		expect( isArrayOfVinyls([SomeClass]) ).toEqual(false);
+	});
+
+	test('false on array w/ arrow function', () => {
+		expect( isArrayOfVinyls([() => {}]) ).toEqual(false);
+	});
+
+	test('false on array w/ function', () => {
+		expect( isArrayOfVinyls([someFunction]) ).toEqual(false);
+	});
+
+	test('false on array w/ object', () => {
+		expect( isArrayOfVinyls([{}]) ).toEqual(false);
+	});
+
+	test('false on array w/ array', () => {
+		expect( isArrayOfVinyls([[]]) ).toEqual(false);
 	});
 });
 

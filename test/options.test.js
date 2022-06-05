@@ -3,75 +3,85 @@
 const prepareOptions = require('../src/options');
 
 const { escapeRegExp } = require('../src/utils');
+const Vinyl = require('vinyl');
 
 function reOptionError(k) {
 	return new RegExp(`option ${escapeRegExp(k)}`, 'i');
 }
 
+const vinyl_file = new Vinyl({
+	contents: Buffer.from('some contents'),
+	path: 'filename.pot',
+});
 const potSource = ['./test/examples/text-domain.pot'];
+
 
 describe('options.js - validate', () => {
 	// String only
 	const string_only = [ 'srcDir', 'destDir', 'domain' ];
 	string_only.forEach(k => {
 		test(`${k} - only string`, () => {
+			const re = reOptionError(k);
 			expect(() => {
 				prepareOptions({ [k]: null });
-			}).toThrow(reOptionError(k));
+			}).toThrow(re);
 			expect(() => {
 				prepareOptions({ [k]: false });
-			}).toThrow(reOptionError(k));
+			}).toThrow(re);
 			expect(() => {
 				prepareOptions({ [k]: true });
-			}).toThrow(reOptionError(k));
+			}).toThrow(re);
 			expect(() => {
 				prepareOptions({ [k]: 1 });
-			}).toThrow(reOptionError(k));
+			}).toThrow(re);
 			expect(() => {
 				prepareOptions({ [k]: '' });
-			}).not.toThrow(reOptionError(k));
+			}).not.toThrow(re);
 			expect(() => {
 				prepareOptions({ [k]: [] });
-			}).toThrow(reOptionError(k));
+			}).toThrow(re);
 			expect(() => {
 				prepareOptions({ [k]: {} });
-			}).toThrow(reOptionError(k));
+			}).toThrow(re);
 		});
 	});
 
 	// Boolean only
 	const bool_only = [
 		'writeFiles',
+		'returnPOT',
 		'domainFromPOTPath',
 		'domainInPOPath',
 		'defaultContextAsFallback',
 		'appendNonIncludedFromPO',
 		'includePORevisionDate',
+		'includeGenerator',
 		'logResults',
 	];
 	bool_only.forEach(k => {
 		test(`${k} - only boolean`, () => {
+			const re = reOptionError(k);
 			expect(() => {
 				prepareOptions({ [k]: null });
-			}).toThrow(reOptionError(k));
+			}).toThrow(re);
 			expect(() => {
 				prepareOptions({ [k]: false });
-			}).not.toThrow(reOptionError(k));
+			}).not.toThrow(re);
 			expect(() => {
 				prepareOptions({ [k]: true });
-			}).not.toThrow(reOptionError(k));
+			}).not.toThrow(re);
 			expect(() => {
 				prepareOptions({ [k]: 1 });
-			}).toThrow(reOptionError(k));
+			}).toThrow(re);
 			expect(() => {
 				prepareOptions({ [k]: '' });
-			}).toThrow(reOptionError(k));
+			}).toThrow(re);
 			expect(() => {
 				prepareOptions({ [k]: [] });
-			}).toThrow(reOptionError(k));
+			}).toThrow(re);
 			expect(() => {
 				prepareOptions({ [k]: {} });
-			}).toThrow(reOptionError(k));
+			}).toThrow(re);
 		});
 	});
 
@@ -79,56 +89,61 @@ describe('options.js - validate', () => {
 	const number_only = [ 'wrapLength' ];
 	number_only.forEach(k => {
 		test(`${k} - only number`, () => {
+			const re = reOptionError(k);
 			expect(() => {
 				prepareOptions({ [k]: null });
-			}).toThrow(reOptionError(k));
+			}).toThrow(re);
 			expect(() => {
 				prepareOptions({ [k]: false });
-			}).toThrow(reOptionError(k));
+			}).toThrow(re);
 			expect(() => {
 				prepareOptions({ [k]: true });
-			}).toThrow(reOptionError(k));
+			}).toThrow(re);
 			expect(() => {
 				prepareOptions({ [k]: 1 });
-			}).not.toThrow(reOptionError(k));
+			}).not.toThrow(re);
 			expect(() => {
 				prepareOptions({ [k]: '' });
-			}).toThrow(reOptionError(k));
+			}).toThrow(re);
 			expect(() => {
 				prepareOptions({ [k]: [] });
-			}).toThrow(reOptionError(k));
+			}).toThrow(re);
 			expect(() => {
 				prepareOptions({ [k]: {} });
-			}).toThrow(reOptionError(k));
+			}).toThrow(re);
 		});
 	});
 
-	// Array only
-	const array_only = [ 'potSources' ];
-	array_only.forEach(k => {
-		test(`${k} - only array`, () => {
-			expect(() => {
-				prepareOptions({ [k]: null });
-			}).toThrow(reOptionError(k));
-			expect(() => {
-				prepareOptions({ [k]: false });
-			}).toThrow(reOptionError(k));
-			expect(() => {
-				prepareOptions({ [k]: true });
-			}).toThrow(reOptionError(k));
-			expect(() => {
-				prepareOptions({ [k]: 1 });
-			}).toThrow(reOptionError(k));
-			expect(() => {
-				prepareOptions({ [k]: '' });
-			}).toThrow(reOptionError(k));
-			expect(() => {
-				prepareOptions({ [k]: potSource });
-			}).not.toThrow(reOptionError(k));
-			expect(() => {
-				prepareOptions({ [k]: {} });
-			}).toThrow(reOptionError(k));
-		});
+	test('potSources - only string, Vinyl or array of those', () => {
+		const k = 'potSources';
+		const re = reOptionError(k);
+		expect(() => {
+			prepareOptions({ [k]: null });
+		}).toThrow(re);
+		expect(() => {
+			prepareOptions({ [k]: false });
+		}).toThrow(re);
+		expect(() => {
+			prepareOptions({ [k]: true });
+		}).toThrow(re);
+		expect(() => {
+			prepareOptions({ [k]: 1 });
+		}).toThrow(re);
+		expect(() => {
+			prepareOptions({ [k]: '' });
+		}).not.toThrow(re);
+		expect(() => {
+			prepareOptions({ [k]: [] });
+		}).not.toThrow(re);
+		expect(() => {
+			prepareOptions({ [k]: {} });
+		}).toThrow(re);
+		expect(() => {
+			prepareOptions({ [k]: vinyl_file });
+		}).not.toThrow(re);
+		expect(() => {
+			prepareOptions({ [k]: [vinyl_file] });
+		}).not.toThrow(re);
 	});
 
 	test('options - only absent, object, glob string or glob array', () => {
@@ -265,6 +280,27 @@ describe('options.js - validate', () => {
 });
 
 describe('options.js - clean & standardize', () => {
+	test('potSources - is array of only non-empty strings or Vinyl objects', () => {
+		// wraps in array
+		expect( prepareOptions({ potSources: '**/*.pot' }) ).toHaveProperty('potSources', ['**/*.pot']);
+		expect( prepareOptions({ potSources: vinyl_file }) ).toHaveProperty('potSources', [vinyl_file]);
+
+		// trims strings and removes empty strings
+		const all = [
+			'first',
+			' 	 ',
+			'second',
+			'',
+			' \t third\t  ',
+		];
+		const expected = [
+			'first',
+			'second',
+			'third',
+		];
+		expect( prepareOptions({ potSources: all }) ).toHaveProperty('potSources', expected);
+	});
+
 	test('poSources - is array of only non-empty strings', () => {
 		// wrap string
 		expect( prepareOptions({ potSources: potSource, poSources: '**/*.po' }) ).toHaveProperty('poSources', ['**/*.po']);
@@ -343,6 +379,7 @@ describe('options.js - clean & standardize', () => {
 describe('options.js - logic', () => {
 	test('provide domain if domainInPOPath and not domainFromPOTPath', () => {
 		const re = new RegExp('domain should be a non-empty string');
+
 		expect(() => {
 			prepareOptions({ domainFromPOTPath: false });
 		}).toThrow(re);
@@ -361,6 +398,26 @@ describe('options.js - logic', () => {
 
 		expect(() => {
 			prepareOptions({ domainFromPOTPath: false, domainInPOPath: false });
+		}).not.toThrow(re);
+	});
+
+	test('writeFiles must be true if returnPOT is false', () => {
+		const re = new RegExp('If option returnPOT is true, option writeFiles must be true');
+
+		expect(() => {
+			prepareOptions({ returnPOT: true, writeFiles: false });
+		}).toThrow(re);
+
+		expect(() => {
+			prepareOptions({ returnPOT: true, writeFiles: true });
+		}).not.toThrow(re);
+
+		expect(() => {
+			prepareOptions({ returnPOT: false, writeFiles: false });
+		}).not.toThrow(re);
+
+		expect(() => {
+			prepareOptions({ returnPOT: false, writeFiles: true });
 		}).not.toThrow(re);
 	});
 });

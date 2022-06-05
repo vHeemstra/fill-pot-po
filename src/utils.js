@@ -1,5 +1,7 @@
 'use strict';
 
+const Vinyl = require('vinyl');
+
 /**
  * Escape string for literal match in regex.
  *
@@ -66,6 +68,18 @@ function isBool(bl) {
 function isArrayOfStrings(ar) {
 	if (!isArray(ar)) return false;
 	return ar.reduce((r, v) => (isString(v) && r), true);
+}
+
+/**
+ * Determine if `ar` is an array containing only Vinyl objects or not.
+ *
+ * @param  {mixed}  ar
+ *
+ * @return {boolean}
+ */
+function isArrayOfVinyls(ar) {
+	if (!isArray(ar)) return false;
+	return ar.reduce((r, v) => (Vinyl.isVinyl(v) && r), true);
 }
 
 /**
@@ -152,5 +166,6 @@ module.exports = {
 	isString,
 	isBool,
 	isArrayOfStrings,
+	isArrayOfVinyls,
 	pathLineSort
 };

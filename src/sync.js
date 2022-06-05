@@ -7,6 +7,7 @@ const gettextParser = require('gettext-parser');
 const prepareOptions = require('./options');
 const { resolvePOTFilepaths, getPOFilepaths, generatePO, logResults } = require('./shared');
 
+let pot_input_files = [];
 let po_input_files = [];
 let po_output_files = [];
 
@@ -60,10 +61,23 @@ function processPOT(pot_file, options) {
 	if (po_filepaths.length) {
 		let pot_content = '';
 		if (isVinyl) {
+			if (options.returnPOT) {
+				pot_input_files.push(pot_file);
+			}
+
 			pot_content = pot_file.contents;
 		} else {
-			// Sync - Read and parse POT file
-			pot_content = readFileSync(pot_filepath).toString();
+			// Sync - Read POT file
+			pot_content = readFileSync(pot_filepath);
+
+			if (options.returnPOT) {
+				pot_input_files.push(new Vinyl({
+					contents: Buffer.from(pot_content),
+					path: pot_filepath
+				}));
+			}
+
+			pot_content = pot_content.toString();
 		}
 		const pot_object = gettextParser.po.parse(pot_content);
 		processPOs(po_filepaths, pot_object, options);
@@ -86,7 +100,11 @@ function fillPotPoSync(options) {
 	});
 
 	if (options.logResults) {
-		logResults(options._potFiles, po_input_files, po_output_files, options.destDir);
+		logResults(options._potFilenames, po_input_files, po_output_files, options.destDir);
+	}
+
+	if (options.returnPOT) {
+		return pot_input_files;
 	}
 
 	// Flatten into array with all PO files

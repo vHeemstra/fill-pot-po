@@ -6,6 +6,7 @@ const { sync: matchedSync } = require('matched');
 const { existsSync, mkdirSync, writeFileSync } = require('fs');
 const gettextParser = require('gettext-parser');
 const { isString, pathLineSort } = require('./utils');
+const Vinyl = require('vinyl');
 const PluginError = require('./plugin-error');
 const c = require('ansi-colors');
 c.enabled = require('color-support').hasBasic;
@@ -25,7 +26,7 @@ function resolvePOTFilepaths(options) {
 	}
 
 	// Store POT filepaths for logging
-	options._potFiles = options.potSources.map(f => (isString(f) ? f : f.path));
+	options._potFilenames = options.potSources.map(f => (isString(f) ? f : f.path));
 
 	if (0 >= options.potSources.length) {
 		throw new PluginError('No POT files found to process.');
@@ -87,17 +88,14 @@ function getPOFilepaths(pot_filepath, options) {
  * - Fills the object with available translations from PO file
  * - Compiles new PO content
  * - Optionally writes content to file
- * - Returns filepath and content of new PO file
+ * - Returns Vinyl file object of the new PO file
  *
  * @param  {object} pot_object
  * @param  {object} po_object
  * @param  {string} po_filepath
  * @param  {object} options
  *
- * @return {array} [
- *                   {string} New PO filepath
- *                   {Buffer} New PO compiled content
- *                 ]
+ * @return {object} Vinyl file object
  */
 function generatePO(pot_object, po_object, po_filepath, options) {
 	// Deep clone POT as base for the new PO
@@ -117,7 +115,10 @@ function generatePO(pot_object, po_object, po_filepath, options) {
 	}
 
 	// Add Buffer to collection
-	return [new_po_filepath, new_po_output];
+	return new Vinyl({
+		contents: Buffer.from(new_po_output),
+		path: new_po_filepath,
+	});
 }
 
 /**

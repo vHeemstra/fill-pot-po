@@ -1,7 +1,8 @@
 'use strict';
 
 const PluginError = require('./plugin-error');
-const { isArray, isObject, isString, isBool, isArrayOfStrings } = require('./utils');
+const { isArray, isObject, isString, isBool, isArrayOfStrings, isArrayOfVinyls } = require('./utils');
+const Vinyl = require('vinyl');
 
 // const { sync: matchedSync } = require('matched');
 // const { pathLineSort } = require('./utils');
@@ -29,14 +30,21 @@ let cwd = './';
  */
 function validateOptionsInput(options) {
 	if (isObject(options)) {
-		if (typeof options.potSources !== 'undefined' && !isArray(options.potSources)) {
-			throw new OptionsError('Option potSources should be an array.');
+		if (
+			typeof options.potSources !== 'undefined'
+			&& !isString(options.potSources)
+			&& !isArrayOfStrings(options.potSources)
+			&& !Vinyl.isVinyl(options.potSources)
+			&& !isArrayOfVinyls(options.potSources)
+		) {
+			throw new OptionsError('Option potSources should be a string or Vinyl object, or an array of those.');
 		}
 
 		if (
 			typeof options.poSources !== 'undefined'
 			&& options.poSources
-			&& ! (isString(options.poSources) || isArrayOfStrings(options.poSources))
+			&& !isString(options.poSources)
+			&& !isArrayOfStrings(options.poSources)
 		) {
 			throw new OptionsError('Option poSources should be a glob string or glob array.');
 		}
@@ -64,11 +72,13 @@ function validateOptionsInput(options) {
 
 		const if_set_bool = [
 			'writeFiles',
+			'returnPOT',
 			'domainFromPOTPath',
 			'domainInPOPath',
 			'defaultContextAsFallback',
 			'appendNonIncludedFromPO',
 			'includePORevisionDate',
+			'includeGenerator',
 			'logResults',
 		];
 		if_set_bool.forEach(k => {
@@ -97,7 +107,17 @@ function validateOptionsInput(options) {
  * @return {object}
  */
 function sanitizeAndStandardizeOptionsInput(options) {
-	if (typeof options.poSources !== 'undefined') {
+	if (typeof options.potSources !== 'undefined' && options.potSources) {
+		if (!isArray(options.potSources)) {
+			options.potSources = [options.potSources];
+		}
+		options.potSources = options.potSources
+			.map(v => (typeof v === 'string' ? v.trim() : v))
+			.filter(v => (typeof v !== 'string' || v.length > 0))
+		;
+	}
+
+	if (typeof options.poSources !== 'undefined' && options.poSources) {
 		// Make array with one or more non-empty strings
 		if (!isArray(options.poSources)) {
 			options.poSources = [options.poSources];
@@ -106,10 +126,8 @@ function sanitizeAndStandardizeOptionsInput(options) {
 			.map(v => (typeof v === 'string' ? v.trim() : v))
 			.filter(v => (typeof v === 'string' && v.length > 0))
 		;
-		if (0 >= options.poSources.length) {
-			delete options.poSources;
-		}
 	}
+
 	if (options.srcDir) {
 		// NOTE: all paths starting with a slash are considered absolute paths
 		options.srcDir = resolve(options.srcDir.trim());
@@ -120,7 +138,7 @@ function sanitizeAndStandardizeOptionsInput(options) {
 			.replaceAll(/^\//g, '') // remove leading slash
 		;
 	}
-	//TO-REMOVE
+
 	if (options.destDir) {
 		// NOTE: all paths starting with a slash are considered absolute paths
 		options.destDir = resolve(options.destDir.trim());
@@ -131,6 +149,7 @@ function sanitizeAndStandardizeOptionsInput(options) {
 			.replaceAll(/^\//g, '') // remove leading slash
 		;
 	}
+
 	if (options.wrapLength) {
 		// Make integer
 		options.wrapLength = Math.ceil(options.wrapLength);
@@ -159,20 +178,26 @@ function prepareOptions(options, writeFiles) {
 	options = sanitizeAndStandardizeOptionsInput(options);
 
 	const defaultOptions = {
+		// Input-related
 		potSources: ['**/*.pot', '!node_modules/**'],
 		poSources: null,
 		srcDir: '',
-		srcGlobOptions: {},
-		writeFiles: (typeof writeFiles !== 'undefined') ? writeFiles : true,
-		destDir: '',
+		domainInPOPath: true,
 		domainFromPOTPath: true,
 		domain: '',
-		domainInPOPath: true,
+		srcGlobOptions: {},
+
+		// Content-related
 		wrapLength: 77,
 		defaultContextAsFallback: false,
 		appendNonIncludedFromPO: false,
 		includePORevisionDate: false,
 		includeGenerator: true,
+
+		// Output-related
+		returnPOT: false,
+		writeFiles: (typeof writeFiles !== 'undefined') ? writeFiles : true,
+		destDir: '',
 		logResults: false,
 	};
 
@@ -189,6 +214,10 @@ function prepareOptions(options, writeFiles) {
 		&& 0 >= options.domain.length
 	) {
 		throw new OptionsError('Option domain should be a non-empty string when domainFromPOTPath is false and domainInPOPath is true.');
+	}
+
+	if (options.returnPOT && !options.writeFiles) {
+		throw new OptionsError('If option returnPOT is true, option writeFiles must be true or no PO files will be generated.');
 	}
 
 	return options;
