@@ -254,6 +254,10 @@ describe('options.js - validate', () => {
 		}).toThrow(re);
 	});
 
+	test('writeFiles - default overwrite for gulp plugin', () => {
+		expect( prepareOptions({ potSources: '**/*.pot' }, false) ).toHaveProperty('writeFiles', false);
+	});
+
 	test('srcDir - no newlines', () => {
 		expect(() => {
 			prepareOptions({ srcDir: 'some\npath' });
