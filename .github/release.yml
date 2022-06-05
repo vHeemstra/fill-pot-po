@@ -8,20 +8,22 @@ changelog:
     authors:
       - octocat
   categories:
-    - title: 📢 Breaking Changes 🚨
+    - title: 🚨 Breaking Changes
       labels:
         - Semver-Major
         - breaking-change
-    - title: 🚀 New Features 🥳
+    - title: 🚀 New Features
       labels:
         - Semver-Minor
         - enhancement
         - feature
-    - title: 🩹 Patches & Fixes 🛠
+    - title: 🩹 Patches & Fixes
       labels:
         - Semver-Patch
         - patch
         - fix
-    - title: ✏ Other Changes 🎨
+        - refactor
+    - title: ✏ Other Changes
       labels:
+        - documentation
         - "*"
