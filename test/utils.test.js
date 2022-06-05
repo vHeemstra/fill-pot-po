@@ -782,6 +782,12 @@ describe('utils.js - pathLineSort', () => {
 
 	test('return 0 when the same', () => {
 		expect( pathLineSort('some/path/file.ext:10', 'some/path/file.ext:10') ).toEqual(0);
+		expect( pathLineSort('some/path/file.ext:', 'some/path/file.ext:') ).toEqual(0);
+		expect( pathLineSort('some/path/file.ext', 'some/path/file.ext') ).toEqual(0);
+		expect( pathLineSort('some/path/file.', 'some/path/file.') ).toEqual(0);
+		expect( pathLineSort('some/path/file', 'some/path/file') ).toEqual(0);
+		expect( pathLineSort('some', 'some') ).toEqual(0);
+		expect( pathLineSort('', '') ).toEqual(0);
 	});
 
 	test('return -1', () => {
