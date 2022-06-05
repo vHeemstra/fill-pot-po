@@ -251,7 +251,7 @@ The first argument of the callback function will be the results array:
 #### results[1] (on error)
 `string` Error message.
 
-### Result - Sync mode
+### Results - Sync mode
 
 #### On success
 `array` Returns an array of [Vinyl](https://github.com/gulpjs/vinyl) file objects, depending on the value of `options.returnPOT`:
