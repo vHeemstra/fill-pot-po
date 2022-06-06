@@ -1,7 +1,7 @@
 'use strict';
 
 const Vinyl = require('vinyl');
-const { readFileSync } = require('fs');
+const fs = require('fs');
 const gettextParser = require('gettext-parser');
 
 const prepareOptions = require('./options');
@@ -29,7 +29,7 @@ function processPOs(po_filepaths, pot_object, options) {
 	// Parse PO files
 	for (const po_filepath of po_filepaths) {
 		// Sync - Read and parse PO file
-		const po_content = readFileSync(po_filepath).toString();
+		const po_content = fs.readFileSync(po_filepath).toString();
 		const po_object = gettextParser.po.parse(po_content);
 
 		// Generate PO and add to collection
@@ -68,7 +68,7 @@ function processPOT(pot_file, options) {
 			pot_content = pot_file.contents;
 		} else {
 			// Sync - Read POT file
-			pot_content = readFileSync(pot_filepath);
+			pot_content = fs.readFileSync(pot_filepath);
 
 			if (options.returnPOT) {
 				pot_input_files.push(new Vinyl({
@@ -88,6 +88,8 @@ function processPOT(pot_file, options) {
 
 function fillPotPoSync(options) {
 	// Reset
+	pot_input_files = [];
+	po_input_files = [];
 	po_output_files = [];
 
 	// Set options

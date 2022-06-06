@@ -5,7 +5,7 @@ const c = require('ansi-colors');
 c.enabled = require('color-support').hasBasic;
 
 const Vinyl = require('vinyl');
-const { readFile } = require('fs');
+const fs = require('fs');
 const gettextParser = require('gettext-parser');
 
 const prepareOptions = require('./options');
@@ -28,7 +28,7 @@ let po_input_files = [];
  */
 function parsePO(po_filepath, resolve, reject) {
 	// Async - Read, parse and process PO file
-	readFile(po_filepath, (err, file_content) => {
+	fs.readFile(po_filepath, (err, file_content) => {
 		if (err) reject(err);
 		const po_object = gettextParser.po.parse(file_content);
 		resolve(po_object);
@@ -69,7 +69,7 @@ function processPOT(pot_file, options, resolve, reject) {
 			resolve([pot_object, po_filepaths]);
 		} else {
 			// Async - Read and parse POT file
-			readFile(pot_filepath, (err, pot_content) => {
+			fs.readFile(pot_filepath, (err, pot_content) => {
 				if (err) reject(err);
 
 				if (options.returnPOT) {
@@ -102,6 +102,7 @@ function fillPotPo(cb, options) {
 		return;
 	}
 
+	// Reset
 	pot_input_files = [];
 	po_input_files = [];
 
@@ -145,9 +146,9 @@ function fillPotPo(cb, options) {
 			throw new PluginError(`${error.message} ${c.gray(`(POT ${c.white(pot_filepath)})`)}`);
 		});
 
-	}) ).then(pot_results => {
+	}) ).then(po_output_files => {
 		if (options.logResults) {
-			logResults(options._potFilenames, po_input_files, pot_results, options.destDir);
+			logResults(options._potFilenames, po_input_files, po_output_files, options.destDir);
 		}
 
 		if (options.returnPOT) {
@@ -156,8 +157,8 @@ function fillPotPo(cb, options) {
 		}
 
 		// Flatten into array with all PO files
-		pot_results = [].concat(...pot_results);
-		cb([true, pot_results]);
+		po_output_files = [].concat(...po_output_files);
+		cb([true, po_output_files]);
 	}).catch(error => {
 		cb([false, error.toString()]);
 	});

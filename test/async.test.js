@@ -1,9 +1,10 @@
 'use strict';
 
 const fillPotPo = require('../src/async');
+const { testOptions } = require('../src/index');
 
 const { sync: matchedSync } = require('matched');
-const { rmSync, existsSync, mkdirSync, readFileSync } = require('fs');
+const fs = require('fs');
 const { relative } = require('path');
 const Vinyl = require('vinyl');
 
@@ -15,18 +16,9 @@ const input_dir = 'test/examples/input/';
 const expected_dir = 'test/examples/output_correct/';
 const test_dir = 'test/examples/output/fa';
 
-const pot_source_buffer = readFileSync(potSource);
-const expected_po_domain = readFileSync(`${expected_dir}text-domain-nl_NL.po`);
-const expected_po_no_domain = readFileSync(`${expected_dir}nl_NL.po`);
-
-// Default options used when check files were generated
-const shared_options = {
-	wrapLength: 77,
-	defaultContextAsFallback: true,
-	appendNonIncludedFromPO: true,
-	includePORevisionDate: false,
-	includeGenerator: false,
-};
+const pot_source_buffer = fs.readFileSync(potSource);
+const expected_po_domain = fs.readFileSync(`${expected_dir}text-domain-nl_NL.po`);
+const expected_po_no_domain = fs.readFileSync(`${expected_dir}nl_NL.po`);
 
 /**
  * Delete all temporary testing folders and files.
@@ -43,7 +35,7 @@ function clearOutputFolder() {
 		return b_len - a_len;
 	});
 	for (const file of files) {
-		rmSync(file, {recursive: true});
+		fs.rmSync(file, {recursive: true});
 	}
 }
 
@@ -64,15 +56,16 @@ describe('async.js - single POT', () => {
 	test('auto domain PO - no write', done => {
 		folder_i++;
 		let folder_path = `${test_dir}${folder_i}`;
-		if (!existsSync(folder_path)) {
-			mkdirSync(folder_path, {recursive: true});
+		if (!fs.existsSync(folder_path)) {
+			fs.mkdirSync(folder_path, {recursive: true});
 		}
 
 		const options = {
-			...shared_options,
+			...testOptions,
 			potSources: [ potSource ],
 			srcDir: input_dir,
 			writeFiles: false,
+			destDir: folder_path,
 		};
 
 		function cb(result_array) {
@@ -110,16 +103,17 @@ describe('async.js - single POT', () => {
 	test('auto no-domain PO - no write', done => {
 		folder_i++;
 		let folder_path = `${test_dir}${folder_i}`;
-		if (!existsSync(folder_path)) {
-			mkdirSync(folder_path, {recursive: true});
+		if (!fs.existsSync(folder_path)) {
+			fs.mkdirSync(folder_path, {recursive: true});
 		}
 
 		const options = {
-			...shared_options,
+			...testOptions,
 			potSources: [ potSource ],
 			srcDir: input_dir,
 			domainInPOPath: false,
 			writeFiles: false,
+			destDir: folder_path,
 		};
 
 		function cb(result_array) {
@@ -157,16 +151,17 @@ describe('async.js - single POT', () => {
 	test('manual multiple PO - no write', done => {
 		folder_i++;
 		let folder_path = `${test_dir}${folder_i}`;
-		if (!existsSync(folder_path)) {
-			mkdirSync(folder_path, {recursive: true});
+		if (!fs.existsSync(folder_path)) {
+			fs.mkdirSync(folder_path, {recursive: true});
 		}
 
 		const options = {
-			...shared_options,
+			...testOptions,
 			potSources: [ potSource ],
 			poSources: [ poSources ],
 			srcDir: input_dir,
 			writeFiles: false,
+			destDir: folder_path,
 		};
 
 		function cb(result_array) {
@@ -211,12 +206,12 @@ describe('async.js - single POT', () => {
 	test('auto domain PO - write', done => {
 		folder_i++;
 		let folder_path = `${test_dir}${folder_i}`;
-		if (!existsSync(folder_path)) {
-			mkdirSync(folder_path, {recursive: true});
+		if (!fs.existsSync(folder_path)) {
+			fs.mkdirSync(folder_path, {recursive: true});
 		}
 
 		const options = {
-			...shared_options,
+			...testOptions,
 			potSources: [ potSource ],
 			srcDir: input_dir,
 			writeFiles: true,
@@ -245,7 +240,7 @@ describe('async.js - single POT', () => {
 
 				// Check contents of file
 				expect(
-					readFileSync(`${folder_path}/text-domain-nl_NL.po`)
+					fs.readFileSync(`${folder_path}/text-domain-nl_NL.po`)
 						.equals(expected_po_domain)
 				).toBe(true);
 
@@ -261,12 +256,12 @@ describe('async.js - single POT', () => {
 	test('auto no-domain PO - write', done => {
 		folder_i++;
 		let folder_path = `${test_dir}${folder_i}`;
-		if (!existsSync(folder_path)) {
-			mkdirSync(folder_path, {recursive: true});
+		if (!fs.existsSync(folder_path)) {
+			fs.mkdirSync(folder_path, {recursive: true});
 		}
 
 		const options = {
-			...shared_options,
+			...testOptions,
 			potSources: [ potSource ],
 			srcDir: input_dir,
 			domainInPOPath: false,
@@ -296,7 +291,7 @@ describe('async.js - single POT', () => {
 
 				// Check contents of file
 				expect(
-					readFileSync(`${folder_path}/nl_NL.po`)
+					fs.readFileSync(`${folder_path}/nl_NL.po`)
 						.equals(expected_po_no_domain)
 				).toBe(true);
 
@@ -312,12 +307,12 @@ describe('async.js - single POT', () => {
 	test('manual multiple PO - write', done => {
 		folder_i++;
 		let folder_path = `${test_dir}${folder_i}`;
-		if (!existsSync(folder_path)) {
-			mkdirSync(folder_path, {recursive: true});
+		if (!fs.existsSync(folder_path)) {
+			fs.mkdirSync(folder_path, {recursive: true});
 		}
 
 		const options = {
-			...shared_options,
+			...testOptions,
 			potSources: [ potSource ],
 			poSources: [ poSources ],
 			srcDir: input_dir,
@@ -350,11 +345,11 @@ describe('async.js - single POT', () => {
 
 				// Check contents of files
 				expect(
-					readFileSync(`${folder_path}/nl_NL.po`)
+					fs.readFileSync(`${folder_path}/nl_NL.po`)
 						.equals(expected_po_no_domain)
 				).toBe(true);
 				expect(
-					readFileSync(`${folder_path}/text-domain-nl_NL.po`)
+					fs.readFileSync(`${folder_path}/text-domain-nl_NL.po`)
 						.equals(expected_po_domain)
 				).toBe(true);
 
@@ -370,16 +365,24 @@ describe('async.js - single POT', () => {
 	test('manual empty PO array', done => {
 		folder_i++;
 		let folder_path = `${test_dir}${folder_i}`;
-		if (!existsSync(folder_path)) {
-			mkdirSync(folder_path, {recursive: true});
+		if (!fs.existsSync(folder_path)) {
+			fs.mkdirSync(folder_path, {recursive: true});
 		}
 
+		// Mock the console.log function
+		const consoleSpy = jest.spyOn(console, 'log')
+			.mockName('console.log')
+			.mockImplementation((...args) => {
+				return args.map(v => String(v).trim().replaceAll(/\s+/g, ' ')).join(' ');
+			});
+
 		const options = {
-			...shared_options,
+			...testOptions,
 			potSources: [ potSource ],
 			poSources: [],
 			srcDir: input_dir,
 			writeFiles: false,
+			logResults: true,
 		};
 
 		function cb(result_array) {
@@ -396,6 +399,16 @@ describe('async.js - single POT', () => {
 				const files = matchedSync([`${folder_path}/*`]);
 				expect(files).toHaveLength(0);
 
+				// Check if results were logged
+				expect(consoleSpy).toHaveBeenCalledTimes(4);
+				const logs = consoleSpy.mock.results.slice();
+				expect(logs[0].value + logs[3].value).toEqual('');
+				expect(logs[1].value).toMatch(new RegExp('■ ' + potSource.split('/').slice(-1)[0]));
+				expect(logs[2].value).toMatch(new RegExp('No PO files found.'));
+
+				// Restore the console.log function
+				consoleSpy.mockRestore();
+
 				done();
 			} catch (error) {
 				done(error);
@@ -408,12 +421,12 @@ describe('async.js - single POT', () => {
 	test('auto domain PO - write - return POT', done => {
 		folder_i++;
 		let folder_path = `${test_dir}${folder_i}`;
-		if (!existsSync(folder_path)) {
-			mkdirSync(folder_path, {recursive: true});
+		if (!fs.existsSync(folder_path)) {
+			fs.mkdirSync(folder_path, {recursive: true});
 		}
 
 		const options = {
-			...shared_options,
+			...testOptions,
 			potSources: [ potSource ],
 			srcDir: input_dir,
 			returnPOT: true,
@@ -449,7 +462,7 @@ describe('async.js - single POT', () => {
 
 				// Check contents of file
 				expect(
-					readFileSync(`${folder_path}/text-domain-nl_NL.po`)
+					fs.readFileSync(`${folder_path}/text-domain-nl_NL.po`)
 						.equals(expected_po_domain)
 				).toBe(true);
 
@@ -462,7 +475,293 @@ describe('async.js - single POT', () => {
 		fillPotPo(cb, options);
 	});
 
+	test('auto domain PO - no write - input POT Vinyl', done => {
+		const options = {
+			...testOptions,
+			potSources: new Vinyl({
+				contents: pot_source_buffer,
+				path: potSource,
+			}),
+			srcDir: input_dir,
+			writeFiles: false,
+		};
+
+		function cb(result_array) {
+			try {
+				// Errorless execution
+				expect(result_array).toHaveLength(2);
+				const [was_success, result] = result_array;
+				expect(was_success).toBe(true);
+
+				// Check returned array
+				expect(result).toHaveLength(1);
+				expect(result[0]).toBeInstanceOf(Vinyl);
+				expect(result[0].isBuffer()).toBe(true);
+				expect(result[0].path).toEqual('text-domain-nl_NL.po');
+
+				// Check contents
+				expect(
+					result[0].contents
+						.equals(expected_po_domain)
+				).toBe(true);
+
+				done();
+			} catch (error) {
+				done(error);
+			}
+		}
+
+		fillPotPo(cb, options);
+	});
+
+	test('auto domain PO - write - return POT - input POT Vinyl', done => {
+		folder_i++;
+		let folder_path = `${test_dir}${folder_i}`;
+		if (!fs.existsSync(folder_path)) {
+			fs.mkdirSync(folder_path, {recursive: true});
+		}
+
+		const options = {
+			...testOptions,
+			potSources: new Vinyl({
+				contents: pot_source_buffer,
+				path: potSource,
+			}),
+			srcDir: input_dir,
+			returnPOT: true,
+			writeFiles: true,
+			destDir: folder_path,
+		};
+
+		function cb(result_array) {
+			try {
+				// Errorless execution
+				expect(result_array).toHaveLength(2);
+				const [was_success, result] = result_array;
+				expect(was_success).toBe(true);
+
+				// Check returned array
+				expect(result).toHaveLength(1);
+				expect(result[0]).toBeInstanceOf(Vinyl);
+				expect(result[0].isBuffer()).toBe(true);
+				expect(relative(result[0].path, potSource)).toEqual('');
+
+				// Check contents
+				expect(
+					result[0].contents
+						.equals(pot_source_buffer)
+				).toBe(true);
+
+				// Check if file exist
+				const files = matchedSync([`${folder_path}/*`]);
+				expect(files).toHaveLength(1);
+				expect(files).toEqual([
+					`${folder_path}/text-domain-nl_NL.po`
+				]);
+
+				// Check contents of file
+				expect(
+					fs.readFileSync(`${folder_path}/text-domain-nl_NL.po`)
+						.equals(expected_po_domain)
+				).toBe(true);
+
+				done();
+			} catch (error) {
+				done(error);
+			}
+		}
+
+		fillPotPo(cb, options);
+	});
+
+	test('extras - auto domain PO - write - content optionals', done => {
+		folder_i++;
+		let folder_path = `${test_dir}${folder_i}`;
+
+		// Mock the console.log function
+		const consoleSpy = jest.spyOn(console, 'log')
+			.mockName('console.log')
+			.mockImplementation((...args) => {
+				return args.map(v => String(v).trim().replaceAll(/\s+/g, ' ')).join(' ');
+			});
+
+		const options = {
+			...testOptions,
+			potSources: [ potSource ],
+			srcDir: input_dir,
+			writeFiles: true,
+			destDir: folder_path,
+			logResults: true,
+			appendNonIncludedFromPO: false,
+			includePORevisionDate: true,
+			includeGenerator: true,
+		};
+
+		function cb(result_array) {
+			try {
+				// Errorless execution
+				expect(result_array).toHaveLength(2);
+				const [was_success, result] = result_array;
+				expect(was_success).toBe(true);
+
+				// Check returned array
+				expect(result).toHaveLength(1);
+				expect(result[0]).toBeInstanceOf(Vinyl);
+				expect(result[0].isBuffer()).toBe(true);
+				expect(result[0].path).toEqual('text-domain-nl_NL.po');
+
+				// Check if folder and file exist
+				expect(fs.existsSync(folder_path)).toBe(true);
+				const files = matchedSync([`${folder_path}/*`]);
+				expect(files).toHaveLength(1);
+				expect(files).toEqual([
+					`${folder_path}/text-domain-nl_NL.po`
+				]);
+
+				// Check contents
+				const result_string_content = result[0].contents.toString();
+				expect(result_string_content)
+					.not.toMatch(/^# DEPRECATED$/m);
+				expect(result_string_content)
+					.toMatch(/^"PO-Revision-Date: \d{4}-\d{2}-\d{2} \d{2}:\d{2}\+0000\\n"$/m);
+				expect(result_string_content)
+					.toMatch(/^"X-Generator: fill-pot-po\/\d+\.\d+\.\d+\\n"$/m);
+
+				// Check if results were logged
+				expect(consoleSpy).toHaveBeenCalledTimes(4);
+				const logs = consoleSpy.mock.results.slice();
+				expect(logs[0].value + logs[3].value).toEqual('');
+				expect(logs[1].value).toMatch(new RegExp('■ ' + potSource.split('/').slice(-1)[0]));
+				expect(logs[2].value).toMatch(new RegExp(`${input_dir}text-domain-nl_NL.po —► ${folder_path}/text-domain-nl_NL.po`));
+
+				// Restore the console.log function
+				consoleSpy.mockRestore();
+
+				done();
+			} catch (error) {
+				done(error);
+			}
+		}
+
+		fillPotPo(cb, options);
+	});
+
+	test('return options error', done => {
+		const options = {
+			...testOptions,
+			potSources: true,
+			writeFiles: false,
+		};
+
+		function cb(result_array) {
+			try {
+				// Errorless execution
+				expect(result_array).toHaveLength(2);
+				const [was_success, result] = result_array;
+				expect(was_success).toBe(false);
+
+				// Check returned array
+				expect(result).toMatch(new RegExp('Option potSources should be a string'));
+
+				done();
+			} catch (error) {
+				done(error);
+			}
+		}
+
+		fillPotPo(cb, options);
+	});
+
+	test('return POT fs.readFile error', done => {
+		// Mock the fs.readFile function
+		const readFileSpy = jest.spyOn(fs, 'readFile')
+			.mockName('fs.readFile')
+			.mockImplementation((path, cb) => {
+				// first: *.pot
+				// then: *.po
+				cb({message: 'POT_MOCK_FS_READFILE_ERROR'}, '');
+			});
+
+		const options = {
+			...testOptions,
+			potSources: [ potSource ],
+			srcDir: input_dir,
+			writeFiles: false,
+		};
+
+		function cb(result_array) {
+			try {
+				// Errorless execution
+				expect(result_array).toHaveLength(2);
+				const [was_success, result] = result_array;
+				expect(was_success).toBe(false);
+
+				// Check returned array
+				expect(result).toMatch(new RegExp('POT_MOCK_FS_READFILE_ERROR'));
+
+				// Restore the console.log function
+				readFileSpy.mockRestore();
+
+				done();
+			} catch (error) {
+				done(error);
+			}
+		}
+
+		fillPotPo(cb, options);
+	});
+
+	test('return PO fs.readFile error', done => {
+		// Mock the fs.readFile function
+		const origReadFile = fs.readFile;
+		const readFileSpy = jest.spyOn(fs, 'readFile')
+			.mockName('fs.readFile')
+			.mockImplementation((path, cb) => {
+				// first *.pot
+				if (path.match(/\.pot$/i)) {
+					origReadFile(path, cb);
+					return;
+				}
+				// then *.po
+				cb('PO_MOCK_FS_READFILE_ERROR', '');
+			});
+
+		const options = {
+			...testOptions,
+			potSources: [ potSource ],
+			srcDir: input_dir,
+			writeFiles: false,
+		};
+
+		function cb(result_array) {
+			try {
+				// Errorless execution
+				expect(result_array).toHaveLength(2);
+				const [was_success, result] = result_array;
+				expect(was_success).toBe(false);
+
+				// Check returned array
+				expect(result).toMatch(new RegExp('PO_MOCK_FS_READFILE_ERROR'));
+
+				// Restore the console.log function
+				readFileSpy.mockRestore();
+
+				done();
+			} catch (error) {
+				done(error);
+			}
+		}
+
+		fillPotPo(cb, options);
+	});
+
 	/* eslint-enable jest/no-done-callback */
+
+	test('fillPotPo requires a callback', () => {
+		expect(() => {
+			fillPotPo();
+		}).toThrow(/fillPotPo\(\) requires a callback function as first parameter/);
+	});
 
 });
 

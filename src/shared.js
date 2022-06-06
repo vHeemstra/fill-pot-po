@@ -186,19 +186,6 @@ function fillPO(new_po_object, po_object, options) {
 					);
 				}
 			}
-
-			// TODO: move undublicate to POT generator
-			// Extra - Remove duplicate translator comments
-			// Fix for gulp-wp-pot's POT generation
-			if ( entry.comments?.extracted ) {
-				let comments = entry.comments.extracted.split('\n');
-				new_po_object.translations[ ctxt ][ msgid ].comments.extracted = comments.reduce((ar, v) => {
-					if (0 > ar.indexOf(v)) {
-						ar.push(v);
-					}
-					return ar;
-				}, []).join('\n');
-			}
 		}
 	}
 
@@ -318,7 +305,7 @@ function logResults(pots, pos_in, pos_out, dest) {
 	pots.forEach((pot, i) => {
 		const pot_filepath = basename(pot);
 		const po_filepaths_in = pos_in[i]?.map(po => po);
-		const po_filepaths_out = pos_out[i]?.map(po => po[0]);
+		const po_filepaths_out = pos_out[i]?.map(po => po.path);
 		const max_length_in = po_filepaths_in.reduce((p, c) => (Math.max(c.length, p)), 0);
 
 		console.log('');

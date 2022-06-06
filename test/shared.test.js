@@ -76,4 +76,10 @@ describe('shared.js - resolvePOTFilepaths()', () => {
 		expect(options).not.toBeNull();
 		expect(options).toHaveProperty('_potFilenames', ['test/examples/text-domain.pot']);
 	});
+
+	/**
+	 * logResults() is tested in sync.test.js, inside tests:
+	 * 	- 'manual empty PO array'
+	 * 	- 'extras - auto domain PO - write - content optionals'
+	 */
 });

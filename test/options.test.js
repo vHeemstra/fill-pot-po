@@ -15,7 +15,6 @@ const vinyl_file = new Vinyl({
 });
 const potSource = ['./test/examples/text-domain.pot'];
 
-
 describe('options.js - validate', () => {
 	// String only
 	const string_only = [ 'srcDir', 'destDir', 'domain' ];
