@@ -536,6 +536,36 @@ describe('sync.js - single POT', () => {
 		// Restore the console.log function
 		consoleSpy.mockRestore();
 	});
+
+	test('extras - manual domain - no srcDir - no write', () => {
+		folder_i++;
+		let folder_path = `${test_dir}${folder_i}`;
+		if (!existsSync(folder_path)) {
+			mkdirSync(folder_path, {recursive: true});
+		}
+
+		const options = {
+			...testOptions,
+			potSources: [ potSource ],
+			domainFromPOTPath: false,
+			domain: 'text-domain',
+			writeFiles: false,
+			destDir: folder_path,
+		};
+
+		// Errorless execution
+		let result;
+		expect(() => {
+			result = fillPotPo(options);
+		}).not.toThrow();
+
+		// Check returned array
+		expect(result).toHaveLength(0);
+
+		// Check that no files were created
+		const files = matchedSync([`${folder_path}/*`]);
+		expect(files).toHaveLength(0);
+	});
 });
 
 // TODO? potSources: Vinyl or Array-of

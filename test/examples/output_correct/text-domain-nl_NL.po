@@ -182,7 +182,6 @@ msgid "Extra string - no comments"
 msgstr ""
 
 # DEPRECATED
-# DEPRECTED
 # Basic extra string with a "DEPRECATED" translator comment
 msgid "Extra string - deprecated translator comment"
 msgstr ""

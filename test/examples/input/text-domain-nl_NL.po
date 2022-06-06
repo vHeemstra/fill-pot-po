@@ -162,7 +162,7 @@ msgstr ""
 msgid "Extra string - translator comment"
 msgstr ""
 
-# DEPRECTED
+# DEPRECATED
 # Basic extra string with a "DEPRECATED" translator comment
 msgid "Extra string - deprecated translator comment"
 msgstr ""
