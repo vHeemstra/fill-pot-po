@@ -30,48 +30,59 @@ on:
         required: true
 
 jobs:
-  print-tag:
-    runs-on: ubuntu-latest
-    if: ${{ github.event.inputs.print_tags == 'true' }}
-    steps:
-      - name: Print the input tag to STDOUT
-        run: echo The tags are ${{ github.event.inputs.tags }}
+  # print-tag:
+  #   runs-on: ubuntu-latest
+  #   if: ${{ github.event.inputs.print_tags == 'true' }}
+  #   steps:
+  #     - name: Print the input tag to STDOUT
+  #       run: echo The tags are ${{ github.event.inputs.tags }}
 
   dump_contexts_to_log:
     runs-on: ubuntu-latest
     env:
       MANUAL_TOKEN: ${{ secrets.MANUAL_RUN_CI_TOKEN }}
     steps:
-      - name: Dump GitHub context
+      - name: Dump context
         if: ${{ github.event.inputs.the_token == env.MANUAL_TOKEN }}
         run: |
-          echo '\n'
-          echo 'github:\n'
+          echo ''
+          echo ''
+          echo 'github:'
           echo '${{ toJSON(github) }}'
-          echo '\n'
-          echo 'env:\n'
+          echo ''
+          echo ''
+          echo 'env:'
           echo '${{ toJSON(env) }}'
-          echo '\n'
-          echo 'job:\n'
+          echo ''
+          echo ''
+          echo 'job:'
           echo '${{ toJSON(job) }}'
-          echo '\n'
-          echo 'steps:\n'
+          echo ''
+          echo ''
+          echo 'steps:'
           echo '${{ toJSON(steps) }}'
-          echo '\n'
-          echo 'runner:\n'
+          echo ''
+          echo ''
+          echo 'runner:'
           echo '${{ toJSON(runner) }}'
-          echo '\n'
-          echo 'strategy:\n'
+          echo ''
+          echo ''
+          echo 'strategy:'
           echo '${{ toJSON(strategy) }}'
-          echo '\n'
-          echo 'matrix:\n'
+          echo ''
+          echo ''
+          echo 'matrix:'
           echo '${{ toJSON(matrix) }}'
-          echo '\n'
-          echo 'needs:\n'
+          echo ''
+          echo ''
+          echo 'needs:'
           echo '${{ toJSON(needs) }}'
-          echo '\n'
-          echo 'inputs:\n'
+          echo ''
+          echo ''
+          echo 'inputs:'
           echo '${{ toJSON(inputs) }}'
+          echo ''
+          echo ''
       # - name: Check out repository
       #   uses: actions/checkout@v3
       #   with:
