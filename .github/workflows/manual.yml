@@ -29,6 +29,9 @@ on:
         type: environment
         required: true
 
+env:
+  MANUAL_TOKEN: ${{ secrets.MANUAL_RUN_CI_TOKEN }}
+
 jobs:
   print-tag:
     runs-on: ubuntu-latest
@@ -39,7 +42,7 @@ jobs:
 
   dump_contexts_to_log:
     runs-on: ubuntu-latest
-    if: ${{ github.event.inputs.manual_token == secrets.MANUAL_RUN_CI_TOKEN }}
+    if: ${{ github.event.inputs.manual_token == env.MANUAL_TOKEN }}
     steps:
       - name: Dump GitHub context
         run: |
