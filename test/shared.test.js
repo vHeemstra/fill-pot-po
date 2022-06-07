@@ -66,7 +66,9 @@ describe('shared.js - resolvePOTFilepaths()', () => {
 		expect(() => {
 			options = resolvePOTFilepaths({ potSources: [vinyl_file] });
 		}).not.toThrow();
-		expect(options).not.toBeNull();
+		expect(options)
+			// .not
+			.toBeNull();
 		expect(options).toHaveProperty('_potFilenames', [vinyl_file.path]);
 
 		options = null;
