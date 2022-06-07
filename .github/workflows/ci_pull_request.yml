@@ -1,0 +1,56 @@
+name: Lint / Test
+
+on:
+  pull_request:
+    # branches:
+    #   - main
+    # Only run when push includes commits with changes to:
+    paths:
+      - 'src/**/*.js'
+      - 'test/**/*.{js,pot,po}'
+      - 'jest.config.js'
+      - 'package.json'
+
+jobs:
+  lint:
+    name: Lint
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v3
+      - name: Install Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 16.x
+          # cache: 'npm'
+      - run: npm install
+      - run: npm run lint
+
+  test:
+    name: Test (Node.js ${{ matrix.node-version }} on ${{ matrix.os }})
+    needs: lint
+    strategy:
+      fail-fast: false
+      matrix:
+        node-version:
+          # - 12.x
+          # - 14.x
+          - 16.x
+        os:
+          - ubuntu-latest
+          - windows-latest
+          # - macos-latest
+    runs-on: ${{ matrix.os }}
+    defaults:
+      run:
+        shell: bash
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v3
+      - name: Install Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ matrix.node-version }}
+          # cache: 'npm'
+      - run: npm install
+      - run: npm test

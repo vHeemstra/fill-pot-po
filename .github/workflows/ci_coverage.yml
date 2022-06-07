@@ -1,4 +1,4 @@
-name: push/pull_request > Test coverage
+name: Test / Coverage
 
 on:
   push:
@@ -7,7 +7,7 @@ on:
     # Only run when push includes commits with changes to:
     paths:
       - 'src/**/*.js'
-      - 'test/**/*.js'
+      - 'test/**/*.{js,pot,po}'
       - 'jest.config.js'
       - 'package.json'
 
@@ -17,7 +17,7 @@ on:
     # Only run when push includes commits with changes to:
     paths:
       - 'src/**/*.js'
-      - 'test/**/*.js'
+      - 'test/**/*.{js,pot,po}'
       - 'jest.config.js'
       - 'package.json'
 
