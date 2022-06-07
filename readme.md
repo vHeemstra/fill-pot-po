@@ -10,6 +10,15 @@
 > *Based on the POT filename or set options, it looks for source PO files. For each PO file, it will create a new one, based on the contents of the POT file. The source PO file is used to fill in the matching translated strings.*
 
 
+## Use case
+
+If you have a development set-up where gettext translation strings are automatically extracted and compiled into a POT file, it can be bothersome to have to re-create PO files from that new POT file and include already translated strings from previous PO files. Especially, if you have multiple languages, like for a WordPress theme or plugin.
+
+In this case, you can use this module to auto-create new PO files based on the new POT file, and have it fill in existing translated strings from previous PO files. The created PO files can now be opened and edited with the benefit of having to do fewer copy-pastes.
+
+For Gulp, there is a wrapper plugin [**gulp-fill-pot-po**](https://github.com/vHeemstra/gulp-fill-pot-po/).
+
+
 ## Install
 
 ```bash
