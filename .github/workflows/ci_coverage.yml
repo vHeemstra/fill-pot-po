@@ -22,7 +22,8 @@ on:
       - 'package.json'
 
 jobs:
-  build:
+  collect_and_upload:
+    name: Collect and upload test coverage
     runs-on: ubuntu-latest
 
     steps:
