@@ -6,8 +6,8 @@ on:
     #   - main
     # Only run when push includes commits with changes to:
     paths:
-      - 'src/**/*.js'
-      - 'test/**/*.{js,pot,po}'
+      - 'src/**.js'
+      - 'test/**.{js,pot,po}'
       - 'jest.config.js'
       - 'package.json'
       - 'package-lock.json'
