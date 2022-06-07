@@ -10,6 +10,7 @@ on:
       - 'test/**/*.{js,pot,po}'
       - 'jest.config.js'
       - 'package.json'
+      - 'package-lock.json'
 
   pull_request:
     branches:
@@ -33,10 +34,11 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: 16.x
-          # cache: 'npm'
-      # - run: npm ci
-      - run: npm install
-      - run: npm test -- --coverage
+          cache: 'npm'
+      - name: Install dependencies
+        run: npm ci
+      - name: Run Jest with coverage
+        run: npm test -- --coverage
 
       # Save coverage report in Coveralls
       - name: Coveralls

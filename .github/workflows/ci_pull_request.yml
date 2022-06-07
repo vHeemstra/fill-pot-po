@@ -10,6 +10,7 @@ on:
       - 'test/**/*.{js,pot,po}'
       - 'jest.config.js'
       - 'package.json'
+      - 'package-lock.json'
 
 jobs:
   lint:
@@ -22,9 +23,11 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: 16.x
-          # cache: 'npm'
-      - run: npm install
-      - run: npm run lint
+          cache: 'npm'
+      - name: Install dependencies
+        run: npm ci
+      - name: Run ESlint
+        run: npm run lint
 
   test:
     name: Test (Node.js ${{ matrix.node-version }} on ${{ matrix.os }})
@@ -51,6 +54,8 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: ${{ matrix.node-version }}
-          # cache: 'npm'
-      - run: npm install
-      - run: npm test
+          cache: 'npm'
+      - name: Install dependencies
+        run: npm ci
+      - name: Run Jest
+        run: npm test
