@@ -7,8 +7,10 @@ const the_module = module.exports = fillPotPo;
 
 the_module.sync = fillPotPoSync;
 
-// Default options for generating PO files
-// used in tests as the correct ones.
+/*
+ * Default content-related options for generating PO files.
+ * Use these when generating and testing PO files to ensure a proper comparison.
+*/
 the_module.testOptions = {
 	wrapLength: 77,
 	defaultContextAsFallback: true,
