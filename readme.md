@@ -1,10 +1,8 @@
-# fill-pot-po
+# fill-pot-po [![GitHub release (latest SemVer)][release-image]][release-url] [![NPM version][npm-image]][npm-url]
 
-[![GitHub release (latest SemVer)][release-image]][release-url]
 [![Build Status][ci-image]][ci-url]
 [![Coverage Status][coverage-image]][coverage-url]
 [![Dependencies Status][deps-image]][deps-url]
-[![NPM version][npm-image]][npm-url]
 [![Downloads][downloads-image]][npm-url]
 
 > Generate pre-filled PO files from POT file, using source PO files.
@@ -300,7 +298,7 @@ MIT © [Philip van Heemstra](https://github.com/vheemstra)
 [release-url]: https://github.com/vHeemstra/fill-pot-po/releases
 [release-image]: https://img.shields.io/github/v/release/vHeemstra/fill-pot-po?sort=semver&logo=github&logoColor=959DA5&labelColor=444D56
 
-[ci-url]: https://github.com/vHeemstra/fill-pot-po/actions/workflows/ci_push.yml
+[ci-url]: https://github.com/vHeemstra/fill-pot-po/actions/workflows/ci_push_on_main.yml
 [ci-image]: https://img.shields.io/github/workflow/status/vHeemstra/fill-pot-po/Lint%20%7C%20Test%20%7C%20Version?label=lint%20%26%20test&logo=github&logoColor=959DA5&labelColor=444D56
 [ci-image2]: https://github.com/vHeemstra/fill-pot-po/actions/workflows/ci_push_on_main.yml/badge.svg
 [ci-image3]: https://img.shields.io/static/v1?logo=github&logoColor=959DA5&label=lint%20%26%20tests&labelColor=444D56&message=passing&color=34D058
