@@ -41,7 +41,6 @@ jobs:
     runs-on: ubuntu-latest
     env:
       MANUAL_TOKEN: ${{ secrets.MANUAL_RUN_CI_TOKEN }}
-    if: ${{ github.event.inputs.the_token == env.MANUAL_TOKEN }}
     steps:
       # - name: Check out repository
       #   uses: actions/checkout@v3
@@ -60,46 +59,55 @@ jobs:
       # - run: git config --global user.email '17368112+vHeemstra@users.noreply.github.com'
       # - run: npm install
       - name: Dump GitHub context
+        if: ${{ github.event.inputs.the_token == env.MANUAL_TOKEN }}
         run: |
           echo '\n'
           echo 'github:\n'
           echo '${{ toJSON(github) }}'
       - name: Dump environment context
+        if: ${{ github.event.inputs.the_token == env.MANUAL_TOKEN }}
         run: |
           echo '\n'
           echo 'env:\n'
           echo '${{ toJSON(env) }}'
       - name: Dump job context
+        if: ${{ github.event.inputs.the_token == env.MANUAL_TOKEN }}
         run: |
           echo '\n'
           echo 'job:\n'
           echo '${{ toJSON(job) }}'
       - name: Dump steps context
+        if: ${{ github.event.inputs.the_token == env.MANUAL_TOKEN }}
         run: |
           echo '\n'
           echo 'steps:\n'
           echo '${{ toJSON(steps) }}'
       - name: Dump runner context
+        if: ${{ github.event.inputs.the_token == env.MANUAL_TOKEN }}
         run: |
           echo '\n'
           echo 'runner:\n'
           echo '${{ toJSON(runner) }}'
       - name: Dump strategy context
+        if: ${{ github.event.inputs.the_token == env.MANUAL_TOKEN }}
         run: |
           echo '\n'
           echo 'strategy:\n'
           echo '${{ toJSON(strategy) }}'
       - name: Dump matrix context
+        if: ${{ github.event.inputs.the_token == env.MANUAL_TOKEN }}
         run: |
           echo '\n'
           echo 'matrix:\n'
           echo '${{ toJSON(matrix) }}'
       - name: Dump needs context
+        if: ${{ github.event.inputs.the_token == env.MANUAL_TOKEN }}
         run: |
           echo '\n'
           echo 'needs:\n'
           echo '${{ toJSON(needs) }}'
       - name: Dump inputs context
+        if: ${{ github.event.inputs.the_token == env.MANUAL_TOKEN }}
         run: |
           echo '\n'
           echo 'inputs:\n'
