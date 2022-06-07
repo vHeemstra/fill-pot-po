@@ -1,0 +1,86 @@
+on:
+  workflow_dispatch:
+    inputs:
+      manual_token:
+        description: 'Token'
+        required: true
+        type: string
+      logLevel:
+        description: 'Log level'
+        required: true
+        default: 'warning'
+        type: choice
+        options:
+        - info
+        - warning
+        - debug
+      print_tags:
+        description: 'True to print to STDOUT'
+        required: true
+        type: boolean
+      tags:
+        description: 'Test scenario tags'
+        required: true
+        type: string
+      environment:
+        description: 'Environment to run tests against'
+        type: environment
+        required: true
+
+jobs:
+  print-tag:
+    runs-on: ubuntu-latest
+    if: ${{ github.event.inputs.print_tags == 'true' }}
+    steps:
+      - name: Print the input tag to STDOUT
+        run: echo The tags are ${{ github.event.inputs.tags }}
+
+  dump_contexts_to_log:
+    runs-on: ubuntu-latest
+    if: ${{ github.event.inputs.manual_token == secrets.MANUAL_RUN_CI_TOKEN }}
+    steps:
+      - name: Dump GitHub context
+        run: |
+          echo '\n'
+          echo 'github:\n'
+          echo '${{ toJSON(github) }}'
+      - name: Dump environment context
+        run: |
+          echo '\n'
+          echo 'env:\n'
+          echo '${{ toJSON(env) }}'
+      - name: Dump job context
+        run: |
+          echo '\n'
+          echo 'job:\n'
+          echo '${{ toJSON(job) }}'
+      - name: Dump steps context
+        run: |
+          echo '\n'
+          echo 'steps:\n'
+          echo '${{ toJSON(steps) }}'
+      - name: Dump runner context
+        run: |
+          echo '\n'
+          echo 'runner:\n'
+          echo '${{ toJSON(runner) }}'
+      - name: Dump strategy context
+        run: |
+          echo '\n'
+          echo 'strategy:\n'
+          echo '${{ toJSON(strategy) }}'
+      - name: Dump matrix context
+        run: |
+          echo '\n'
+          echo 'matrix:\n'
+          echo '${{ toJSON(matrix) }}'
+      - name: Dump needs context
+        run: |
+          echo '\n'
+          echo 'needs:\n'
+          echo '${{ toJSON(needs) }}'
+      - name: Dump inputs context
+        run: |
+          echo '\n'
+          echo 'inputs:\n'
+          echo '${{ toJSON(inputs) }}'
