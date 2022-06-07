@@ -7,7 +7,8 @@ on:
     # Only run when push includes commits with changes to:
     paths:
       - 'src/**.js'
-      - 'test/**.{js,pot,po}'
+      - 'test/**.js'
+      - 'test/**.pot?'
       - 'jest.config.js'
       - 'package.json'
       - 'package-lock.json'
