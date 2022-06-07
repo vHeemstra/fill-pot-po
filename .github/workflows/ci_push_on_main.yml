@@ -1,4 +1,4 @@
-name: Lint / Test / Version
+name: Lint | Test | Version
 
 on:
   push:
