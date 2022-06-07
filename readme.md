@@ -1,4 +1,4 @@
-# fill-pot-po [![GitHub release (latest SemVer)][release-image]][release-url] [![NPM version][npm-image]][npm-url]
+# fill-pot-po &nbsp;&nbsp;[![GitHub release (latest SemVer)][release-image]][release-url] [![NPM version][npm-image]][npm-url]
 
 [![Build Status][ci-image]][ci-url]
 [![Coverage Status][coverage-image]][coverage-url]
