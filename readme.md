@@ -107,6 +107,51 @@ try {
 ```
 
 
+## Locating PO files for each POT file
+For each POT file that is processed, the module will try to locate the proper PO files.
+
+This is the algorithm in pseudo-code:
+```js
+if ( options.poSources ) {
+
+    po_search_glob = options.poSources
+
+} else {
+
+    source_dir = options.srcDir || pot_file_directory
+
+    if ( options.domainInPOPath ) {
+
+        if ( options.domainFromPOTPath ) {
+
+            // NOTE: If the POT file is an unnamed Vinyl object, an error will be thrown now.
+
+            po_search_glob = `${source_dir}/${pot_file_basename_without_ext}-${any_locale}.po`
+
+        } else {
+
+            // NOTE: If options.domain is empty, an error will be thrown now.
+
+            po_search_glob = `${source_dir}/${options.domain}-${any_locale}.po`
+
+        }
+
+    } else {
+
+        po_search_glob = `${source_dir}/${any_locale}.po`
+
+    }
+
+}
+
+// NOTE: For all glob searches, options.srcGlobOptions will be used.
+
+```
+For actual source code, see [**`getPOFilepaths()`**](https://github.com/vHeemstra/fill-pot-po/blob/main/src/shared.js#L50) in **src/shared.js**.
+
+See also options [`poSources`](#posources), [`srcDir`](#srcdir), [`domainInPOPath`](#domaininpopath), [`domainFromPOTPath`](#domainfrompotpath) and [`domain`](#domain).
+
+
 ## Options
 
 ### potSources
@@ -125,7 +170,7 @@ Default: `['**/*.pot', '!node_modules/**']`
 > 
 > `{text-domain}` is either the POT filename or the value set in the [`domain`](#domain) option.
 > 
-> See also [`domainInPOPath`](#domaininpopath), [`domainFromPOTPath`](#domainfrompotpath) and [`domain`](#domain).
+> See [**Locating PO files for each POT file**](#locating-po-files-for-each-pot-file) for more info.
 
 Default: `null`
 
@@ -134,6 +179,8 @@ Default: `null`
 > Relative path from current working directory or absolute path to folder where source PO files can be found.
 > 
 > By default, the same folder as the POT file will be used.
+> 
+> See [**Locating PO files for each POT file**](#locating-po-files-for-each-pot-file) for more info.
 
 Default: `''`
 
@@ -143,7 +190,7 @@ Default: `''`
 > 
 > For example: `text-domain-en_EN.po` and `text-domain-nl_NL.po`.
 > 
-> See also [`domainFromPOTPath`](#domainfrompotpath) and [`domain`](#domain).
+> See [**Locating PO files for each POT file**](#locating-po-files-for-each-pot-file) for more info.
 
 Default: `true`
 
@@ -153,7 +200,7 @@ Default: `true`
 > 
 > If set to `false` and [`domainInPOPath`](#domaininpopath) is `true`, a text domain must be set using the [`domain`](#domain) option.
 > 
-> See also [`domainInPOPath`](#domaininpopath) and [`domain`](#domain).
+> See [**Locating PO files for each POT file**](#locating-po-files-for-each-pot-file) for more info.
 
 Default: `true`
 
@@ -163,13 +210,15 @@ Default: `true`
 > 
 > By default this is the POT filename excluding extension and is used to find the right PO source files.
 > 
-> See also [`domainInPOPath`](#domaininpopath) and [`domainFromPOTPath`](#domainfrompotpath).
+> See [**Locating PO files for each POT file**](#locating-po-files-for-each-pot-file) for more info.
 
 Default: `''`
 
 #### srcGlobOptions
 `object`
 > Glob options used when matching PO source files.
+> 
+> See [**Locating PO files for each POT file**](#locating-po-files-for-each-pot-file) for more info.
 
 Default: `{}`
 
