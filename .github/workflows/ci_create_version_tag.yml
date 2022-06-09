@@ -4,7 +4,7 @@ on: create
 
 jobs:
   release-and-publish:
-    name: Create release & Publish to NPM & GPR
+    name: Create release & Publish to NPM
     # Skip if we're not creating a new version tag
     if: ${{ startsWith(github.ref, 'refs/tags/v') }}
     runs-on: ubuntu-latest
@@ -28,15 +28,17 @@ jobs:
         run: npm publish
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
-      # Setup .npmrc file to publish to GitHub Packages
-      - name: Install Node.js
-        uses: actions/setup-node@v3
-        with:
-          node-version: 16.x
-          cache: npm
-          scope: '@vHeemstra'
-          registry-url: https://npm.pkg.github.com
-      - name: Publish to GitHub Packages
-        run: npm publish
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      # Throws errors
+      # See: https://github.com/vHeemstra/fill-pot-po/runs/6805116331?check_suite_focus=true#step:8:33
+      # # Setup .npmrc file to publish to GitHub Packages
+      # - name: Install Node.js
+      #   uses: actions/setup-node@v3
+      #   with:
+      #     node-version: 16.x
+      #     cache: npm
+      #     scope: '@vHeemstra'
+      #     registry-url: https://npm.pkg.github.com
+      # - name: Publish to GitHub Packages
+      #   run: npm publish
+      #   env:
+      #     NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
