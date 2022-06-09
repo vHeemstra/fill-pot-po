@@ -14,6 +14,7 @@ const Vinyl = require('vinyl');
 function escapeRegExp(string) {
 	return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); // $& means the whole matched string
 }
+
 /**
  * Determine if `ar` is an array or not.
  *
