@@ -1,0 +1,62 @@
+name: Manual experiment
+
+on:
+  workflow_dispatch:
+    inputs:
+      pr_nr:
+        description: 'Pull request NR'
+        required: true
+        type: string
+      search_string:
+        description: 'Search title'
+        required: true
+        type: string
+      environment:
+        description: 'Environment to run tests against'
+        type: environment
+        required: true
+
+jobs:
+  manual_test:
+    runs-on: ubuntu-latest
+    env:
+      API_HEADER: 'Accept: application/vnd.github.v3+json'
+      PR_NR: ${{ github.event.inputs.pr_nr }}
+    steps:
+      - name: Get first 250 commits from PR
+        # For each commit extracts object:
+        #   {
+        #     author: {
+        #       name: '',
+        #       email: '',
+        #       date: '2022-06-09T16:09:33Z'
+        #     },
+        #     message: {
+        #       title: '', // First line of message
+        #       body: [ ... ], // Third+ lines
+        #     }
+        #   }
+        # See also:
+        # https://docs.github.com/en/rest/pulls/pulls#list-commits-on-a-pull-request
+        id: get_pr_commits
+        env:
+          # Is: https://api.github.com/repos/vHeemstra/fill-pot-po/pulls{/number}
+          API_PR_URL: ${{ github.event.repository.pulls_url }}
+          # See: https://jqplay.org/s/6ooNjDtT9Ci  or: https://jqplay.org/s/19HnH7PHwHa
+          JQ_FILTER: '[ .[] | { author: .commit.author, message: ( .commit.message | split("\n") | { title: .[0], body: ( .[2:] ) } ) } ] | @json'
+        run: |
+          # Replace '{/number}' with '/123/commits'
+          PULL_URL=${API_PR_URL/\{\/number\}/\/$PR_NR\/commits}
+          echo 'gh api -H $API_HEADER $PULL_URL --jq $JQ_FILTER'
+          echo '::set-output name=commits::$(gh api -H $API_HEADER $PULL_URL --jq $JQ_FILTER)'
+          echo 'ENV_ALL_COMMITS=$(gh api -H $API_HEADER $PULL_URL --jq $JQ_FILTER)' >> $GITHUB_ENV
+      - name: Log the output
+        run: |
+          echo '${{ steps.get_pr_commits.outputs.commits }}'
+          echo '${{ fromJSON( steps.get_pr_commits.outputs.commits ) }}'
+      - name: Has commit with title containing '${{ github.event.inputs.search_string }}'
+        # env:
+        #   THE_COMMITS: ${{ fromJSON( steps.get_pr_commits.outputs.commits ) }}
+        # if: ${{ contains(github.event.issue.labels.*.name, 'bug') }}
+        if: ${{ contains( fromJSON( steps.get_pr_commits.outputs.commits ).*.title, github.event.inputs.search_string ) }}
+        run: echo 'True'
