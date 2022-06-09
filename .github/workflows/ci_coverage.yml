@@ -1,4 +1,4 @@
-name: Test | Coverage
+name: Test coverage
 
 on:
   push:
@@ -35,7 +35,7 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: 16.x
-          cache: 'npm'
+          cache: npm
       - name: Install dependencies
         run: npm ci
       - name: Run Jest with coverage
