@@ -3,8 +3,8 @@ name: Release | Publish
 on: create
 
 jobs:
-  create-release:
-    name: Create GitHub release
+  release-and-publish:
+    name: Create release & Publish to NPM & GPR
     # Skip if we're not creating a new version tag
     if: ${{ startsWith(github.ref, 'refs/tags/v') }}
     runs-on: ubuntu-latest
@@ -15,14 +15,6 @@ jobs:
         run: gh release create ${{ github.ref_name }} --generate-notes
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-  publish-npm:
-    name: Publish to NPM
-    needs: create-release
-    runs-on: ubuntu-latest
-    steps:
-      - name: Check out repository
-        uses: actions/checkout@v3
       # Setup .npmrc file to publish to npm
       - name: Install Node.js
         uses: actions/setup-node@v3
@@ -36,14 +28,6 @@ jobs:
         run: npm publish
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
-
-  publish-gpr:
-    name: Publish to GitHub Packages
-    needs: create-release
-    runs-on: ubuntu-latest
-    steps:
-      - name: Check out repository
-        uses: actions/checkout@v3
       # Setup .npmrc file to publish to GitHub Packages
       - name: Install Node.js
         uses: actions/setup-node@v3
@@ -51,11 +35,7 @@ jobs:
           node-version: 16.x
           cache: npm
           registry-url: https://npm.pkg.github.com
-          # Defaults to the user or organization that owns the workflow file
-          scope: '@vheemstra'
-      - name: Install dependencies
-        run: npm ci
-      - name: Publish to GPR
+      - name: Publish to GitHub Packages
         run: npm publish
         env:
           NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
