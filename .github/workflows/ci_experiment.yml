@@ -23,6 +23,14 @@ jobs:
       API_HEADER: 'Accept: application/vnd.github.v3+json'
       PR_NR: ${{ github.event.inputs.pr_nr }}
     steps:
+      - name: Check out repository
+        uses: actions/checkout@v3
+      #   with:
+      #     token: ${{ secrets.GH_PERSONAL_ACCESS_TOKEN }}
+      # - name: Set Git user
+      #   run: |
+      #     git config --global user.name 'vHeemstra'
+      #     git config --global user.email '17368112+vHeemstra@users.noreply.github.com'
       - name: Get first 250 commits from PR
         # For each commit extracts object:
         #   {
