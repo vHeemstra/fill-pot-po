@@ -35,12 +35,12 @@ jobs:
             });
             console.log(pr);
 
-            const pr2 = await github.rest.pulls.get({
-              owner: context.payload.repository.owner,
-              repo: context.payload.repository.name,
-              pull_number: context.payload.inputs.pr_nr,
-            });
-            console.log(pr2);
+            // const pr2 = await github.rest.pulls.get({
+            //   owner: context.payload.repository.owner,
+            //   repo: context.payload.repository.name,
+            //   pull_number: context.payload.inputs.pr_nr,
+            // });
+            // console.log(pr2);
 
             // Get commits
 
