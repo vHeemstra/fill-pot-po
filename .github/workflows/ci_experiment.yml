@@ -6,8 +6,8 @@ on:
       pr_nr:
         description: 'Pull request NR'
         required: true
-        type: string
-        default: '2'
+        type: number
+        default: 2
       search_string:
         description: 'Search title'
         required: true
