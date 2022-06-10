@@ -81,10 +81,10 @@ jobs:
 
             return r;
       - name: Has commit with title containing '${{ github.event.inputs.search_string }}'
-        if: ${{ contains(steps.get-pr-commits.outputs.result.commits.*.title, github.event.inputs.search_string) }}
+        if: ${{ contains( fromJSON(steps.get-pr-commits.outputs.result).commits.*.title, github.event.inputs.search_string) }}
         run: echo TRUE
       - name: Has body containing 'See commit messages'
-        if: ${{ contains(steps.get-pr-commits.outputs.result.pr.body.*, 'See commit messages') }}
+        if: ${{ contains( fromJSON(steps.get-pr-commits.outputs.result).pr.body.*, 'See commit messages') }}
         run: echo TRUE
 
 
