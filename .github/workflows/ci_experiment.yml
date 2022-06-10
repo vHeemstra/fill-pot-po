@@ -26,9 +26,28 @@ jobs:
         with:
           result-encoding: string
           script: |
+            // Get pull request
+            // octokit.rest.pulls.get({
+            const pr = await github.rest.pulls.get({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              pull_number: context.payload.inputs.pr_nr,
+            });
+            console.log(pr);
+
+            const pr2 = await github.rest.pulls.get({
+              owner: context.payload.repository.owner,
+              repo: context.payload.repository.name,
+              pull_number: context.payload.inputs.pr_nr,
+            });
+            console.log(pr2);
+
+            // Get commits
+
+            // Extract author, title and body
+
             console.log(context)
             return "I will be string (not JSON) encoded!"
-
 
 
 
