@@ -26,23 +26,27 @@ jobs:
         with:
           result-encoding: string
           script: |
-            // Get pull request
-            // octokit.rest.pulls.get({
-            const pr = await github.rest.pulls.get({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              pull_number: context.payload.inputs.pr_nr,
-            });
-            console.log(pr);
+            const owner = context.repo.owner; // same as: context.payload.repository.owner.login
+            const repo = context.repo.repo; // same as: context.payload.repository.name
+            const pull_number = context.payload.inputs.pr_nr;
 
-            // const pr2 = await github.rest.pulls.get({
-            //   owner: context.payload.repository.owner,
-            //   repo: context.payload.repository.name,
-            //   pull_number: context.payload.inputs.pr_nr,
-            // });
-            // console.log(pr2);
+            // Get pull request
+            const pr_result = await github.rest.pulls.get({
+              owner,
+              repo,
+              pull_number,
+            });
+            console.log(pr_result.data);
+            const pr_title = pr_result.data.title;
+            const pr_body = pr_result.data.body.split(/\r?\n/);
 
             // Get commits
+            const commits_result = await github.rest.pulls.listCommits({
+              owner,
+              repo,
+              pull_number,
+            });
+            console.log(commits_result.data);
 
             // Extract author, title and body
 
