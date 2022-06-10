@@ -43,8 +43,6 @@ jobs:
               repo,
               pull_number,
             });
-            // console.log(pr_result.data);
-            // console.log('');
 
             const pr = {
               author: pr_result.data.user,
@@ -60,8 +58,6 @@ jobs:
               repo,
               pull_number,
             });
-            // console.log(commits_result.data);
-            // console.log('');
 
             // Extract author, title and body
             const commits = commits_result.data.map(c => {
@@ -74,9 +70,6 @@ jobs:
             });
             console.log('Commits:', commits);
             console.log('');
-
-            // console.log(context)
-            // console.log('');
 
             const r = {
               pr,
