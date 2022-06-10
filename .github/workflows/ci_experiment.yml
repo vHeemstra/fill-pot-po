@@ -80,8 +80,8 @@ jobs:
             console.log('');
 
             return r;
-      - name: Get result
-        run: echo "${{ steps.get-pr-commits.outputs.result }}"
+      # - name: Get result
+      #   run: echo "${{ steps.get-pr-commits.outputs.result }}"
       # NOTE!
       #   contains( array, string )    searches array for an EXACT match of string with one of its items
       #   contains( string1, string2 ) checks if string2 is SUBSTRING of string1
