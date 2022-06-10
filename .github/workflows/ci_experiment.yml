@@ -77,6 +77,7 @@ jobs:
             // console.log('');
 
             const r = {
+              shit: 'hits the fan',
               pr,
               commits,
               all: [ pr ].concat(...commits),
@@ -99,6 +100,14 @@ jobs:
           contains(
             (fromJSON( steps.get-pr-commits.outputs.result )).pr.body,
             'See commit messages'
+          )
+        run: echo TRUE
+
+      - name: Has shit
+        if: |
+          contains(
+            fromJSON( steps.get-pr-commits.outputs.result ).shit,
+            'hit'
           )
         run: echo TRUE
 
