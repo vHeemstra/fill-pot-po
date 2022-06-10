@@ -20,52 +20,67 @@ jobs:
   manual_test:
     runs-on: ubuntu-latest
     steps:
-      # - name: Check out repository
-      #   uses: actions/checkout@v3
-      #   with:
-      #     token: ${{ secrets.GH_PERSONAL_ACCESS_TOKEN }}
-      # - name: Set Git user
+      - name: Blabla
+        id: my-script
+        uses: actions/github-script@v6
+        with:
+          result-encoding: string
+          script: console.log(context)
+          script: return "I will be string (not JSON) encoded!"
+
+
+
+
+
+
+
+      # # - name: Check out repository
+      # #   uses: actions/checkout@v3
+      # #   with:
+      # #     token: ${{ secrets.GH_PERSONAL_ACCESS_TOKEN }}
+      # # - name: Set Git user
+      # #   run: |
+      # #     git config --global user.name 'vHeemstra'
+      # #     git config --global user.email '17368112+vHeemstra@users.noreply.github.com'
+      # - name: Get first 250 commits from PR
+      #   # For each commit extracts object:
+      #   #   {
+      #   #     author: {
+      #   #       name: '',
+      #   #       email: '',
+      #   #       date: '2022-06-09T16:09:33Z'
+      #   #     },
+      #   #     message: {
+      #   #       title: '', // First line of message
+      #   #       body: [ ... ], // Third+ lines
+      #   #     }
+      #   #   }
+      #   # See also:
+      #   # https://docs.github.com/en/rest/pulls/pulls#list-commits-on-a-pull-request
+      #   id: get_pr_commits
+      #   env:
+      #     PR_NR: ${{ github.event.inputs.pr_nr }}
+      #     API_HEADER: 'Accept: application/vnd.github.v3+json'
+      #     # Is: https://api.github.com/repos/vHeemstra/fill-pot-po/pulls{/number}
+      #     API_PR_URL: ${{ github.event.repository.pulls_url }}
+      #     # See: https://jqplay.org/s/6ooNjDtT9Ci  or: https://jqplay.org/s/19HnH7PHwHa
+      #     JQ_FILTER: '[ .[] | { author: .commit.author, message: ( .commit.message | split(\"\n\") | { title: .[0], body: ( .[2:] ) } ) } ] | @json'
       #   run: |
-      #     git config --global user.name 'vHeemstra'
-      #     git config --global user.email '17368112+vHeemstra@users.noreply.github.com'
-      - name: Get first 250 commits from PR
-        # For each commit extracts object:
-        #   {
-        #     author: {
-        #       name: '',
-        #       email: '',
-        #       date: '2022-06-09T16:09:33Z'
-        #     },
-        #     message: {
-        #       title: '', // First line of message
-        #       body: [ ... ], // Third+ lines
-        #     }
-        #   }
-        # See also:
-        # https://docs.github.com/en/rest/pulls/pulls#list-commits-on-a-pull-request
-        id: get_pr_commits
-        env:
-          PR_NR: ${{ github.event.inputs.pr_nr }}
-          API_HEADER: 'Accept: application/vnd.github.v3+json'
-          # Is: https://api.github.com/repos/vHeemstra/fill-pot-po/pulls{/number}
-          API_PR_URL: ${{ github.event.repository.pulls_url }}
-          # See: https://jqplay.org/s/6ooNjDtT9Ci  or: https://jqplay.org/s/19HnH7PHwHa
-          JQ_FILTER: '[ .[] | { author: .commit.author, message: ( .commit.message | split("\n") | { title: .[0], body: ( .[2:] ) } ) } ] | @json'
-        run: |
-          # Authenticate GitHub CLI
-          echo ${{ secrets.GITHUB_TOKEN }} | gh auth login --with-token
-          # Replace '{/number}' with '/123/commits'
-          PULL_URL=${API_PR_URL/\{\/number\}/\/$PR_NR\/commits}
-          echo "COMMAND: gh api -H '$API_HEADER' '$PULL_URL' --jq '$JQ_FILTER'"
-          # echo "::set-output name=commits::$(gh api -H '${API_HEADER}' '${PULL_URL}' --jq '${JQ_FILTER}')"
-          echo "ENV_ALL_COMMITS=$(gh api -H \"$API_HEADER\" \"$PULL_URL\" --jq \"$JQ_FILTER\")" >> $GITHUB_ENV
-      - name: Log the output
-        run: |
-          # echo ${{ steps.get_pr_commits.outputs.commits }}
-          echo $ENV_ALL_COMMITS
-      - name: Has commit with title containing '${{ github.event.inputs.search_string }}'
-        # env:
-        #   THE_COMMITS: ${{ fromJSON( steps.get_pr_commits.outputs.commits ) }}
-        # if: ${{ contains(github.event.issue.labels.*.name, 'bug') }}
-        if: ${{ contains( fromJSON( steps.get_pr_commits.outputs.commits ).*.title, github.event.inputs.search_string ) }}
-        run: echo 'True'
+      #     # Authenticate GitHub CLI
+      #     echo ${{ secrets.GITHUB_TOKEN }} | gh auth login --with-token
+      #     # Replace '{/number}' with '/123/commits'
+      #     PULL_URL=${API_PR_URL/\{\/number\}/\/$PR_NR\/commits}
+      #     THE_COMMAND="gh api -H '$API_HEADER' '$PULL_URL' --jq '$JQ_FILTER'"
+      #     echo "COMMAND: gh api -H '$API_HEADER' '$PULL_URL' --jq '$JQ_FILTER'"
+      #     # echo "::set-output name=commits::$(gh api -H '${API_HEADER}' '${PULL_URL}' --jq '${JQ_FILTER}')"
+      #     echo "ENV_ALL_COMMITS=$(gh api -H \"$API_HEADER\" \"$PULL_URL\" --jq \"$JQ_FILTER\")" >> $GITHUB_ENV
+      # - name: Log the output
+      #   run: |
+      #     # echo ${{ steps.get_pr_commits.outputs.commits }}
+      #     echo $ENV_ALL_COMMITS
+      # - name: Has commit with title containing '${{ github.event.inputs.search_string }}'
+      #   # env:
+      #   #   THE_COMMITS: ${{ fromJSON( steps.get_pr_commits.outputs.commits ) }}
+      #   # if: ${{ contains(github.event.issue.labels.*.name, 'bug') }}
+      #   if: ${{ contains( fromJSON( steps.get_pr_commits.outputs.commits ).*.title, github.event.inputs.search_string ) }}
+      #   run: echo 'True'
