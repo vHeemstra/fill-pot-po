@@ -80,6 +80,8 @@ jobs:
             console.log('');
 
             return r;
+      - name: Get result
+        run: echo "${{ steps.get-pr-commits.outputs.result }}"
       - name: Has commit with title containing '${{ github.event.inputs.search_string }}'
         if: ${{ contains( fromJSON(steps.get-pr-commits.outputs.result).commits.*.title, github.event.inputs.search_string) }}
         run: echo TRUE
