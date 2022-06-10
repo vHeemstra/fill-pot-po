@@ -25,8 +25,9 @@ jobs:
         uses: actions/github-script@v6
         with:
           result-encoding: string
-          script: console.log(context)
-          script: return "I will be string (not JSON) encoded!"
+          script: |
+            console.log(context)
+            return "I will be string (not JSON) encoded!"
 
 
 
