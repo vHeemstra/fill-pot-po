@@ -88,14 +88,18 @@ jobs:
       - name: Get result
         run: echo "${{ steps.get-pr-commits.outputs.result }}"
       - name: Has commit with title containing '${{ github.event.inputs.search_string }}'
-        env:
-          THE_RESULT: ${{ fromJSON( steps.get-pr-commits.outputs.result ) }}
-        if: ${{ contains( env.THE_RESULT.commits.*.title, github.event.inputs.search_string) }}
+        if: |
+          contains(
+            (fromJSON( steps.get-pr-commits.outputs.result )).commits.*.title,
+            github.event.inputs.search_string
+          )
         run: echo TRUE
       - name: Has body containing 'See commit messages'
-        env:
-          THE_RESULT: ${{ fromJSON( steps.get-pr-commits.outputs.result ) }}
-        if: ${{ contains( env.THE_RESULT.pr.body.*, 'See commit messages') }}
+        if: |
+          contains(
+            (fromJSON( steps.get-pr-commits.outputs.result )).pr.body.*,
+            'See commit messages'
+          )
         run: echo TRUE
 
 
