@@ -97,7 +97,7 @@ jobs:
       - name: Has body containing 'See commit messages'
         if: |
           contains(
-            (fromJSON( steps.get-pr-commits.outputs.result )).pr.body.*,
+            (fromJSON( steps.get-pr-commits.outputs.result )).pr.body,
             'See commit messages'
           )
         run: echo TRUE
