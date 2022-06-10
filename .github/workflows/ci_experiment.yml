@@ -78,6 +78,8 @@ jobs:
 
             const r = {
               shit: 'hits the fan',
+              shit2: ['hits the fan'],
+              shit3: { fan: 'hits the fan' },
               pr,
               commits,
               all: [ pr ].concat(...commits),
@@ -108,6 +110,27 @@ jobs:
         if: |
           contains(
             fromJSON( steps.get-pr-commits.outputs.result ).shit,
+            'hit'
+          )
+        run: echo TRUE
+      - name: Has shit2a
+        if: |
+          contains(
+            fromJSON( steps.get-pr-commits.outputs.result ).shit2,
+            'hit'
+          )
+        run: echo TRUE
+      - name: Has shit2b
+        if: |
+          contains(
+            fromJSON( steps.get-pr-commits.outputs.result ).shit2.*,
+            'hit'
+          )
+        run: echo TRUE
+      - name: Has shit3
+        if: |
+          contains(
+            fromJSON( steps.get-pr-commits.outputs.result ).shit3.fan,
             'hit'
           )
         run: echo TRUE
