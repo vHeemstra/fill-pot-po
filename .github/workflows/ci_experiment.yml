@@ -47,9 +47,9 @@ jobs:
         run: |
           # Replace '{/number}' with '/123/commits'
           PULL_URL=${API_PR_URL/\{\/number\}/\/$PR_NR\/commits}
-          echo "COMMAND: gh api -H \"$API_HEADER\" \"$PULL_URL\" --jq \"$JQ_FILTER\""
-          echo "::set-output name=commits::$(gh api -H \"$API_HEADER\" \"$PULL_URL\" --jq \"$JQ_FILTER\")"
-          echo "ENV_ALL_COMMITS=$(gh api -H \"$API_HEADER\" \"$PULL_URL\" --jq \"$JQ_FILTER\")" >> $GITHUB_ENV
+          echo "COMMAND: gh api -H '$API_HEADER' '$PULL_URL' --jq '$JQ_FILTER'"
+          echo "::set-output name=commits::$(gh api -H '$API_HEADER' '$PULL_URL' --jq '$JQ_FILTER')"
+          echo "ENV_ALL_COMMITS=$(gh api -H '$API_HEADER' '$PULL_URL' --jq '$JQ_FILTER')" >> $GITHUB_ENV
       - name: Log the output
         run: |
           echo ${{ steps.get_pr_commits.outputs.commits }}
