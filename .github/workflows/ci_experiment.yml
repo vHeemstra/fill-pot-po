@@ -21,10 +21,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Blabla
-        id: my-script
+        id: get-pr-commits
         uses: actions/github-script@v6
         with:
-          result-encoding: string
+          # result-encoding: string
           script: |
             const owner = context.repo.owner; // same as: context.payload.repository.owner.login
             const repo = context.repo.repo; // same as: context.payload.repository.name
@@ -36,9 +36,16 @@ jobs:
               repo,
               pull_number,
             });
-            console.log(pr_result.data);
-            const pr_title = pr_result.data.title;
-            const pr_body = pr_result.data.body.split(/\r?\n/);
+            // console.log(pr_result.data);
+            // console.log('');
+
+            const pr = {
+              author: pr_result.data.user,
+              title: pr_result.data.title,
+              body: pr_result.data.body.split(/\r?\n/),
+            };
+            console.log('PR:', pr);
+            console.log('');
 
             // Get commits
             const commits_result = await github.rest.pulls.listCommits({
@@ -46,16 +53,39 @@ jobs:
               repo,
               pull_number,
             });
-            console.log(commits_result.data);
+            // console.log(commits_result.data);
+            // console.log('');
 
             // Extract author, title and body
+            const commits = commits_result.data.map(c => {
+              let msg = c.commit.message.split(/(\r?\n)/);
+              return {
+                author: c.author,
+                title: msg[0] || '',
+                body: msg.slice(1) || [],
+              };
+            });
+            console.log('Commits:', commits);
+            console.log('');
 
-            console.log(context)
-            return "I will be string (not JSON) encoded!"
+            // console.log(context)
+            // console.log('');
 
+            const r = {
+              pr,
+              commits,
+              all: [ pr ].concat(...commits),
+            };
+            console.log('return:', r);
+            console.log('');
 
-
-
+            return r;
+      - name: Has commit with title containing '${{ github.event.inputs.search_string }}'
+        if: ${{ contains(steps.get-pr-commits.outputs.result.commits.*.title, github.event.inputs.search_string) }}
+        run: echo TRUE
+      - name: Has body containing 'See commit messages'
+        if: ${{ contains(steps.get-pr-commits.outputs.result.pr.body.*, 'See commit messages') }}
+        run: echo TRUE
 
 
       # # - name: Check out repository
