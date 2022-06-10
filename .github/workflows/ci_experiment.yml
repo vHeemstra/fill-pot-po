@@ -23,8 +23,8 @@ jobs:
       API_HEADER: 'Accept: application/vnd.github.v3+json'
       PR_NR: ${{ github.event.inputs.pr_nr }}
     steps:
-      - name: Check out repository
-        uses: actions/checkout@v3
+      # - name: Check out repository
+      #   uses: actions/checkout@v3
       #   with:
       #     token: ${{ secrets.GH_PERSONAL_ACCESS_TOKEN }}
       # - name: Set Git user
@@ -53,6 +53,8 @@ jobs:
           # See: https://jqplay.org/s/6ooNjDtT9Ci  or: https://jqplay.org/s/19HnH7PHwHa
           JQ_FILTER: '[ .[] | { author: .commit.author, message: ( .commit.message | split("\n") | { title: .[0], body: ( .[2:] ) } ) } ] | @json'
         run: |
+          # Authenticate GitHub CLI
+          echo ${{ secrets.GITHUB_TOKEN }} | gh auth login --with-token
           # Replace '{/number}' with '/123/commits'
           PULL_URL=${API_PR_URL/\{\/number\}/\/$PR_NR\/commits}
           echo "COMMAND: gh api -H '$API_HEADER' '$PULL_URL' --jq '$JQ_FILTER'"
