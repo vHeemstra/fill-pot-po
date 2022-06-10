@@ -7,10 +7,12 @@ on:
         description: 'Pull request NR'
         required: true
         type: string
+        default: '2'
       search_string:
         description: 'Search title'
         required: true
         type: string
+        default: 'Update ci_coverage.yml'
       environment:
         description: 'Environment to run tests against'
         type: environment
@@ -77,9 +79,6 @@ jobs:
             // console.log('');
 
             const r = {
-              shit: 'hits the fan',
-              shit2: ['hits the fan'],
-              shit3: { fan: 'hits the fan' },
               pr,
               commits,
               all: [ pr ].concat(...commits),
@@ -90,55 +89,22 @@ jobs:
             return r;
       - name: Get result
         run: echo "${{ steps.get-pr-commits.outputs.result }}"
-      - name: Has commit with title containing '${{ github.event.inputs.search_string }}'
+      # NOTE!
+      #   contains( array, string )    searches array for an EXACT match of string with one of its items
+      #   contains( string1, string2 ) checks if string2 is SUBSTRING of string1
+      - name: Has commit with title '${{ github.event.inputs.search_string }}'
         if: |
           contains(
             (fromJSON( steps.get-pr-commits.outputs.result )).commits.*.title,
             github.event.inputs.search_string
           )
         run: echo TRUE
-      - name: Has body containing 'See commit messages'
+      - name: Has title containing 'CI'
         if: |
           contains(
             fromJSON( steps.get-pr-commits.outputs.result ).pr.title,
             'CI'
           )
-        # See commit messages
-        run: echo TRUE
-
-      - name: Has shit
-        if: |
-          contains(
-            fromJSON( steps.get-pr-commits.outputs.result ).shit,
-            'hit'
-          )
-        run: echo TRUE
-      - name: Has shit2a
-        if: |
-          contains(
-            fromJSON( steps.get-pr-commits.outputs.result ).shit2,
-            'hits the fan'
-          )
-        run: echo TRUE
-      - name: Has shit2b
-        if: |
-          contains(
-            fromJSON( steps.get-pr-commits.outputs.result ).shit2.*,
-            'hits the fan'
-          )
-        run: echo TRUE
-      - name: Has shit3
-        if: |
-          contains(
-            fromJSON( steps.get-pr-commits.outputs.result ).shit3.fan,
-            'hit'
-          )
-        run: echo TRUE
-      - name: t1
-        if: contains(fromJSON('["monarch", "bloom"]'), 'nar')
-        run: echo TRUE
-      - name: t2
-        if: contains(fromJSON('["monarch", "bloom"]'), 'monarch')
         run: echo TRUE
 
 
