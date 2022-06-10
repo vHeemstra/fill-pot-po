@@ -23,9 +23,14 @@ jobs:
       - name: Blabla
         id: get-pr-commits
         uses: actions/github-script@v6
+        # env:
+        #   FIRST_NAME: Mona
+        #   LAST_NAME: Octocat
         with:
+          # github-token: ${{ secrets.MY_PAT }}
           # result-encoding: string
           script: |
+            // const { FIRST_NAME, LAST_NAME } = process.env;
             const owner = context.repo.owner; // same as: context.payload.repository.owner.login
             const repo = context.repo.repo; // same as: context.payload.repository.name
             const pull_number = context.payload.inputs.pr_nr;
@@ -83,10 +88,14 @@ jobs:
       - name: Get result
         run: echo "${{ steps.get-pr-commits.outputs.result }}"
       - name: Has commit with title containing '${{ github.event.inputs.search_string }}'
-        if: ${{ contains( fromJSON(steps.get-pr-commits.outputs.result).commits.*.title, github.event.inputs.search_string) }}
+        env:
+          THE_RESULT: ${{ fromJSON( steps.get-pr-commits.outputs.result ) }}
+        if: ${{ contains( env.THE_RESULT.commits.*.title, github.event.inputs.search_string) }}
         run: echo TRUE
       - name: Has body containing 'See commit messages'
-        if: ${{ contains( fromJSON(steps.get-pr-commits.outputs.result).pr.body.*, 'See commit messages') }}
+        env:
+          THE_RESULT: ${{ fromJSON( steps.get-pr-commits.outputs.result ) }}
+        if: ${{ contains( env.THE_RESULT.pr.body.*, 'See commit messages') }}
         run: echo TRUE
 
 
