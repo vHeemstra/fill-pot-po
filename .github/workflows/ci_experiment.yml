@@ -58,7 +58,7 @@ jobs:
 
             // Extract author, title and body
             const commits = commits_result.data.map(c => {
-              let msg = c.commit.message.split(/(\\r)?\\n/);
+              let msg = c.commit.message.split(/((\r)?\n)/);
               return {
                 author: c.author,
                 title: msg[0] || '',
