@@ -117,14 +117,14 @@ jobs:
         if: |
           contains(
             fromJSON( steps.get-pr-commits.outputs.result ).shit2,
-            'hit'
+            'hits the fan'
           )
         run: echo TRUE
       - name: Has shit2b
         if: |
           contains(
             fromJSON( steps.get-pr-commits.outputs.result ).shit2.*,
-            'hit'
+            'hits the fan'
           )
         run: echo TRUE
       - name: Has shit3
@@ -133,6 +133,12 @@ jobs:
             fromJSON( steps.get-pr-commits.outputs.result ).shit3.fan,
             'hit'
           )
+        run: echo TRUE
+      - name: t1
+        if: contains(fromJSON('["monarch", "bloom"]'), 'nar')
+        run: echo TRUE
+      - name: t2
+        if: contains(fromJSON('["monarch", "bloom"]'), 'monarch')
         run: echo TRUE
 
 
