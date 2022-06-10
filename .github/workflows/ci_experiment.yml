@@ -19,9 +19,6 @@ on:
 jobs:
   manual_test:
     runs-on: ubuntu-latest
-    env:
-      API_HEADER: 'Accept: application/vnd.github.v3+json'
-      PR_NR: ${{ github.event.inputs.pr_nr }}
     steps:
       # - name: Check out repository
       #   uses: actions/checkout@v3
@@ -48,6 +45,8 @@ jobs:
         # https://docs.github.com/en/rest/pulls/pulls#list-commits-on-a-pull-request
         id: get_pr_commits
         env:
+          PR_NR: ${{ github.event.inputs.pr_nr }}
+          API_HEADER: 'Accept: application/vnd.github.v3+json'
           # Is: https://api.github.com/repos/vHeemstra/fill-pot-po/pulls{/number}
           API_PR_URL: ${{ github.event.repository.pulls_url }}
           # See: https://jqplay.org/s/6ooNjDtT9Ci  or: https://jqplay.org/s/19HnH7PHwHa
@@ -58,11 +57,11 @@ jobs:
           # Replace '{/number}' with '/123/commits'
           PULL_URL=${API_PR_URL/\{\/number\}/\/$PR_NR\/commits}
           echo "COMMAND: gh api -H '$API_HEADER' '$PULL_URL' --jq '$JQ_FILTER'"
-          echo "::set-output name=commits::$(gh api -H '$API_HEADER' '$PULL_URL' --jq '$JQ_FILTER')"
-          echo "ENV_ALL_COMMITS=$(gh api -H '$API_HEADER' '$PULL_URL' --jq '$JQ_FILTER')" >> $GITHUB_ENV
+          # echo "::set-output name=commits::$(gh api -H '${API_HEADER}' '${PULL_URL}' --jq '${JQ_FILTER}')"
+          echo "ENV_ALL_COMMITS=$(gh api -H '${API_HEADER}' '${PULL_URL}' --jq '${JQ_FILTER}')" >> $GITHUB_ENV
       - name: Log the output
         run: |
-          echo ${{ steps.get_pr_commits.outputs.commits }}
+          # echo ${{ steps.get_pr_commits.outputs.commits }}
           echo $ENV_ALL_COMMITS
       - name: Has commit with title containing '${{ github.event.inputs.search_string }}'
         # env:
