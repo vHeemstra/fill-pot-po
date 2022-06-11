@@ -1,0 +1,26 @@
+name: Push test
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  dump_context_to_log:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Dump context
+        run: |
+          echo ''
+          echo 'github:'
+          echo '${{ toJSON(github) }}'
+          echo ''
+          echo 'github.event:'
+          echo '${{ toJSON(github.event) }}'
+          echo ''
+          echo 'github.event.head_commit:'
+          echo '${{ toJSON(github.event.head_commit) }}'
+          echo ''
+          echo 'github.event.commits:'
+          echo '${{ toJSON(github.event.commits) }}'
+          echo ''
