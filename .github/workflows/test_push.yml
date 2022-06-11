@@ -10,16 +10,22 @@ jobs:
     name: Some testing with checking commit messages on push 
     runs-on: ubuntu-latest
     steps:
-      - name: Dump github context
-        run: echo '${{ toJSON(github) }}'
-      - name: Dump github.event
-        run: echo '${{ toJSON(github.event) }}'
-      - name: Dump github.event.head_commit
-        run: echo '${{ toJSON(github.event.head_commit) }}'
-      - name: Dump github.event.commits
-        run: echo '${{ toJSON(github.event.commits) }}'
+      - name: Dump context
+        run: |
+          echo '::group::github'
+          echo '${{ toJSON(github) }}'
+          echo '::endgroup::'
+          echo '::group::github.event
+          echo '${{ toJSON(github.event) }}'
+          echo '::endgroup::'
+          echo '::group::github.event.head_commit
+          echo '${{ toJSON(github.event.head_commit) }}'
+          echo '::endgroup::'
+          echo '::group::github.event.commits
+          echo '${{ toJSON(github.event.commits) }}'
+          echo '::endgroup::'
 
-      - name: Dump github context
+      - name: Check commits
         id: check-commits
         uses: actions/github-script@v6
         env:
@@ -65,16 +71,16 @@ jobs:
 
             // return any_title_matches || any_body_matches ? 'true': 'false';
             return any_title_matches || any_body_matches;
+
       - name: Test was true
         # if: fromJSON( steps.check-commits.outputs.result )
         if: steps.check-commits.outputs.result
         run: echo YES
-      - name: Test was true
-        if: fromJSON( steps.check-commits.outputs.result )
-        run: echo YES
       - name: Test was false
-        if: ${{ ! fromJSON( steps.check-commits.outputs.result ) }}
+        # if: ${{ ! fromJSON( steps.check-commits.outputs.result ) }}
+        if: ${{ ! steps.check-commits.outputs.result }}
         run: echo NO
+
       - name: Write job summary
         run: |
           echo "### Hello world! :rocket:" >> $GITHUB_STEP_SUMMARY
