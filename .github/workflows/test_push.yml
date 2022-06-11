@@ -29,7 +29,7 @@ jobs:
         # For special console.log()'s, see also:
         # https://docs.github.com/en/actions/using-workflows/workflow-commands-for-github-actions
         with:
-          result-encoding: string
+          # result-encoding: string
           script: |
             const { COMMITS_JSON, TITLE_REGEX, BODY_REGEX } = process.env;
 
@@ -37,18 +37,15 @@ jobs:
             console.log('Title:', TITLE_REGEX );
             console.log('Body:', BODY_REGEX );
             console.log('::endgroup::');
-            console.log('');
 
             console.log('::group::Commits JSON');
             console.log( COMMITS_JSON );
             console.log('::endgroup::');
-            console.log('');
 
             const _commits = JSON.parse( COMMITS_JSON );
             console.log('::group::Parsed JSON');
             console.log( _commits );
             console.log('::endgroup::');
-            console.log('');
 
             const commits = _commits.map( commit => {
               const msg = commit.message.split(/\r?\n/);
@@ -61,13 +58,17 @@ jobs:
             console.log('::group::Commits');
             console.log( commits );
             console.log('::endgroup::');
-            console.log('');
 
             // .some() or .every()
             const any_title_matches = TITLE_REGEX.length ? commits.map( c => c.title ).some( v => v.match( new RegExp( TITLE_REGEX, 'mi' ) ) ) : false;
             const any_body_matches = BODY_REGEX.length ? commits.map( c => c.body ).some( v => v.match( new RegExp( BODY_REGEX, 'mi' ) ) ) : false;
 
-            return any_title_matches || any_body_matches ? 'true': 'false';
+            // return any_title_matches || any_body_matches ? 'true': 'false';
+            return any_title_matches || any_body_matches;
+      - name: Test was true
+        # if: fromJSON( steps.check-commits.outputs.result )
+        if: steps.check-commits.outputs.result
+        run: echo YES
       - name: Test was true
         if: fromJSON( steps.check-commits.outputs.result )
         run: echo YES
