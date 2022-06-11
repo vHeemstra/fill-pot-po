@@ -9,18 +9,58 @@ jobs:
   dump_context_to_log:
     runs-on: ubuntu-latest
     steps:
-      - name: Dump context
-        run: |
-          echo ''
-          echo 'github:'
-          echo '${{ toJSON(github) }}'
-          echo ''
-          echo 'github.event:'
-          echo '${{ toJSON(github.event) }}'
-          echo ''
-          echo 'github.event.head_commit:'
-          echo '${{ toJSON(github.event.head_commit) }}'
-          echo ''
-          echo 'github.event.commits:'
-          echo '${{ toJSON(github.event.commits) }}'
-          echo ''
+      - name: Dump github context
+        run: echo '${{ toJSON(github) }}'
+      - name: Dump github.event
+        run: echo '${{ toJSON(github.event) }}'
+      - name: Dump github.event.head_commit
+        run: echo '${{ toJSON(github.event.head_commit) }}'
+      - name: Dump github.event.commits
+        run: echo '${{ toJSON(github.event.commits) }}'
+
+      - name: Dump github context
+        id: get-pr-commits
+        uses: actions/github-script@v6
+        env:
+          COMMITS_JSON: ${{ toJSON(github.event.commits.*.message) }}
+          TITLE_REGEX: 'date' # Regex without the '/' boundary characters
+          BODY_REGEX: 'test' # Regex without the '/' boundary characters
+        with:
+          result-encoding: string
+          script: |
+            const { COMMITS_JSON, TITLE_REGEX, BODY_REGEX } = process.env;
+
+            console.log('::group::Regexes');
+            console.log( TITLE_REGEX );
+            console.log( BODY_REGEX );
+            console.log('::endgroup::');
+            console.log('');
+
+            console.log('::group::Commits JSON');
+            console.log( COMMITS_JSON );
+            console.log('::endgroup::');
+            console.log('');
+
+            const _commits = JSON.parse( COMMITS_JSON );
+            console.log('::group::Parsed JSON');
+            console.log( _commits );
+            console.log('::endgroup::');
+            console.log('');
+
+            const commits = _commits.map( commit => {
+              const msg = commit.split(/\r?\n/);
+              return {
+                title: msg[0],
+                body: (msg.slice(2) || [''] ).join('\n'),
+              };
+            });
+            console.log('::group::Commits');
+            console.log( commits );
+            console.log('::endgroup::');
+            console.log('');
+
+            // .some() or .every()
+            const any_title_matches = TITLE_REGEX.length ? commits.map( c => c.title ).some( v => v.match( new RegExp( TITLE_REGEX, 'mi' ) ) ) : false;
+            const any_body_matches = BODY_REGEX.length ? commits.map( c => c.body ).some( v => v.match( new RegExp( BODY_REGEX, 'mi' ) ) ) : false;
+
+            return any_title_matches || any_body_matches ? 'true': 'false';
