@@ -2,7 +2,10 @@ name: Publish
 
 on:
   release:
+    # See: https://docs.github.com/en/developers/webhooks-and-events/webhooks/webhook-events-and-payloads#release
+    # published: a release, pre-release, or draft of a release is published
     types: [published]
+    # created: a draft is saved, or a release or pre-release is published without previously being saved as a draft
     # types: [created]
 
 jobs:
