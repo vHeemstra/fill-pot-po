@@ -12,18 +12,18 @@ jobs:
     steps:
       - name: Dump context
         run: |
-          echo '::group::github'
+          echo "::group::github"
           echo '${{ toJSON(github) }}'
-          echo '::endgroup::'
-          echo '::group::github.event
+          echo "::endgroup::"
+          echo "::group::github.event"
           echo '${{ toJSON(github.event) }}'
-          echo '::endgroup::'
-          echo '::group::github.event.head_commit
+          echo "::endgroup::"
+          echo "::group::github.event.head_commit"
           echo '${{ toJSON(github.event.head_commit) }}'
-          echo '::endgroup::'
-          echo '::group::github.event.commits
+          echo "::endgroup::"
+          echo "::group::github.event.commits"
           echo '${{ toJSON(github.event.commits) }}'
-          echo '::endgroup::'
+          echo "::endgroup::"
 
       - name: Check commits
         id: check-commits
