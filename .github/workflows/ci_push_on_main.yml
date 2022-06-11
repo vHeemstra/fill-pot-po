@@ -86,6 +86,7 @@ jobs:
           git config --global user.email '17368112+vHeemstra@users.noreply.github.com'
 
       # TODO? check all commits since last (= current) version instead of only the head_commit
+      # github.event.commits.*.message
 
       - name: Major version
         if: |
