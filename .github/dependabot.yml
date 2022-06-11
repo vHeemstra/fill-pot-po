@@ -12,22 +12,24 @@ updates:
     schedule:
       interval: "daily"
     ignore:
-      - dependency-type: "direct:development"
+      - dependency-type: "development"
     labels:
       - "dependencies"
       - "npm production"
+      # - "javascript"
 
   # Maintain dev dependencies for npm
   - package-ecosystem: "npm"
     # Package(-lock).json files stored in repository root
-    directory: "/"
+    directory: "./"
     schedule:
       interval: "daily"
     ignore:
-      - dependency-type: "direct:production"
+      - dependency-type: "production"
     labels:
       - "dependencies"
       - "npm development"
+      # - "javascript"
 
   # Maintain dependencies for GitHub Actions
   - package-ecosystem: "github-actions"
@@ -39,3 +41,4 @@ updates:
     labels:
       - "dependencies"
       - "github actions"
+      # - "yaml"
