@@ -25,5 +25,5 @@ updates:
       interval: "weekly"
     labels:
       - "dependencies"
-      - "github-actions"
+      - "github actions"
       # - "yaml"
