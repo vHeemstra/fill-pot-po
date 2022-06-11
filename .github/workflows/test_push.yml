@@ -22,9 +22,11 @@ jobs:
         id: check-commits
         uses: actions/github-script@v6
         env:
-          COMMITS_JSON: ${{ toJSON(github.event.commits.*.message) }}
+          COMMITS_JSON: ${{ toJSON( github.event.commits ) }}
           TITLE_REGEX: 'date' # Regex without the '/' boundary characters
           BODY_REGEX: 'test' # Regex without the '/' boundary characters
+        # For special console.log()'s, see also:
+        # https://docs.github.com/en/actions/using-workflows/workflow-commands-for-github-actions
         with:
           result-encoding: string
           script: |
@@ -48,8 +50,9 @@ jobs:
             console.log('');
 
             const commits = _commits.map( commit => {
-              const msg = commit.split(/\r?\n/);
+              const msg = commit.message.split(/\r?\n/);
               return {
+                // author: commit.author.username,
                 title: msg[0],
                 body: (msg.slice(2) || [''] ).join('\n'),
               };
@@ -70,3 +73,11 @@ jobs:
       - name: Test was false
         if: ${{ ! fromJSON( steps.check-commits.outputs.result ) }}
         run: echo NO
+      - name: Write job summary
+        run: |
+          echo "### Hello world! :rocket:" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "* This" >> $GITHUB_STEP_SUMMARY
+          echo "* all" >> $GITHUB_STEP_SUMMARY
+          echo "* went" >> $GITHUB_STEP_SUMMARY
+          echo "* well! (${{ steps.check-commits.outputs.result }})" >> $GITHUB_STEP_SUMMARY
