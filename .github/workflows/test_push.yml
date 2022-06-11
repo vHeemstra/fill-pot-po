@@ -19,7 +19,7 @@ jobs:
         run: echo '${{ toJSON(github.event.commits) }}'
 
       - name: Dump github context
-        id: get-pr-commits
+        id: check-commits
         uses: actions/github-script@v6
         env:
           COMMITS_JSON: ${{ toJSON(github.event.commits.*.message) }}
@@ -31,8 +31,8 @@ jobs:
             const { COMMITS_JSON, TITLE_REGEX, BODY_REGEX } = process.env;
 
             console.log('::group::Regexes');
-            console.log( TITLE_REGEX );
-            console.log( BODY_REGEX );
+            console.log('Title:', TITLE_REGEX );
+            console.log('Body:', BODY_REGEX );
             console.log('::endgroup::');
             console.log('');
 
@@ -64,3 +64,9 @@ jobs:
             const any_body_matches = BODY_REGEX.length ? commits.map( c => c.body ).some( v => v.match( new RegExp( BODY_REGEX, 'mi' ) ) ) : false;
 
             return any_title_matches || any_body_matches ? 'true': 'false';
+      - name: Test was true
+        if: fromJSON( steps.check-commits.outputs.result )
+        run: echo YES
+      - name: Test was false
+        if: ${{ ! fromJSON( steps.check-commits.outputs.result ) }}
+        run: echo NO
