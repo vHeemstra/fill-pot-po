@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
     inputs:
       pr_nr:
-        description: 'Pull request nr'
+        description: 'Pull request number'
         required: true
         type: number
         default: 2
