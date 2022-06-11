@@ -6,7 +6,8 @@ on:
       - main
 
 jobs:
-  dump_context_to_log:
+  check_commits_test:
+    name: Some testing with checking commit messages on push 
     runs-on: ubuntu-latest
     steps:
       - name: Dump github context
