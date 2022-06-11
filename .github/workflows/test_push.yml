@@ -30,7 +30,7 @@ jobs:
         uses: actions/github-script@v6
         env:
           COMMITS_JSON: ${{ toJSON( github.event.commits ) }}
-          TITLE_REGEX: 'date' # Regex without the '/' boundary characters
+          TITLE_REGEX: '^Update ' # Regex without the '/' boundary characters
           BODY_REGEX: 'test' # Regex without the '/' boundary characters
         # For special console.log()'s, see also:
         # https://docs.github.com/en/actions/using-workflows/workflow-commands-for-github-actions
