@@ -73,12 +73,10 @@ jobs:
             return any_title_matches || any_body_matches;
 
       - name: Test was true
-        # if: fromJSON( steps.check-commits.outputs.result )
-        if: steps.check-commits.outputs.result
+        if: fromJSON( steps.check-commits.outputs.result )
         run: echo YES
       - name: Test was false
-        # if: ${{ ! fromJSON( steps.check-commits.outputs.result ) }}
-        if: ${{ ! steps.check-commits.outputs.result }}
+        if: ${{ ! fromJSON( steps.check-commits.outputs.result ) }}
         run: echo NO
 
       - name: Write job summary
