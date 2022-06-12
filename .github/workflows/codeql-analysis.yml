@@ -17,7 +17,8 @@ on:
     paths:
       - 'src/**'
   pull_request:
-    types: [opened, reopened, edited, synchronize, unlocked]
+    # types: [opened, reopened, synchronize] # Default
+    # types: [opened, reopened, synchronize, edited, unlocked]
     # The branches below must be a subset of the branches above
     branches: [ "main" ]
     paths:
