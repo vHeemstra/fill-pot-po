@@ -699,7 +699,7 @@ describe('async.js - single POT', () => {
 				// Check returned array
 				expect(result).toMatch(new RegExp('POT_MOCK_FS_READFILE_ERROR'));
 
-				// Restore the console.log function
+				// Restore the fs.readFile function
 				readFileSpy.mockRestore();
 
 				done();
@@ -723,7 +723,7 @@ describe('async.js - single POT', () => {
 					return;
 				}
 				// then *.po
-				cb('PO_MOCK_FS_READFILE_ERROR', '');
+				cb({message: 'PO_MOCK_FS_READFILE_ERROR'}, '');
 			});
 
 		const options = {
@@ -743,7 +743,7 @@ describe('async.js - single POT', () => {
 				// Check returned array
 				expect(result).toMatch(new RegExp('PO_MOCK_FS_READFILE_ERROR'));
 
-				// Restore the console.log function
+				// Restore the fs.readFile function
 				readFileSpy.mockRestore();
 
 				done();
