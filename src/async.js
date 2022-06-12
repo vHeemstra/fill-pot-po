@@ -136,7 +136,7 @@ function fillPotPo(cb, options) {
 					return generatePO(pot_object, po_object, po_file, options);
 
 				}).catch(error => {
-					throw new PluginError(`${c.bold(error)}  ${c.gray(`(PO ${c.white(po_file)})`)}`);
+					throw new PluginError(`${c.bold(error.message)}  ${c.gray(`(PO ${c.white(po_file)})`)}`);
 				});
 
 			}) );
