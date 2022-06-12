@@ -369,8 +369,8 @@ MIT © [Philip van Heemstra](https://github.com/vheemstra)
 [coverage-image2]: https://codecov.io/gh/vHeemstra/fill-pot-po/branch/main/graph/badge.svg?token=sZaKGStMXg
 
 [deps-url]: https://libraries.io/npm/fill-pot-po
-[deps-image]: https://img.shields.io/librariesio/release/npm/gulp-fill-pot-po?logo=libraries.io&logoColor=959DA5&labelColor=444D56
-[deps-image2]: https://img.shields.io/librariesio/github/vheemstra/fill-pot-po?logo=libraries.io&logoColor=959DA5&labelColor=444D56
+[deps-image]: https://img.shields.io/librariesio/release/npm/fill-pot-po?logo=libraries.io&logoColor=959DA5&labelColor=444D56
+[deps-image2]: https://img.shields.io/librariesio/github/vHeemstra/fill-pot-po?logo=libraries.io&logoColor=959DA5&labelColor=444D56
 
 [npm-url]: https://www.npmjs.com/package/fill-pot-po
 [npm-image]: https://img.shields.io/npm/v/fill-pot-po.svg?color=cb0000&labelColor=444D56&logo=data:image/svg+xml;base64,PHN2ZyByb2xlPSJpbWciIHZpZXdCb3g9IjAgMCAyNCAyNCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBmaWxsPSIjOTU5REE1IiBkPSJNMS43NjMgMEMuNzg2IDAgMCAuNzg2IDAgMS43NjN2MjAuNDc0QzAgMjMuMjE0Ljc4NiAyNCAxLjc2MyAyNGgyMC40NzRjLjk3NyAwIDEuNzYzLS43ODYgMS43NjMtMS43NjNWMS43NjNDMjQgLjc4NiAyMy4yMTQgMCAyMi4yMzcgMHpNNS4xMyA1LjMyM2wxMy44MzcuMDE5LS4wMDkgMTMuODM2aC0zLjQ2NGwuMDEtMTAuMzgyaC0zLjQ1NkwxMi4wNCAxOS4xN0g1LjExM3oiPjwvcGF0aD48L3N2Zz4=
