@@ -1,7 +1,7 @@
 # fill-pot-po &nbsp;&nbsp;[![GitHub release (latest SemVer)][release-image]][release-url] [![NPM version][npm-image]][npm-url]
 
 [![Build Status][ci-image]][ci-url]
-[![Coverage Status][coverage-image]][coverage-url]
+[![Coverall Coverage Status][coverage-image]][coverage-url]
 [![Dependencies Status][deps-image]][deps-url]
 [![Downloads][downloads-image]][npm-url]
 
@@ -363,7 +363,10 @@ MIT © [Philip van Heemstra](https://github.com/vheemstra)
 
 [coverage-url]: https://coveralls.io/github/vHeemstra/fill-pot-po?branch=main
 [coverage-image]: https://img.shields.io/coveralls/github/vHeemstra/fill-pot-po?logo=coveralls&logoColor=959DA5&labelColor=444D56
-[coverage-image2]: https://coveralls.io/repos/github/vHeemstra/fill-pot-po/badge.svg?branch=main
+[coverage-image_]: https://coveralls.io/repos/github/vHeemstra/fill-pot-po/badge.svg?branch=main
+
+[coverage-url2]: https://codecov.io/gh/vHeemstra/fill-pot-po
+[coverage-image2]: https://codecov.io/gh/vHeemstra/fill-pot-po/branch/main/graph/badge.svg?token=sZaKGStMXg
 
 [deps-url]: https://libraries.io/npm/fill-pot-po
 [deps-image]: https://img.shields.io/librariesio/release/npm/gulp-fill-pot-po?logo=libraries.io&logoColor=959DA5&labelColor=444D56
