@@ -154,6 +154,33 @@ See also options [`poSources`](#posources), [`srcDir`](#srcdir), [`domainInPOPat
 
 ## Options
 
+### *Overview of all defaults*
+```js
+{
+    // Input-related
+    potSources: ['**/*.pot', '!node_modules/**'],
+    poSources: null,
+    srcDir: '',
+    domainInPOPath: true,
+    domainFromPOTPath: true,
+    domain: '',
+    srcGlobOptions: {},
+
+    // Content-related
+    wrapLength: 77,
+    defaultContextAsFallback: false,
+    appendNonIncludedFromPO: false,
+    includePORevisionDate: false,
+    includeGenerator: true,
+
+    // Output-related
+    returnPOT: false,
+    writeFiles: true,
+    destDir: '',
+    logResults: false,
+}
+```
+
 ### potSources
 `string|Vinyl|array`
 > The POT files to process. Can be a path or glob string, a Vinyl object, an array of strings or an array of Vinyl objects.
