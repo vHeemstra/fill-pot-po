@@ -11,7 +11,6 @@ const PluginError = require('./plugin-error');
 const c = require('ansi-colors');
 c.enabled = require('color-support').hasBasic;
 
-
 /**
  * Resolve POT sources globs to filepaths.
  * If options.potSources is array of Vinyl objects, leave them as-is.
@@ -20,23 +19,28 @@ c.enabled = require('color-support').hasBasic;
  * @return {object} options
  */
 function resolvePOTFilepaths(options) {
-	// Resolve POT filepaths to process, if array of strings
-	if (options.potSources.length && isString(options.potSources[0])) {
-		options.potSources = matchedSync(options.potSources);
-	}
+  // Resolve POT filepaths to process, if array of strings
+  if (options.potSources.length && isString(options.potSources[0])) {
+    options.potSources = matchedSync(options.potSources);
+  }
 
-	// Store POT filepaths for logging
-	options._potFilenames = options.potSources.map(f => (isString(f) ? f : f.path));
+  // Store POT filepaths for logging
+  options._potFilenames = options.potSources.map((f) =>
+    isString(f) ? f : f.path
+  );
 
-	if (0 >= options.potSources.length) {
-		throw new PluginError('No POT files found to process.');
-	}
+  if (0 >= options.potSources.length) {
+    throw new PluginError('No POT files found to process.');
+  }
 
-	if (1 < options.potSources.length && options.poSources) {
-		throw new PluginError('When processing multiple POT files, leave option poSources empty.\nElse, the same generated PO files will be overwritten for each POT file.', 'options');
-	}
+  if (1 < options.potSources.length && options.poSources) {
+    throw new PluginError(
+      'When processing multiple POT files, leave option poSources empty.\nElse, the same generated PO files will be overwritten for each POT file.',
+      'options'
+    );
+  }
 
-	return options;
+  return options;
 }
 
 /**
@@ -48,37 +52,39 @@ function resolvePOTFilepaths(options) {
  * @return {array} PO filepaths
  */
 function getPOFilepaths(pot_filepath, options) {
-	const pot_name = basename(pot_filepath, '.pot');
-	const domain = options.domainFromPOTPath ? pot_name: options.domain;
-	const po_dir = options.srcDir ? options.srcDir: `${dirname(pot_filepath)}/`;
+  const pot_name = basename(pot_filepath, '.pot');
+  const domain = options.domainFromPOTPath ? pot_name : options.domain;
+  const po_dir = options.srcDir ? options.srcDir : `${dirname(pot_filepath)}/`;
 
-	// TODO? also search subdirectories?
-	//       preserving glob base for re-use at write and/or return paths
-	//       use: https://github.com/gulpjs/glob-parent
-	// options.srcSearchRecursive = true/false
-	
-	// TODO?
-	// const srcDirs = matchedSync(`${po_dir}`); // Always has trailing separator
+  // TODO? also search subdirectories?
+  //       preserving glob base for re-use at write and/or return paths
+  //       use: https://github.com/gulpjs/glob-parent
+  // options.srcSearchRecursive = true/false
 
-	// Auto-compile PO files glob
-	const po_files_glob = [];
-	if (options.poSources) {
-		// TODO? prefix all with po_dir ?
-		po_files_glob.push(...options.poSources);
-	} else {
-		const locale_glob = '[a-z][a-z]?([a-z])?(_[A-Z][A-Z]?([A-Z]))?(_formal)';
-		const domain_glob = options.domainInPOPath ? `${domain}-`: '';
-		po_files_glob.push(`${po_dir}${domain_glob}${locale_glob}.po`);
-		// TODO?
-		// const sub_dirs = options.srcSearchRecursive ? '**/': '';
-		// po_files_glob.push(`${po_dir}${sub_dirs}${domain_glob}${locale_glob}.po`);
-	}
+  // TODO?
+  // const srcDirs = matchedSync(`${po_dir}`); // Always has trailing separator
 
-	// Find and sort file paths
-	const po_filepaths = pathLineSort(matchedSync(po_files_glob, options.srcGlobOptions));
-	// TODO?
-	// store or return srcDirs (for subtracting from PO paths later on)
-	return po_filepaths;
+  // Auto-compile PO files glob
+  const po_files_glob = [];
+  if (options.poSources) {
+    // TODO? prefix all with po_dir ?
+    po_files_glob.push(...options.poSources);
+  } else {
+    const locale_glob = '[a-z][a-z]?([a-z])?(_[A-Z][A-Z]?([A-Z]))?(_formal)';
+    const domain_glob = options.domainInPOPath ? `${domain}-` : '';
+    po_files_glob.push(`${po_dir}${domain_glob}${locale_glob}.po`);
+    // TODO?
+    // const sub_dirs = options.srcSearchRecursive ? '**/': '';
+    // po_files_glob.push(`${po_dir}${sub_dirs}${domain_glob}${locale_glob}.po`);
+  }
+
+  // Find and sort file paths
+  const po_filepaths = pathLineSort(
+    matchedSync(po_files_glob, options.srcGlobOptions)
+  );
+  // TODO?
+  // store or return srcDirs (for subtracting from PO paths later on)
+  return po_filepaths;
 }
 
 /**
@@ -98,27 +104,27 @@ function getPOFilepaths(pot_filepath, options) {
  * @return {object} Vinyl file object
  */
 function generatePO(pot_object, po_object, po_filepath, options) {
-	// Deep clone POT as base for the new PO
-	let new_po_object = JSON.parse(JSON.stringify(pot_object));
+  // Deep clone POT as base for the new PO
+  let new_po_object = JSON.parse(JSON.stringify(pot_object));
 
-	// Pre-fill template with PO strings
-	new_po_object = fillPO(new_po_object, po_object, options);
+  // Pre-fill template with PO strings
+  new_po_object = fillPO(new_po_object, po_object, options);
 
-	// Compile object to PO
-	const new_po_output = compilePO(new_po_object, options);
+  // Compile object to PO
+  const new_po_output = compilePO(new_po_object, options);
 
-	// Optionally, write to file
-	// TODO? preserve subdirectories from search glob?
-	const new_po_filepath = basename(po_filepath);
-	if (options.writeFiles) {
-		writePO(`${options.destDir}${new_po_filepath}`, new_po_output);
-	}
+  // Optionally, write to file
+  // TODO? preserve subdirectories from search glob?
+  const new_po_filepath = basename(po_filepath);
+  if (options.writeFiles) {
+    writePO(`${options.destDir}${new_po_filepath}`, new_po_output);
+  }
 
-	// Add Buffer to collection
-	return new Vinyl({
-		contents: Buffer.from(new_po_output),
-		path: new_po_filepath,
-	});
+  // Add Buffer to collection
+  return new Vinyl({
+    contents: Buffer.from(new_po_output),
+    path: new_po_filepath,
+  });
 }
 
 /**
@@ -138,104 +144,116 @@ function generatePO(pot_object, po_object, po_filepath, options) {
  * @return {object} Prefilled PO object
  */
 function fillPO(new_po_object, po_object, options) {
-	// Traverse template contexts
-	for (const [ctxt, entries] of Object.entries(new_po_object.translations)) {
-		// Traverse template entries
-		for (const [msgid, entry] of Object.entries(entries)) {
-			// If the PO has a translation for this
-			// with equal number of strings, use to pre-fill it.
-			if (
-				po_object.translations[ ctxt ] &&
-				po_object.translations[ ctxt ][ msgid ] &&
-				po_object.translations[ ctxt ][ msgid ]['msgstr'].length === entry['msgstr'].length
-			) {
-				new_po_object.translations[ ctxt ][ msgid ]['msgstr'] = [ ...po_object.translations[ ctxt ][ msgid ]['msgstr'] ];
-			} else if (
-				options.defaultContextAsFallback &&
-				po_object.translations[''] &&
-				po_object.translations[''][ msgid ] &&
-				po_object.translations[''][ msgid ]['msgstr'].length === entry['msgstr'].length
-			) {
-				// Optionally, fallback to default context
-				new_po_object.translations[ ctxt ][ msgid ]['msgstr'] = [ ...po_object.translations[''][ msgid ]['msgstr'] ];
+  // Traverse template contexts
+  for (const [ctxt, entries] of Object.entries(new_po_object.translations)) {
+    // Traverse template entries
+    for (const [msgid, entry] of Object.entries(entries)) {
+      // If the PO has a translation for this
+      // with equal number of strings, use to pre-fill it.
+      if (
+        po_object.translations[ctxt] &&
+        po_object.translations[ctxt][msgid] &&
+        po_object.translations[ctxt][msgid]['msgstr'].length ===
+          entry['msgstr'].length
+      ) {
+        new_po_object.translations[ctxt][msgid]['msgstr'] = [
+          ...po_object.translations[ctxt][msgid]['msgstr'],
+        ];
+      } else if (
+        options.defaultContextAsFallback &&
+        po_object.translations[''] &&
+        po_object.translations[''][msgid] &&
+        po_object.translations[''][msgid]['msgstr'].length ===
+          entry['msgstr'].length
+      ) {
+        // Optionally, fallback to default context
+        new_po_object.translations[ctxt][msgid]['msgstr'] = [
+          ...po_object.translations[''][msgid]['msgstr'],
+        ];
 
-				// Set/add fuzzy flag comment
-				const fuzzy_comment = 'fuzzy';
-				if (!new_po_object.translations[ ctxt ][ msgid ].comments) {
-					new_po_object.translations[ ctxt ][ msgid ].comments = {};
-				}
-				if (!new_po_object.translations[ ctxt ][ msgid ].comments.flag) {
-					new_po_object.translations[ ctxt ][ msgid ].comments.flag = fuzzy_comment;
-				} else {
-					new_po_object.translations[ ctxt ][ msgid ].comments.flag = (
-						fuzzy_comment + ', ' + new_po_object.translations[ ctxt ][ msgid ].comments.flag
-					);
-				}
+        // Set/add fuzzy flag comment
+        const fuzzy_comment = 'fuzzy';
+        if (!new_po_object.translations[ctxt][msgid].comments) {
+          new_po_object.translations[ctxt][msgid].comments = {};
+        }
+        if (!new_po_object.translations[ctxt][msgid].comments.flag) {
+          new_po_object.translations[ctxt][msgid].comments.flag = fuzzy_comment;
+        } else {
+          new_po_object.translations[ctxt][msgid].comments.flag =
+            fuzzy_comment +
+            ', ' +
+            new_po_object.translations[ctxt][msgid].comments.flag;
+        }
 
-				// Set translator comment to flag re-usage in case of deprecation
-				// NOTE: comment set on PO object, so it's only included if appended as deprecated.
-				const reusage_comment = `NOTE: re-used for same message, but with context '${ctxt}'`;
-				if (!po_object.translations[''][ msgid ].comments) {
-					po_object.translations[''][ msgid ].comments = {};
-				}
-				if (!po_object.translations[''][ msgid ].comments.translator) {
-					po_object.translations[''][ msgid ].comments.translator = reusage_comment;
-				} else {
-					po_object.translations[''][ msgid ].comments.translator = (
-						reusage_comment + '\n' + po_object.translations[''][ msgid ].comments.translator
-					);
-				}
-			}
-		}
-	}
+        // Set translator comment to flag re-usage in case of deprecation
+        // NOTE: comment set on PO object, so it's only included if appended as deprecated.
+        const reusage_comment = `NOTE: re-used for same message, but with context '${ctxt}'`;
+        if (!po_object.translations[''][msgid].comments) {
+          po_object.translations[''][msgid].comments = {};
+        }
+        if (!po_object.translations[''][msgid].comments.translator) {
+          po_object.translations[''][msgid].comments.translator =
+            reusage_comment;
+        } else {
+          po_object.translations[''][msgid].comments.translator =
+            reusage_comment +
+            '\n' +
+            po_object.translations[''][msgid].comments.translator;
+        }
+      }
+    }
+  }
 
-	if (options.appendNonIncludedFromPO) {
-		// Append all strings from PO that are not present in POT
-		for (const [ctxt, entries] of Object.entries(po_object.translations)) {
-			// Add context
-			if (!new_po_object.translations[ ctxt ]) {
-				new_po_object.translations[ ctxt ] = {};
-			}
+  if (options.appendNonIncludedFromPO) {
+    // Append all strings from PO that are not present in POT
+    for (const [ctxt, entries] of Object.entries(po_object.translations)) {
+      // Add context
+      if (!new_po_object.translations[ctxt]) {
+        new_po_object.translations[ctxt] = {};
+      }
 
-			for (const [msgid, entry] of Object.entries(entries)) {
-				// Add entry
-				if (!new_po_object.translations[ ctxt ][ msgid ]) {
-					new_po_object.translations[ ctxt ][ msgid ] = entry;
+      for (const [msgid, entry] of Object.entries(entries)) {
+        // Add entry
+        if (!new_po_object.translations[ctxt][msgid]) {
+          new_po_object.translations[ctxt][msgid] = entry;
 
-					// Add translator comment "DEPRECATED"
-					if (!new_po_object.translations[ ctxt ][ msgid ].comments) {
-						new_po_object.translations[ ctxt ][ msgid ].comments = {};
-					}
-					if (!new_po_object.translations[ ctxt ][ msgid ].comments.translator) {
-						new_po_object.translations[ ctxt ][ msgid ].comments.translator = 'DEPRECATED';
-					} else if (!entry.comments.translator.match(/^DEPRECATED$/gm)) {
-						new_po_object.translations[ ctxt ][ msgid ].comments.translator = (
-							'DEPRECATED\n' + new_po_object.translations[ ctxt ][ msgid ].comments.translator
-						);
-					}
-				}
-			}
-		}
-	}
+          // Add translator comment "DEPRECATED"
+          if (!new_po_object.translations[ctxt][msgid].comments) {
+            new_po_object.translations[ctxt][msgid].comments = {};
+          }
+          if (!new_po_object.translations[ctxt][msgid].comments.translator) {
+            new_po_object.translations[ctxt][msgid].comments.translator =
+              'DEPRECATED';
+          } else if (!entry.comments.translator.match(/^DEPRECATED$/gm)) {
+            new_po_object.translations[ctxt][msgid].comments.translator =
+              'DEPRECATED\n' +
+              new_po_object.translations[ctxt][msgid].comments.translator;
+          }
+        }
+      }
+    }
+  }
 
-	if (options.includePORevisionDate) {
-		const d = new Date();
-		const po_rev_date_string = [
-			`${d.getUTCFullYear()}`,
-			`-${String(d.getUTCMonth() + 1).padStart(2, '0')}`,
-			`-${String(d.getUTCDate()).padStart(2, '0')}`,
-			` ${String(d.getUTCHours()).padStart(2, '0')}`,
-			`:${String(d.getUTCMinutes()).padStart(2, '0')}`,
-			'+0000'
-		].join('');
-		new_po_object.headers['po-revision-date'] = po_rev_date_string;
-	}
+  if (options.includePORevisionDate) {
+    const d = new Date();
+    const po_rev_date_string = [
+      `${d.getUTCFullYear()}`,
+      `-${String(d.getUTCMonth() + 1).padStart(2, '0')}`,
+      `-${String(d.getUTCDate()).padStart(2, '0')}`,
+      ` ${String(d.getUTCHours()).padStart(2, '0')}`,
+      `:${String(d.getUTCMinutes()).padStart(2, '0')}`,
+      '+0000',
+    ].join('');
+    new_po_object.headers['po-revision-date'] = po_rev_date_string;
+  }
 
-	if (options.includeGenerator) {
-		new_po_object.headers['X-Generator'] = `${packageJSON.name}/${packageJSON.version}`;
-	}
+  if (options.includeGenerator) {
+    new_po_object.headers[
+      'X-Generator'
+    ] = `${packageJSON.name}/${packageJSON.version}`;
+  }
 
-	return new_po_object;
+  return new_po_object;
 }
 
 /**
@@ -250,25 +268,25 @@ function fillPO(new_po_object, po_object, options) {
  * @return {string} Compiled PO file content
  */
 function compilePO(new_po_object, options) {
-	return gettextParser.po.compile(new_po_object, {
-		foldLength: options.wrapLength,
-		// Sort entries by first reference filepath and line number.
-		sort: (a, b) => {
-			// Entries with DEPRECATED translator comment are put last (but sorted as usual there).
-			const b_deprecated = b.comments?.translator?.match(/^DEPRECATED$/gm);
-			const a_deprecated = a.comments?.translator?.match(/^DEPRECATED$/gm);
-			if (!a_deprecated && b_deprecated) return -1;
-			if (a_deprecated && !b_deprecated) return 1;
+  return gettextParser.po.compile(new_po_object, {
+    foldLength: options.wrapLength,
+    // Sort entries by first reference filepath and line number.
+    sort: (a, b) => {
+      // Entries with DEPRECATED translator comment are put last (but sorted as usual there).
+      const b_deprecated = b.comments?.translator?.match(/^DEPRECATED$/gm);
+      const a_deprecated = a.comments?.translator?.match(/^DEPRECATED$/gm);
+      if (!a_deprecated && b_deprecated) return -1;
+      if (a_deprecated && !b_deprecated) return 1;
 
-			// Entries without reference(s) are put last.
-			if (!b.comments?.reference) return -1;
-			if (!a.comments?.reference) return 1;
+      // Entries without reference(s) are put last.
+      if (!b.comments?.reference) return -1;
+      if (!a.comments?.reference) return 1;
 
-			a = a.comments.reference.trim().split(/\s+/)[0];
-			b = b.comments.reference.trim().split(/\s+/)[0];
-			return pathLineSort(a, b);
-		},
-	});
+      a = a.comments.reference.trim().split(/\s+/)[0];
+      b = b.comments.reference.trim().split(/\s+/)[0];
+      return pathLineSort(a, b);
+    },
+  });
 }
 
 /**
@@ -282,11 +300,11 @@ function compilePO(new_po_object, options) {
  * @return {void}
  */
 function writePO(new_po_filepath, new_po_output) {
-	const new_po_dir = dirname(new_po_filepath);
-	if (!existsSync(new_po_dir)) {
-		mkdirSync(new_po_dir, {recursive: true});
-	}
-	writeFileSync(new_po_filepath, new_po_output);
+  const new_po_dir = dirname(new_po_filepath);
+  if (!existsSync(new_po_dir)) {
+    mkdirSync(new_po_dir, { recursive: true });
+  }
+  writeFileSync(new_po_filepath, new_po_output);
 }
 
 /**
@@ -302,36 +320,41 @@ function writePO(new_po_filepath, new_po_output) {
  * @return {void}
  */
 function logResults(pots, pos_in, pos_out, dest) {
-	pots.forEach((pot, i) => {
-		const pot_filepath = basename(pot);
-		const po_filepaths_in = pos_in[i]?.map(po => po);
-		const po_filepaths_out = pos_out[i]?.map(po => po.path);
-		const max_length_in = po_filepaths_in.reduce((p, c) => (Math.max(c.length, p)), 0);
+  pots.forEach((pot, i) => {
+    const pot_filepath = basename(pot);
+    const po_filepaths_in = pos_in[i]?.map((po) => po);
+    const po_filepaths_out = pos_out[i]?.map((po) => po.path);
+    const max_length_in = po_filepaths_in.reduce(
+      (p, c) => Math.max(c.length, p),
+      0
+    );
 
-		console.log('');
+    console.log('');
 
-		if (po_filepaths_out && po_filepaths_out.length) {
-			console.log(`  ${c.bold.green('■')} ${c.white(pot_filepath)}`);
+    if (po_filepaths_out && po_filepaths_out.length) {
+      console.log(`  ${c.bold.green('■')} ${c.white(pot_filepath)}`);
 
-			po_filepaths_out.forEach((po_filepath_out, pi) => {
-				console.log([
-					'    ',
-					`${c.cyan(po_filepaths_in[pi].padEnd(max_length_in, ' '))}`,
-					` ${c.gray('—►')} `,
-					`${c.yellow(dest)}${c.yellow(po_filepath_out)}`
-				].join(''));
-			});
-		} else {
-			console.log(`  ${c.gray('■')} ${c.white(pot_filepath)}`);
-			console.log(`    ${c.gray('No PO files found.')}`);
-		}
-	});
-	console.log('');
+      po_filepaths_out.forEach((po_filepath_out, pi) => {
+        console.log(
+          [
+            '    ',
+            `${c.cyan(po_filepaths_in[pi].padEnd(max_length_in, ' '))}`,
+            ` ${c.gray('—►')} `,
+            `${c.yellow(dest)}${c.yellow(po_filepath_out)}`,
+          ].join('')
+        );
+      });
+    } else {
+      console.log(`  ${c.gray('■')} ${c.white(pot_filepath)}`);
+      console.log(`    ${c.gray('No PO files found.')}`);
+    }
+  });
+  console.log('');
 }
 
 module.exports = {
-	resolvePOTFilepaths,
-	getPOFilepaths,
-	generatePO,
-	logResults
+  resolvePOTFilepaths,
+  getPOFilepaths,
+  generatePO,
+  logResults,
 };
