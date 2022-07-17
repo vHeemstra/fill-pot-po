@@ -5,7 +5,12 @@ const fs = require('fs');
 const gettextParser = require('gettext-parser');
 
 const prepareOptions = require('./options');
-const { resolvePOTFilepaths, getPOFilepaths, generatePO, logResults } = require('./shared');
+const {
+  resolvePOTFilepaths,
+  getPOFilepaths,
+  generatePO,
+  logResults,
+} = require('./shared');
 
 let pot_input_files = [];
 let po_input_files = [];
@@ -25,17 +30,17 @@ let po_output_files = [];
  * @return {void}
  */
 function processPOs(po_filepaths, pot_object, options) {
-	const pos = [];
-	// Parse PO files
-	for (const po_filepath of po_filepaths) {
-		// Sync - Read and parse PO file
-		const po_content = fs.readFileSync(po_filepath).toString();
-		const po_object = gettextParser.po.parse(po_content);
+  const pos = [];
+  // Parse PO files
+  for (const po_filepath of po_filepaths) {
+    // Sync - Read and parse PO file
+    const po_content = fs.readFileSync(po_filepath).toString();
+    const po_object = gettextParser.po.parse(po_content);
 
-		// Generate PO and add to collection
-		pos.push( generatePO(pot_object, po_object, po_filepath, options) );
-	}
-	po_output_files.push(pos);
+    // Generate PO and add to collection
+    pos.push(generatePO(pot_object, po_object, po_filepath, options));
+  }
+  po_output_files.push(pos);
 }
 
 /**
@@ -51,67 +56,74 @@ function processPOs(po_filepaths, pot_object, options) {
  * @return {void}
  */
 function processPOT(pot_file, options) {
-	const isVinyl = Vinyl.isVinyl(pot_file);
-	const pot_filepath = isVinyl ? pot_file.path : pot_file;
+  const isVinyl = Vinyl.isVinyl(pot_file);
+  const pot_filepath = isVinyl ? pot_file.path : pot_file;
 
-	// Get filepaths of POs
-	const po_filepaths = getPOFilepaths(pot_filepath, options);
-	po_input_files.push(po_filepaths);
+  // Get filepaths of POs
+  const po_filepaths = getPOFilepaths(pot_filepath, options);
+  po_input_files.push(po_filepaths);
 
-	if (po_filepaths.length) {
-		let pot_content = '';
-		if (isVinyl) {
-			if (options.returnPOT) {
-				pot_input_files.push(pot_file);
-			}
+  if (po_filepaths.length) {
+    let pot_content = '';
+    if (isVinyl) {
+      if (options.returnPOT) {
+        pot_input_files.push(pot_file);
+      }
 
-			pot_content = pot_file.contents;
-		} else {
-			// Sync - Read POT file
-			pot_content = fs.readFileSync(pot_filepath);
+      pot_content = pot_file.contents;
+    } else {
+      // Sync - Read POT file
+      pot_content = fs.readFileSync(pot_filepath);
 
-			if (options.returnPOT) {
-				pot_input_files.push(new Vinyl({
-					contents: Buffer.from(pot_content),
-					path: pot_filepath
-				}));
-			}
+      if (options.returnPOT) {
+        pot_input_files.push(
+          new Vinyl({
+            contents: Buffer.from(pot_content),
+            path: pot_filepath,
+          })
+        );
+      }
 
-			pot_content = pot_content.toString();
-		}
-		const pot_object = gettextParser.po.parse(pot_content);
-		processPOs(po_filepaths, pot_object, options);
-	} else {
-		po_output_files.push([]);
-	}
+      pot_content = pot_content.toString();
+    }
+    const pot_object = gettextParser.po.parse(pot_content);
+    processPOs(po_filepaths, pot_object, options);
+  } else {
+    po_output_files.push([]);
+  }
 }
 
 function fillPotPoSync(options) {
-	// Reset
-	pot_input_files = [];
-	po_input_files = [];
-	po_output_files = [];
+  // Reset
+  pot_input_files = [];
+  po_input_files = [];
+  po_output_files = [];
 
-	// Set options
-	options = prepareOptions(options);
-	options = resolvePOTFilepaths(options);
+  // Set options
+  options = prepareOptions(options);
+  options = resolvePOTFilepaths(options);
 
-	// Process all POT files
-	options.potSources.forEach(pot_file => {
-		processPOT(pot_file, options);
-	});
+  // Process all POT files
+  options.potSources.forEach((pot_file) => {
+    processPOT(pot_file, options);
+  });
 
-	if (options.logResults) {
-		logResults(options._potFilenames, po_input_files, po_output_files, options.destDir);
-	}
+  if (options.logResults) {
+    logResults(
+      options._potFilenames,
+      po_input_files,
+      po_output_files,
+      options.destDir
+    );
+  }
 
-	if (options.returnPOT) {
-		return pot_input_files;
-	}
+  if (options.returnPOT) {
+    return pot_input_files;
+  }
 
-	// Flatten into array with all PO files
-	po_output_files = [].concat(...po_output_files);
-	return po_output_files;
+  // Flatten into array with all PO files
+  po_output_files = [].concat(...po_output_files);
+  return po_output_files;
 }
 
 module.exports = fillPotPoSync;

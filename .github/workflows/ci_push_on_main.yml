@@ -127,3 +127,10 @@ jobs:
         run: gh release create ${{ env.NEW_VERSION }} --generate-notes
         # env:
         #   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Sync dev branch with main branch
+        run: |
+          git checkout dev
+          git pull
+          git merge main
+          git push

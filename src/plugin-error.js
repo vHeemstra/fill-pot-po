@@ -6,24 +6,27 @@ c.enabled = require('color-support').hasBasic;
 
 const pluginname = require('../package.json').name;
 
-
 // class PluginError extends Error {
 class PluginError {
-	constructor( message, category = '' ) {
-		// super( message );
-		// this.name = 'PluginError';
-		this.message = message;
-		this.category = category.slice(0, 1).toUpperCase() + category.slice(1).toLowerCase();
-	}
+  constructor(message, category = '') {
+    // super( message );
+    // this.name = 'PluginError';
+    this.message = message;
+    this.category =
+      category.slice(0, 1).toUpperCase() + category.slice(1).toLowerCase();
+  }
 
-	toString() {
-		return `${c.cyan(pluginname)}  ${c.bold.red(`${this.category}Error`)}  ${this.message}`;
-	}
+  toString() {
+    return `${c.cyan(pluginname)}  ${c.bold.red(`${this.category}Error`)}  ${
+      this.message
+    }`;
+  }
 
-	// See: https://nodejs.org/api/util.html#custom-inspection-functions-on-objects
-	[util.inspect.custom]() { // (depth, options, inspect) {
-		return this.toString();
-	}
+  // See: https://nodejs.org/api/util.html#custom-inspection-functions-on-objects
+  [util.inspect.custom]() {
+    // (depth, options, inspect) {
+    return this.toString();
+  }
 }
 
 module.exports = PluginError;
