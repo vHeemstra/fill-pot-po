@@ -20,7 +20,6 @@ import {
   PoObject,
   Source,
 } from './shared';
-import { isVinyl as _isVinyl } from './utils';
 
 let pot_input_files: Vinyl[] = [];
 let po_input_files: string[][] = [];
@@ -75,7 +74,7 @@ export const processPOT = (
   resolve: ProcessPotResolveCallback,
   reject: ProcessPotRejectCallback
 ) => {
-  const isVinyl = _isVinyl(pot_file);
+  const isVinyl = Vinyl.isVinyl(pot_file);
   const pot_filepath = isVinyl ? pot_file.path : pot_file;
 
   // Get filepaths of POs
@@ -139,7 +138,9 @@ export default (cb: AsyncCallback, options: Options) => {
   // Process all POT files
   Promise.all(
     resolvedOptions.potSources.map((pot_file) => {
-      const pot_filepath = _isVinyl(pot_file) ? pot_file.relative : pot_file;
+      const pot_filepath = Vinyl.isVinyl(pot_file)
+        ? pot_file.relative
+        : pot_file;
 
       return new Promise(
         (
