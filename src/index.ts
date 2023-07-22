@@ -26,6 +26,7 @@ export { fillPotPoSync as sync, testOptions, prepareOptions };
  *   `const fillPotPo = require('fill-pot-po')`
  * See: https://github.com/egoist/tsup/issues/255#issuecomment-784856826
  */
+/* eslint-disable */
 if (typeof module !== 'undefined') {
   // @ts-ignore
   fillPotPo.sync = fillPotPoSync;
@@ -38,3 +39,4 @@ if (typeof module !== 'undefined') {
   // @ts-ignore
   module.exports.default = fillPotPo;
 }
+/* eslint-enable */
