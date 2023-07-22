@@ -1,23 +1,29 @@
-'use strict';
+import * as fs from 'node:fs';
+import Vinyl from 'vinyl';
+// import { Buffer } from 'node:buffer';
+import { Buffer } from 'safe-buffer';
+import gettextParser from 'gettext-parser';
+import c from 'ansi-colors';
+import cs from 'color-support';
 
-const PluginError = require('./plugin-error');
-const c = require('ansi-colors');
-c.enabled = require('color-support').hasBasic;
+c.enabled = Boolean(cs().hasBasic);
 
-const Vinyl = require('vinyl');
-const fs = require('fs');
-const gettextParser = require('gettext-parser');
-
-const prepareOptions = require('./options');
-const {
+import PluginError from './plugin-error';
+import prepareOptions from './options';
+import {
   resolvePOTFilepaths,
   getPOFilepaths,
   generatePO,
   logResults,
-} = require('./shared');
+  Options,
+  ResolvedOptions,
+  PoObject,
+  Source,
+} from './shared';
+import { isVinyl as _isVinyl } from './utils';
 
-let pot_input_files = [];
-let po_input_files = [];
+let pot_input_files: Vinyl[] = [];
+let po_input_files: string[][] = [];
 
 /**
  * Reads and parses PO file.
@@ -31,14 +37,20 @@ let po_input_files = [];
  *
  * @return {void}
  */
-function parsePO(po_filepath, resolve, reject) {
+export const parsePO = (
+  po_filepath: string,
+  resolve: ParsePoResolveCallback,
+  reject: ParsePoRejectCallback
+) => {
   // Async - Read, parse and process PO file
   fs.readFile(po_filepath, (err, file_content) => {
     if (err) reject(err);
     const po_object = gettextParser.po.parse(file_content);
     resolve(po_object);
   });
-}
+};
+type ParsePoResolveCallback = (value: PoObject) => void;
+type ParsePoRejectCallback = (reason?: NodeJS.ErrnoException) => void;
 
 /**
  * Process POT file.
@@ -57,8 +69,13 @@ function parsePO(po_filepath, resolve, reject) {
  *
  * @return {void}
  */
-function processPOT(pot_file, options, resolve, reject) {
-  const isVinyl = Vinyl.isVinyl(pot_file);
+export const processPOT = (
+  pot_file: Source,
+  options: ResolvedOptions,
+  resolve: ProcessPotResolveCallback,
+  reject: ProcessPotRejectCallback
+) => {
+  const isVinyl = _isVinyl(pot_file);
   const pot_filepath = isVinyl ? pot_file.path : pot_file;
 
   // Get filepaths of POs
@@ -70,7 +87,7 @@ function processPOT(pot_file, options, resolve, reject) {
         pot_input_files.push(pot_file);
       }
 
-      const pot_object = gettextParser.po.parse(pot_file.contents);
+      const pot_object: PoObject = gettextParser.po.parse(pot_file.contents);
       resolve([pot_object, po_filepaths]);
     } else {
       // Async - Read and parse POT file
@@ -86,16 +103,20 @@ function processPOT(pot_file, options, resolve, reject) {
           );
         }
 
-        const pot_object = gettextParser.po.parse(pot_content);
+        const pot_object: PoObject = gettextParser.po.parse(pot_content);
         resolve([pot_object, po_filepaths]);
       });
     }
   } else {
     resolve(null);
   }
-}
+};
+type ProcessPotResolveCallback = (value: [PoObject, string[]] | null) => void;
+type ProcessPotRejectCallback = (reason?: NodeJS.ErrnoException) => void;
 
-function fillPotPo(cb, options) {
+type AsyncCallbackResult = [true, Vinyl[]] | [false, string];
+type AsyncCallback = (result: AsyncCallbackResult) => unknown;
+export default (cb: AsyncCallback, options: Options) => {
   if (typeof cb !== 'function') {
     throw new PluginError(
       'fillPotPo() requires a callback function as first parameter'
@@ -103,9 +124,9 @@ function fillPotPo(cb, options) {
   }
 
   // Set options
+  let resolvedOptions: ResolvedOptions;
   try {
-    options = prepareOptions(options);
-    options = resolvePOTFilepaths(options);
+    resolvedOptions = resolvePOTFilepaths(prepareOptions(options));
   } catch (error) {
     cb([false, error.toString()]);
     return;
@@ -117,14 +138,17 @@ function fillPotPo(cb, options) {
 
   // Process all POT files
   Promise.all(
-    options.potSources.map((pot_file) => {
-      const pot_filepath = Vinyl.isVinyl(pot_file)
-        ? pot_file.relative
-        : pot_file;
+    resolvedOptions.potSources.map((pot_file) => {
+      const pot_filepath = _isVinyl(pot_file) ? pot_file.relative : pot_file;
 
-      return new Promise((resolve, reject) => {
-        processPOT(pot_file, options, resolve, reject);
-      })
+      return new Promise(
+        (
+          resolve: ProcessPotResolveCallback,
+          reject: ProcessPotRejectCallback
+        ) => {
+          processPOT(pot_file, resolvedOptions, resolve, reject);
+        }
+      )
         .then(async (value) => {
           if (!value) {
             po_input_files.push([]);
@@ -132,17 +156,27 @@ function fillPotPo(cb, options) {
           }
 
           // Process all PO files
-          let pot_object = value[0];
-          let po_files = value[1];
+          const pot_object = value[0];
+          const po_files: string[] = value[1];
           po_input_files.push(po_files);
           const po_results = await Promise.all(
             po_files.map((po_file) => {
-              return new Promise((resolve, reject) => {
-                parsePO(po_file, resolve, reject);
-              })
+              return new Promise(
+                (
+                  resolve: ParsePoResolveCallback,
+                  reject: ParsePoRejectCallback
+                ) => {
+                  parsePO(po_file, resolve, reject);
+                }
+              )
                 .then((po_object) => {
                   // Generate PO and add to collection
-                  return generatePO(pot_object, po_object, po_file, options);
+                  return generatePO(
+                    pot_object,
+                    po_object,
+                    po_file,
+                    resolvedOptions
+                  );
                 })
                 .catch((error) => {
                   throw new PluginError(
@@ -163,29 +197,26 @@ function fillPotPo(cb, options) {
     })
   )
     .then((po_output_files) => {
-      if (options.logResults) {
+      if (resolvedOptions.logResults) {
         logResults(
-          options._potFilenames,
+          resolvedOptions._potFilenames,
           po_input_files,
           po_output_files,
-          options.destDir
+          resolvedOptions.destDir
         );
       }
 
-      if (options.returnPOT) {
+      if (resolvedOptions.returnPOT) {
         cb([true, pot_input_files]);
         return;
       }
 
       // Flatten into array with all PO files
-      po_output_files = [].concat(...po_output_files);
-      cb([true, po_output_files]);
+      cb([true, ([] as Vinyl[]).concat(...po_output_files)]);
     })
     .catch((error) => {
       cb([false, error.toString()]);
     });
 
   return;
-}
-
-module.exports = fillPotPo;
+};

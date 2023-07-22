@@ -1,9 +1,18 @@
-/*
- * For a detailed explanation regarding each configuration property, visit:
- * https://jestjs.io/docs/configuration
- */
+import type { JestConfigWithTsJest } from 'ts-jest';
 
-module.exports = {
+import { defaults as tsjPreset } from 'ts-jest/presets';
+// import { defaultsESM as tsjPreset } from 'ts-jest/presets';
+// import { jsWithTs as tsjPreset } from 'ts-jest/presets';
+// import { jsWithTsESM as tsjPreset } from 'ts-jest/presets';
+// import { jsWithBabel as tsjPreset } from 'ts-jest/presets';
+// import { jsWithBabelESM as tsjPreset } from 'ts-jest/presets';
+
+const jestConfig: JestConfigWithTsJest = {
+  /*
+   * Jest configuration
+   * For a detailed explanation regarding each configuration property, visit:
+   * https://jestjs.io/docs/configuration
+   */
   // All imported modules in your tests should be mocked automatically
   // automock: false,
 
@@ -21,16 +30,29 @@ module.exports = {
 
   // An array of glob patterns indicating a set of files for which coverage information should be collected
   // collectCoverageFrom: undefined,
+  collectCoverageFrom: [
+    // '**/*.{js,jsx}',
+    '<rootDir>/src/**/*.ts',
+    '!<rootDir>/src/**/*.interface.ts',
+    '!<rootDir>/src/**/*.mock.ts',
+    '!<rootDir>/src/**/*.module.ts',
+    '!<rootDir>/src/**/*.spec.ts',
+    '!<rootDir>/src/**/*.test.ts',
+    '!<rootDir>/src/**/*.d.ts',
+    '!**/node_modules/**',
+    '!**/vendor/**',
+  ],
 
   // The directory where Jest should output its coverage files
-  // coverageDirectory: 'coverage',
+  coverageDirectory: '<rootDir>/test/coverage',
 
   // An array of regexp pattern strings used to skip coverage collection
   // coveragePathIgnorePatterns: [
   //   '\\\\node_modules\\\\'
   // ],
 
-  // Indicates which provider should be used to instrument code for coverage
+  // Indicates which provider should be used to instrument code for coverage.
+  // Allowed values are `babel` (default) or `v8`.
   // coverageProvider: 'v8',
 
   // A list of reporter names that Jest uses when writing coverage reports
@@ -45,6 +67,7 @@ module.exports = {
     'text',
     // 'text-summary',
   ],
+  // coverageReporters: ['html', 'json'],
 
   // An object that configures minimum threshold enforcement for coverage results
   // coverageThreshold: undefined,
@@ -127,10 +150,11 @@ module.exports = {
   // restoreMocks: false,
 
   // The root directory that Jest should scan for tests and modules within
-  rootDir: './test/',
+  // rootDir: './test/',
+  rootDir: './',
 
   // A list of paths to directories that Jest should use to search for files in
-  roots: ['<rootDir>'],
+  roots: ['<rootDir>/test/', '<rootDir>/src/'],
 
   // Allows you to use a custom runner instead of Jest's default test runner
   // runner: 'jest-runner',
@@ -196,4 +220,37 @@ module.exports = {
 
   // Whether to use watchman for file crawling
   // watchman: true,
+  /*
+   * ts-jest configuration:
+   * See: https://kulshekhar.github.io/ts-jest/docs/getting-started/presets
+   * See: https://kulshekhar.github.io/ts-jest/docs/getting-started/options/
+   */
+  // preset: 'ts-jest/presets/default-esm',
+  // preset: 'ts-jest',
+  // extensionsToTreatAsEsm: ['.ts'],
+  // moduleNameMapper: {
+  //   '^(\\.{1,2}/.*)\\.js$': '$1',
+  // },
+  testEnvironment: 'node',
+  // testEnvironmentOptions: {
+  //   NODE_OPTIONS: '--experimental-vm-modules',
+  // },
+  transform: {
+    ...tsjPreset.transform,
+    // '^.+\\.[tj]sx?$' to process js/ts with `ts-jest`
+    // '^.+\\.m?[tj]sx?$' to process js/ts/mjs/mts with `ts-jest`
+    '^.+\\.tsx?$': [
+      'ts-jest',
+      {
+        // ts-jest configuration goes here
+        diagnostics: false,
+        babelConfig: {
+          plugins: ['babel-plugin-transform-import-meta'],
+        },
+        // useESM: true,
+      },
+    ],
+  },
 };
+
+export default jestConfig;

@@ -1,12 +1,23 @@
-'use strict';
+import fillPotPo from '../src/sync';
+import { testOptions } from '../src/index';
 
-const fillPotPo = require('../src/sync');
-const { testOptions } = require('../src/index');
+import { sync as matchedSync } from 'matched';
+import { rmSync, existsSync, mkdirSync, readFileSync } from 'node:fs';
+import { relative } from 'node:path';
+import Vinyl from 'vinyl';
 
-const { sync: matchedSync } = require('matched');
-const { rmSync, existsSync, mkdirSync, readFileSync } = require('fs');
-const { relative } = require('path');
-const Vinyl = require('vinyl');
+/* eslint-disable no-control-regex */
+const stripANSIColors = (s: string): string => {
+  return s.replace(
+    /[\u001b\u009b][[()#;?]*(?:[0-9]{1,4}(?:;[0-9]{0,4})*)?[0-9A-ORZcf-nqry=><]/g,
+    ''
+  );
+};
+/* eslint-enable no-control-regex */
+
+// jest.mock('console', () => ({
+//   ...jest.requireActual('console'),
+// }));
 
 const potSource = './test/examples/text-domain.pot';
 // const potSources = './test/examples/*.pot';
@@ -26,7 +37,7 @@ const expected_po_no_domain = readFileSync(`${expected_dir}nl_NL.po`);
  * @return {void}
  */
 function clearOutputFolder() {
-  let files = matchedSync([`${test_dir}*`]);
+  const files = matchedSync([`${test_dir}*`]);
   files.sort((a, b) => {
     const a_len = a.split(/\//);
     const b_len = b.split(/\//);
@@ -50,7 +61,7 @@ describe('sync.js - single POT', () => {
 
   test('auto domain PO - no write', () => {
     folder_i++;
-    let folder_path = `${test_dir}${folder_i}`;
+    const folder_path = `${test_dir}${folder_i}`;
     if (!existsSync(folder_path)) {
       mkdirSync(folder_path, { recursive: true });
     }
@@ -85,7 +96,7 @@ describe('sync.js - single POT', () => {
 
   test('auto no-domain PO - no write', () => {
     folder_i++;
-    let folder_path = `${test_dir}${folder_i}`;
+    const folder_path = `${test_dir}${folder_i}`;
     if (!existsSync(folder_path)) {
       mkdirSync(folder_path, { recursive: true });
     }
@@ -121,7 +132,7 @@ describe('sync.js - single POT', () => {
 
   test('manual multiple PO - no write', () => {
     folder_i++;
-    let folder_path = `${test_dir}${folder_i}`;
+    const folder_path = `${test_dir}${folder_i}`;
     if (!existsSync(folder_path)) {
       mkdirSync(folder_path, { recursive: true });
     }
@@ -161,7 +172,7 @@ describe('sync.js - single POT', () => {
 
   test('auto domain PO - write', () => {
     folder_i++;
-    let folder_path = `${test_dir}${folder_i}`;
+    const folder_path = `${test_dir}${folder_i}`;
     if (!existsSync(folder_path)) {
       mkdirSync(folder_path, { recursive: true });
     }
@@ -201,7 +212,7 @@ describe('sync.js - single POT', () => {
 
   test('auto no-domain PO - write', () => {
     folder_i++;
-    let folder_path = `${test_dir}${folder_i}`;
+    const folder_path = `${test_dir}${folder_i}`;
     if (!existsSync(folder_path)) {
       mkdirSync(folder_path, { recursive: true });
     }
@@ -240,7 +251,7 @@ describe('sync.js - single POT', () => {
 
   test('manual multiple PO - write', () => {
     folder_i++;
-    let folder_path = `${test_dir}${folder_i}`;
+    const folder_path = `${test_dir}${folder_i}`;
     if (!existsSync(folder_path)) {
       mkdirSync(folder_path, { recursive: true });
     }
@@ -294,7 +305,7 @@ describe('sync.js - single POT', () => {
       .mockName('console.log')
       .mockImplementation((...args) => {
         return args
-          .map((v) => String(v).trim().replaceAll(/\s+/g, ' '))
+          .map((v) => stripANSIColors(String(v).trim().replaceAll(/\s+/g, ' ')))
           .join(' ');
       });
 
@@ -319,11 +330,9 @@ describe('sync.js - single POT', () => {
     // Check if results were logged
     expect(consoleSpy).toHaveBeenCalledTimes(4);
     const logs = consoleSpy.mock.results.slice();
-    expect(logs[0].value + logs[3].value).toEqual('');
-    expect(logs[1].value).toMatch(
-      new RegExp('■ ' + potSource.split('/').slice(-1)[0])
-    );
-    expect(logs[2].value).toMatch(new RegExp('No PO files found.'));
+    expect(`${logs[0].value}${logs[3].value}`).toEqual('');
+    expect(logs[1].value).toEqual(`■ ${potSource.split('/').slice(-1)[0]}`);
+    expect(logs[2].value).toEqual('No PO files found.');
 
     // Restore the console.log function
     consoleSpy.mockRestore();
@@ -331,7 +340,7 @@ describe('sync.js - single POT', () => {
 
   test('auto domain PO - write - return POT', () => {
     folder_i++;
-    let folder_path = `${test_dir}${folder_i}`;
+    const folder_path = `${test_dir}${folder_i}`;
     if (!existsSync(folder_path)) {
       mkdirSync(folder_path, { recursive: true });
     }
@@ -402,7 +411,7 @@ describe('sync.js - single POT', () => {
 
   test('auto domain PO - write - return POT - input POT Vinyl', () => {
     folder_i++;
-    let folder_path = `${test_dir}${folder_i}`;
+    const folder_path = `${test_dir}${folder_i}`;
     if (!existsSync(folder_path)) {
       mkdirSync(folder_path, { recursive: true });
     }
@@ -449,7 +458,7 @@ describe('sync.js - single POT', () => {
 
   test('extras - auto domain PO - write - content optionals', () => {
     folder_i++;
-    let folder_path = `${test_dir}${folder_i}`;
+    const folder_path = `${test_dir}${folder_i}`;
 
     // Mock the console.log function
     const consoleSpy = jest
@@ -457,7 +466,7 @@ describe('sync.js - single POT', () => {
       .mockName('console.log')
       .mockImplementation((...args) => {
         return args
-          .map((v) => String(v).trim().replaceAll(/\s+/g, ' '))
+          .map((v) => stripANSIColors(String(v).trim().replaceAll(/\s+/g, ' ')))
           .join(' ');
       });
 
@@ -504,14 +513,10 @@ describe('sync.js - single POT', () => {
     // Check if results were logged
     expect(consoleSpy).toHaveBeenCalledTimes(4);
     const logs = consoleSpy.mock.results.slice();
-    expect(logs[0].value + logs[3].value).toEqual('');
-    expect(logs[1].value).toMatch(
-      new RegExp('■ ' + potSource.split('/').slice(-1)[0])
-    );
-    expect(logs[2].value).toMatch(
-      new RegExp(
-        `${input_dir}text-domain-nl_NL.po —► ${folder_path}/text-domain-nl_NL.po`
-      )
+    expect(`${logs[0].value}${logs[3].value}`).toEqual('');
+    expect(logs[1].value).toEqual(`■ ${potSource.split('/').slice(-1)[0]}`);
+    expect(logs[2].value).toEqual(
+      `${input_dir}text-domain-nl_NL.po —► ${folder_path}/text-domain-nl_NL.po`
     );
 
     // Restore the console.log function
@@ -520,7 +525,7 @@ describe('sync.js - single POT', () => {
 
   test('extras - manual domain - no srcDir - no write', () => {
     folder_i++;
-    let folder_path = `${test_dir}${folder_i}`;
+    const folder_path = `${test_dir}${folder_i}`;
     if (!existsSync(folder_path)) {
       mkdirSync(folder_path, { recursive: true });
     }

@@ -1,25 +1,28 @@
-'use strict';
+import * as util from 'node:util';
+import c from 'ansi-colors';
+import cs from 'color-support';
 
-const util = require('util');
-const c = require('ansi-colors');
-c.enabled = require('color-support').hasBasic;
+c.enabled = Boolean(cs().hasBasic);
 
-const pluginname = require('../package.json').name;
+import { readFileSync } from 'node:fs';
+const packageJSON = JSON.parse(
+  readFileSync(new URL('../package.json', import.meta.url), 'utf-8')
+);
 
-// class PluginError extends Error {
 class PluginError {
-  constructor(message, category = '') {
-    // super( message );
-    // this.name = 'PluginError';
+  public message: string;
+  public category: string;
+
+  constructor(message: string, category = '') {
     this.message = message;
     this.category =
       category.slice(0, 1).toUpperCase() + category.slice(1).toLowerCase();
   }
 
   toString() {
-    return `${c.cyan(pluginname)}  ${c.bold.red(`${this.category}Error`)}  ${
-      this.message
-    }`;
+    return `${c.cyan(packageJSON.name)}  ${c.bold.red(
+      `${this.category}Error`
+    )}  ${this.message}`;
   }
 
   // See: https://nodejs.org/api/util.html#custom-inspection-functions-on-objects
@@ -29,7 +32,7 @@ class PluginError {
   }
 }
 
-module.exports = PluginError;
+export default PluginError;
 
 /*
  * TODO? ideas for new way of error writing + compile/display

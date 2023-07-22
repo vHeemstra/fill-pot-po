@@ -1,15 +1,13 @@
-'use strict';
+import prepareOptions from '../src/options';
 
-const prepareOptions = require('../src/options');
+import { escapeRegExp } from '../src/utils';
+import Vinyl from 'vinyl';
 
-const { escapeRegExp } = require('../src/utils');
-const Vinyl = require('vinyl');
-
-function reOptionError(k) {
+function reOptionError(k: string) {
   return new RegExp(`option ${escapeRegExp(k)}`, 'i');
 }
 
-const vinyl_file = new Vinyl({
+const vinyl_file: Vinyl = new Vinyl({
   contents: Buffer.from('some contents'),
   path: 'filename.pot',
 });
@@ -149,6 +147,7 @@ describe('options.js - validate', () => {
     const re = /Options should be an object/;
 
     expect(() => {
+      // @ts-expect-error - Missing argument
       prepareOptions();
     }).not.toThrow(re);
 
@@ -161,14 +160,17 @@ describe('options.js - validate', () => {
     }).toThrow(re);
 
     expect(() => {
+      // @ts-expect-error - Wrong argument
       prepareOptions(false);
     }).toThrow(re);
 
     expect(() => {
+      // @ts-expect-error - Wrong argument
       prepareOptions(true);
     }).toThrow(re);
 
     expect(() => {
+      // @ts-expect-error - Wrong argument
       prepareOptions(1);
     }).toThrow(re);
 
@@ -185,10 +187,12 @@ describe('options.js - validate', () => {
     }).not.toThrow(re);
 
     expect(() => {
+      // @ts-expect-error - Wrong argument
       prepareOptions([1]);
     }).toThrow(re);
 
     expect(() => {
+      // @ts-expect-error - Wrong argument
       prepareOptions([true]);
     }).toThrow(re);
 
@@ -197,10 +201,12 @@ describe('options.js - validate', () => {
     }).not.toThrow(re);
 
     expect(() => {
+      // @ts-expect-error - Wrong argument
       prepareOptions([[]]);
     }).toThrow(re);
 
     expect(() => {
+      // @ts-expect-error - Wrong argument
       prepareOptions([{}]);
     }).toThrow(re);
   });
@@ -213,14 +219,17 @@ describe('options.js - validate', () => {
     }).not.toThrow(re);
 
     expect(() => {
+      // @ts-expect-error - Wrong argument
       prepareOptions({ potSources: potSource, poSources: false });
-    }).not.toThrow(re);
+    }).toThrow(re);
 
     expect(() => {
+      // @ts-expect-error - Wrong argument
       prepareOptions({ potSources: potSource, poSources: true });
     }).toThrow(re);
 
     expect(() => {
+      // @ts-expect-error - Wrong argument
       prepareOptions({ potSources: potSource, poSources: 1 });
     }).toThrow(re);
 
@@ -233,31 +242,35 @@ describe('options.js - validate', () => {
     }).not.toThrow(re);
 
     expect(() => {
+      // @ts-expect-error - Wrong argument
       prepareOptions({ potSources: potSource, poSources: {} });
     }).toThrow(re);
 
     expect(() => {
+      // @ts-expect-error - Wrong argument
       prepareOptions({ potSources: potSource, poSources: [1] });
     }).toThrow(re);
 
     expect(() => {
+      // @ts-expect-error - Wrong argument
       prepareOptions({ potSources: potSource, poSources: [true] });
     }).toThrow(re);
 
     expect(() => {
+      // @ts-expect-error - Wrong argument
       prepareOptions({ potSources: potSource, poSources: [[]] });
     }).toThrow(re);
 
     expect(() => {
+      // @ts-expect-error - Wrong argument
       prepareOptions({ potSources: potSource, poSources: [{}] });
     }).toThrow(re);
   });
 
   test('writeFiles - default overwrite for gulp plugin', () => {
-    expect(prepareOptions({ potSources: '**/*.pot' }, false)).toHaveProperty(
-      'writeFiles',
-      false
-    );
+    expect(
+      prepareOptions({ potSources: '**/*.pot', writeFiles: false })
+    ).toHaveProperty('writeFiles', false);
   });
 
   test('srcDir - no newlines', () => {

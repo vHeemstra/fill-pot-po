@@ -1,12 +1,10 @@
-'use strict';
+import { resolvePOTFilepaths } from '../src/shared';
+import prepareOptions from '../src/options';
 
-const { resolvePOTFilepaths } = require('../src/shared');
-const prepareOptions = require('../src/options');
-
-const Vinyl = require('vinyl');
+import Vinyl from 'vinyl';
 
 const potSource = ['./test/examples/text-domain.pot'];
-const vinyl_file = new Vinyl({
+const vinyl_file: Vinyl = new Vinyl({
   contents: Buffer.from('some contents'),
   path: 'filename.pot',
 });
@@ -16,7 +14,7 @@ describe('shared.js - resolvePOTFilepaths()', () => {
     const re = new RegExp('leave option poSources empty');
     expect(() => {
       resolvePOTFilepaths(prepareOptions({ poSources: '' }));
-    }).not.toThrow(re);
+    }).toThrow(re);
     expect(() => {
       resolvePOTFilepaths(prepareOptions({ poSources: '*.po' }));
     }).toThrow(re);
@@ -54,6 +52,7 @@ describe('shared.js - resolvePOTFilepaths()', () => {
   test('store POT filenames', () => {
     let options = null;
     expect(() => {
+      // @ts-expect-error - Missing other properties
       options = resolvePOTFilepaths({ potSources: [vinyl_file] });
     }).not.toThrow();
     expect(options).not.toBeNull();
@@ -61,6 +60,7 @@ describe('shared.js - resolvePOTFilepaths()', () => {
 
     options = null;
     expect(() => {
+      // @ts-expect-error - Missing other properties
       options = resolvePOTFilepaths({
         potSources: ['test/examples/text-domain.pot'],
       });

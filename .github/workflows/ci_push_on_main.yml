@@ -1,4 +1,4 @@
-name: Lint | Test | Release
+name: Lint | Test | Build | Release
 
 on:
   push:
@@ -9,6 +9,8 @@ on:
       - 'src/**'
       - '.npmignore'
       - 'LICENSE'
+      - 'tsup.config.js'
+      - 'tsconfig.json'
       - 'package.json'
       - 'package-lock.json'
 
