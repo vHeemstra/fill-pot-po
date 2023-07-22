@@ -56,16 +56,6 @@ export const isBool = (value: unknown): value is boolean => {
 };
 
 /**
- * Determine if `value` is a Vinyl object or not.
- *
- * @param  {mixed}  value
- * @return {boolean}
- */
-export const isVinyl = (value: unknown): value is Vinyl => {
-  return Vinyl.isVinyl(value);
-};
-
-/**
  * Determine if `value` is an array containing only strings or not.
  *
  * @param  {mixed}  value
@@ -86,7 +76,7 @@ export const isArrayOfStrings = (value: unknown): value is Array<string> => {
  */
 export const isArrayOfVinyls = (value: unknown): value is Array<Vinyl> => {
   if (!isArray(value)) return false;
-  return Boolean(value.reduce((r, v) => isVinyl(v) && r, true));
+  return Boolean(value.reduce((r, v) => Vinyl.isVinyl(v) && r, true));
 };
 
 /**
@@ -110,7 +100,7 @@ export const isArrayOfVinyls = (value: unknown): value is Array<Vinyl> => {
 //   value: unknown
 // ): value is Array<Vinyl | Buffer> => {
 //   if (!isArray(value)) return false;
-//   return value.reduce((r, v) => isVinyl(v) && r, true);
+//   return value.reduce((r, v) => Vinyl.isVinyl(v) && r, true);
 // };
 
 /**

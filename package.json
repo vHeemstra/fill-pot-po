@@ -14,7 +14,7 @@
   },
   "scripts": {
     "dev": "npm run build -- --watch src",
-    "build": "tsup src/index.ts --format cjs,esm --dts --clean",
+    "build": "tsup",
     "lint": "eslint src/*.ts test/*.ts",
     "lint:fix": "eslint --fix src/*.ts test/*.ts",
     "test": "jest",

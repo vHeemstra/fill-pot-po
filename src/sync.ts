@@ -15,7 +15,6 @@ import {
   ResolvedOptions,
   PoObject,
 } from './shared';
-import { isVinyl as _isVinyl } from './utils';
 
 let pot_input_files: Vinyl[] = [];
 let po_input_files: string[][] = [];
@@ -65,7 +64,7 @@ export const processPOs = (
  * @return {void}
  */
 export const processPOT = (pot_file: Source, options: ResolvedOptions) => {
-  const isVinyl = _isVinyl(pot_file);
+  const isVinyl = Vinyl.isVinyl(pot_file);
   const pot_filepath: string = isVinyl ? pot_file.path : pot_file;
 
   // Get filepaths of POs

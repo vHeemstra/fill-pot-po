@@ -1,18 +1,18 @@
 import { resolve, relative } from 'node:path';
+import Vinyl from 'vinyl';
 // // import { Buffer } from 'node:buffer';
 // import { Buffer } from 'safe-buffer';
 import PluginError from './plugin-error';
 import {
   isArray,
   isObject,
-  isString,
   isBool,
+  isString,
   isArrayOfStrings,
   isArrayOfVinyls,
   // isArrayOfBuffers,
   // isArrayOfVinylsOrBuffers,
 } from './utils';
-import { isVinyl } from 'vinyl';
 
 import type {
   ValidatedOptions,
@@ -54,7 +54,7 @@ export const validateOptionsInput = (options: Options): ValidatedOptions => {
       // !Buffer.isBuffer(options.potSources) &&
       // !isArrayOfBuffers(options.potSources) &&
       // !isArrayOfVinylsOrBuffers(options.potSources) &&
-      !isVinyl(options.potSources) &&
+      !Vinyl.isVinyl(options.potSources) &&
       !isArrayOfVinyls(options.potSources)
     ) {
       throw new OptionsError(
