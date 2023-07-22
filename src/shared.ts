@@ -1,15 +1,87 @@
-'use strict';
+import type { Omit } from 'utility-types';
+import { basename, dirname } from 'node:path';
+// import { Buffer } from 'node:buffer';
+import { Buffer } from 'safe-buffer';
+import { sync as matchedSync } from 'matched';
+import { existsSync, mkdirSync, writeFileSync } from 'node:fs';
+import gettextParser from 'gettext-parser';
+import Vinyl from 'vinyl';
+import c from 'ansi-colors';
+import cs from 'color-support';
+import { isArray, isString, pathLineSort } from './utils';
+import PluginError from './plugin-error';
 
-const packageJSON = require('../package.json');
-const { basename, dirname } = require('path');
-const { sync: matchedSync } = require('matched');
-const { existsSync, mkdirSync, writeFileSync } = require('fs');
-const gettextParser = require('gettext-parser');
-const { isString, pathLineSort } = require('./utils');
-const Vinyl = require('vinyl');
-const PluginError = require('./plugin-error');
-const c = require('ansi-colors');
-c.enabled = require('color-support').hasBasic;
+c.enabled = Boolean(cs().hasBasic);
+
+import { readFileSync } from 'node:fs';
+const packageJSON = JSON.parse(
+  readFileSync(new URL('../package.json', import.meta.url), 'utf-8')
+);
+
+export type Source = string | Vinyl; // | Buffer;
+
+export type Options = string | string[] | ValidatedOptions;
+
+export type ValidatedOptions = {
+  // Input-related
+  potSources?: Source | Source[];
+  poSources?: string | string[] | null;
+  srcDir?: string;
+  domainInPOPath?: boolean;
+  domainFromPOTPath?: boolean;
+  domain?: string;
+  srcGlobOptions?: object;
+
+  // Content-related
+  wrapLength?: number;
+  defaultContextAsFallback?: boolean;
+  appendNonIncludedFromPO?: boolean;
+  includePORevisionDate?: boolean;
+  includeGenerator?: boolean;
+
+  // Output-related
+  returnPOT?: boolean;
+  writeFiles?: boolean;
+  destDir?: string;
+  logResults?: boolean;
+};
+
+export type StandardizedOptions = Omit<
+  ValidatedOptions,
+  'potSources' | 'poSources'
+> & {
+  potSources?: Source[];
+  poSources?: string[] | null;
+};
+
+export type PreparedOptions = Required<StandardizedOptions>;
+
+export type ResolvedOptions = PreparedOptions & {
+  _potFilenames: string[];
+};
+
+export type PoObject = {
+  charset: string;
+  headers: {
+    [key: string]: string;
+  };
+  translations: {
+    [key: string]: {
+      [key: string]: {
+        msgctxt?: string; // Context
+        msgid: string; // Untranslated (single) string
+        msgid_plural?: string; // Untranslated plural string
+        msgstr: string[]; // Translated strings (single, plural)
+        comments?: {
+          [key: string]: string;
+          // translator?: string;
+          // reference?: string;
+          // flag?: string;
+        };
+      };
+    };
+  };
+};
 
 /**
  * Resolve POT sources globs to filepaths.
@@ -18,14 +90,20 @@ c.enabled = require('color-support').hasBasic;
  * @param  {object} options
  * @return {object} options
  */
-function resolvePOTFilepaths(options) {
+export const resolvePOTFilepaths = (
+  options: PreparedOptions
+): ResolvedOptions => {
   // Resolve POT filepaths to process, if array of strings
-  if (options.potSources.length && isString(options.potSources[0])) {
-    options.potSources = matchedSync(options.potSources);
+  if (
+    isArray(options.potSources) &&
+    options.potSources.length &&
+    isString(options.potSources[0])
+  ) {
+    options.potSources = matchedSync(options.potSources) as Source[];
   }
 
   // Store POT filepaths for logging
-  options._potFilenames = options.potSources.map((f) =>
+  (options as ResolvedOptions)._potFilenames = options.potSources.map((f) =>
     isString(f) ? f : f.path
   );
 
@@ -40,8 +118,8 @@ function resolvePOTFilepaths(options) {
     );
   }
 
-  return options;
-}
+  return options as ResolvedOptions;
+};
 
 /**
  * Get filepaths for all PO files to process.
@@ -51,7 +129,10 @@ function resolvePOTFilepaths(options) {
  *
  * @return {array} PO filepaths
  */
-function getPOFilepaths(pot_filepath, options) {
+export const getPOFilepaths = (
+  pot_filepath: string,
+  options: ResolvedOptions
+) => {
   const pot_name = basename(pot_filepath, '.pot');
   const domain = options.domainFromPOTPath ? pot_name : options.domain;
   const po_dir = options.srcDir ? options.srcDir : `${dirname(pot_filepath)}/`;
@@ -65,7 +146,7 @@ function getPOFilepaths(pot_filepath, options) {
   // const srcDirs = matchedSync(`${po_dir}`); // Always has trailing separator
 
   // Auto-compile PO files glob
-  const po_files_glob = [];
+  const po_files_glob: string[] = [];
   if (options.poSources) {
     // TODO? prefix all with po_dir ?
     po_files_glob.push(...options.poSources);
@@ -79,13 +160,14 @@ function getPOFilepaths(pot_filepath, options) {
   }
 
   // Find and sort file paths
-  const po_filepaths = pathLineSort(
-    matchedSync(po_files_glob, options.srcGlobOptions)
-  );
+  const po_filepaths: string[] = matchedSync(
+    po_files_glob,
+    options.srcGlobOptions
+  ).sort(pathLineSort);
   // TODO?
   // store or return srcDirs (for subtracting from PO paths later on)
   return po_filepaths;
-}
+};
 
 /**
  * Create the new PO file.
@@ -103,9 +185,14 @@ function getPOFilepaths(pot_filepath, options) {
  *
  * @return {object} Vinyl file object
  */
-function generatePO(pot_object, po_object, po_filepath, options) {
+export const generatePO = (
+  pot_object: PoObject,
+  po_object: PoObject,
+  po_filepath: string,
+  options: ResolvedOptions
+): Vinyl => {
   // Deep clone POT as base for the new PO
-  let new_po_object = JSON.parse(JSON.stringify(pot_object));
+  let new_po_object: PoObject = JSON.parse(JSON.stringify(pot_object));
 
   // Pre-fill template with PO strings
   new_po_object = fillPO(new_po_object, po_object, options);
@@ -125,7 +212,7 @@ function generatePO(pot_object, po_object, po_filepath, options) {
     contents: Buffer.from(new_po_output),
     path: new_po_filepath,
   });
-}
+};
 
 /**
  * Fill new PO object with translations from PO file.
@@ -143,7 +230,11 @@ function generatePO(pot_object, po_object, po_filepath, options) {
  *
  * @return {object} Prefilled PO object
  */
-function fillPO(new_po_object, po_object, options) {
+const fillPO = (
+  new_po_object: PoObject,
+  po_object: PoObject,
+  options: ResolvedOptions
+) => {
   // Traverse template contexts
   for (const [ctxt, entries] of Object.entries(new_po_object.translations)) {
     // Traverse template entries
@@ -172,34 +263,27 @@ function fillPO(new_po_object, po_object, options) {
         ];
 
         // Set/add fuzzy flag comment
-        const fuzzy_comment = 'fuzzy';
-        if (!new_po_object.translations[ctxt][msgid].comments) {
-          new_po_object.translations[ctxt][msgid].comments = {};
-        }
-        if (!new_po_object.translations[ctxt][msgid].comments.flag) {
-          new_po_object.translations[ctxt][msgid].comments.flag = fuzzy_comment;
-        } else {
-          new_po_object.translations[ctxt][msgid].comments.flag =
-            fuzzy_comment +
-            ', ' +
-            new_po_object.translations[ctxt][msgid].comments.flag;
-        }
+        new_po_object.translations[ctxt][msgid].comments = {
+          ...(new_po_object.translations[ctxt][msgid]?.comments ?? {}),
+          flag: [
+            'fuzzy',
+            new_po_object.translations[ctxt][msgid]?.comments?.flag,
+          ]
+            .filter((v) => v)
+            .join(', '),
+        };
 
         // Set translator comment to flag re-usage in case of deprecation
         // NOTE: comment set on PO object, so it's only included if appended as deprecated.
-        const reusage_comment = `NOTE: re-used for same message, but with context '${ctxt}'`;
-        if (!po_object.translations[''][msgid].comments) {
-          po_object.translations[''][msgid].comments = {};
-        }
-        if (!po_object.translations[''][msgid].comments.translator) {
-          po_object.translations[''][msgid].comments.translator =
-            reusage_comment;
-        } else {
-          po_object.translations[''][msgid].comments.translator =
-            reusage_comment +
-            '\n' +
-            po_object.translations[''][msgid].comments.translator;
-        }
+        po_object.translations[''][msgid].comments = {
+          ...(po_object.translations[''][msgid]?.comments ?? {}),
+          translator: [
+            `NOTE: re-used for same message, but with context '${ctxt}'`,
+            po_object.translations[''][msgid]?.comments?.translator,
+          ]
+            .filter((v) => v)
+            .join('\n'),
+        };
       }
     }
   }
@@ -218,17 +302,22 @@ function fillPO(new_po_object, po_object, options) {
           new_po_object.translations[ctxt][msgid] = entry;
 
           // Add translator comment "DEPRECATED"
-          if (!new_po_object.translations[ctxt][msgid].comments) {
-            new_po_object.translations[ctxt][msgid].comments = {};
-          }
-          if (!new_po_object.translations[ctxt][msgid].comments.translator) {
-            new_po_object.translations[ctxt][msgid].comments.translator =
-              'DEPRECATED';
-          } else if (!entry.comments.translator.match(/^DEPRECATED$/gm)) {
-            new_po_object.translations[ctxt][msgid].comments.translator =
-              'DEPRECATED\n' +
-              new_po_object.translations[ctxt][msgid].comments.translator;
-          }
+          new_po_object.translations[ctxt][msgid].comments = {
+            ...(new_po_object.translations[ctxt][msgid]?.comments ?? {}),
+            ...(new_po_object.translations[ctxt][msgid]?.comments?.translator &&
+            entry?.comments?.translator.match(/^DEPRECATED$/gm)
+              ? {}
+              : {
+                  translator: isString(
+                    new_po_object.translations[ctxt][msgid]?.comments
+                      ?.translator
+                  )
+                    ? 'DEPRECATED\n' +
+                      (new_po_object.translations[ctxt][msgid].comments
+                        ?.translator ?? '')
+                    : 'DEPRECATED',
+                }),
+          };
         }
       }
     }
@@ -254,7 +343,7 @@ function fillPO(new_po_object, po_object, options) {
   }
 
   return new_po_object;
-}
+};
 
 /**
  * Compiles PO object to content.
@@ -267,7 +356,10 @@ function fillPO(new_po_object, po_object, options) {
  *
  * @return {string} Compiled PO file content
  */
-function compilePO(new_po_object, options) {
+const compilePO = (
+  new_po_object: PoObject,
+  options: ResolvedOptions
+): Buffer => {
   return gettextParser.po.compile(new_po_object, {
     foldLength: options.wrapLength,
     // Sort entries by first reference filepath and line number.
@@ -287,7 +379,7 @@ function compilePO(new_po_object, options) {
       return pathLineSort(a, b);
     },
   });
-}
+};
 
 /**
  * Writes PO content to file.
@@ -299,13 +391,13 @@ function compilePO(new_po_object, options) {
  *
  * @return {void}
  */
-function writePO(new_po_filepath, new_po_output) {
+const writePO = (new_po_filepath: string, new_po_output: Buffer) => {
   const new_po_dir = dirname(new_po_filepath);
   if (!existsSync(new_po_dir)) {
     mkdirSync(new_po_dir, { recursive: true });
   }
-  writeFileSync(new_po_filepath, new_po_output);
-}
+  writeFileSync(new_po_filepath, new_po_output.toString());
+};
 
 /**
  * Log results to console.
@@ -319,7 +411,7 @@ function writePO(new_po_filepath, new_po_output) {
  *
  * @return {void}
  */
-function logResults(pots, pos_in, pos_out, dest) {
+export const logResults = (pots, pos_in, pos_out, dest) => {
   pots.forEach((pot, i) => {
     const pot_filepath = basename(pot);
     const po_filepaths_in = pos_in[i]?.map((po) => po);
@@ -350,11 +442,4 @@ function logResults(pots, pos_in, pos_out, dest) {
     }
   });
   console.log('');
-}
-
-module.exports = {
-  resolvePOTFilepaths,
-  getPOFilepaths,
-  generatePO,
-  logResults,
 };

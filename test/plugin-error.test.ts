@@ -1,7 +1,5 @@
-'use strict';
-
-const PluginError = require('../src/plugin-error');
-const util = require('util');
+import PluginError from '../src/plugin-error';
+import * as util from 'node:util';
 
 describe('plugin-error.js', () => {
   const error = new PluginError('SOMEERROR', 'AaAaA');

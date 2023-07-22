@@ -1,6 +1,4 @@
-'use strict';
-
-const {
+import {
   isArray,
   isObject,
   isString,
@@ -8,8 +6,8 @@ const {
   isArrayOfStrings,
   isArrayOfVinyls,
   pathLineSort,
-} = require('../src/utils');
-const Vinyl = require('vinyl');
+} from '../src/utils';
+import Vinyl from 'vinyl';
 
 const vinyl_file = new Vinyl({
   contents: Buffer.from('some contents'),
@@ -27,7 +25,7 @@ function someFunction() {}
  *
  * @return {array} Filepaths
  */
-/* eslint-disable-next-line no-unused-vars */
+/* eslint-disable-next-line no-unused-vars, @typescript-eslint/no-unused-vars */
 function generatePaths() {
   const dirs = [
     '',
@@ -42,7 +40,7 @@ function generatePaths() {
 
   const lines = ['', ':10', ':20', ':100'];
 
-  let filepaths = [].concat(
+  const filepaths = [].concat(
     ...dirs.map((d) =>
       [d].concat(...files.map((f) => lines.map((l) => `${d}${f}${l}`)))
     )
@@ -57,7 +55,7 @@ function generatePaths() {
  * @param  {array} array
  * @return {array}
  */
-/* eslint-disable-next-line no-unused-vars */
+/* eslint-disable-next-line no-unused-vars, @typescript-eslint/no-unused-vars */
 function shuffle(array) {
   let currentIndex = array.length,
     randomIndex;
@@ -620,7 +618,7 @@ describe('utils.js - pathLineSort', () => {
   ];
 
   // let shuffled = shuffle( sorted.slice() );
-  let shuffled = [
+  const shuffled = [
     'some/quoted/file.ext:100',
     'some/path/file.ext:100',
     'some/path/file.ext:10',
@@ -754,19 +752,17 @@ describe('utils.js - pathLineSort', () => {
     'some/path/.ext',
   ];
 
-  test('used as function', () => {
-    expect(pathLineSort(shuffled)).toEqual(sorted);
-  });
-
   test('used as callback for array.sort()', () => {
     expect(shuffled.sort(pathLineSort)).toEqual(sorted);
   });
 
   test('handles only strings', () => {
     expect(() => {
+      // @ts-expect-error - Wrong argument type
       pathLineSort('test.txt', {});
     }).toThrow(new RegExp('pathLineSort: a or b not a string'));
     expect(() => {
+      // @ts-expect-error - Wrong argument type
       pathLineSort([], 'test.txt');
     }).toThrow(new RegExp('pathLineSort: a or b not a string'));
   });

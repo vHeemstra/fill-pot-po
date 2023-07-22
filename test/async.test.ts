@@ -1,12 +1,40 @@
-'use strict';
+import fillPotPo from '../src/async';
+import { testOptions } from '../src/index';
 
-const fillPotPo = require('../src/async');
-const { testOptions } = require('../src/index');
+import { sync as matchedSync } from 'matched';
+import * as fs from 'node:fs';
+import { relative } from 'node:path';
+import Vinyl from 'vinyl';
 
-const { sync: matchedSync } = require('matched');
-const fs = require('fs');
-const { relative } = require('path');
-const Vinyl = require('vinyl');
+// import {jest} from '@jest/globals';
+// jest.mock('node:fs', () => ({
+//   rmSync: jest.fn(jest.requireActual('node:fs').rmSync),
+//   existsSync: jest.fn(jest.requireActual('node:fs').existsSync),
+//   mkdirSync: jest.fn(jest.requireActual('node:fs').mkdirSync),
+//   readFileSync: jest.fn(jest.requireActual('node:fs').readFileSync),
+//   writeFileSync: jest.fn(jest.requireActual('node:fs').writeFileSync),
+//   readFile: jest.fn(jest.requireActual('node:fs').readFile),
+// }));
+jest.mock('node:fs', () => ({
+  __esModule: true,
+  ...jest.requireActual('node:fs'),
+}));
+
+// jest.mock('console', () => ({
+//   log: jest.fn(jest.requireActual('console').log),
+// }));
+// jest.mock('console', () => ({
+//   ...jest.requireActual('console'),
+// }));
+
+/* eslint-disable no-control-regex */
+const stripANSIColors = (s: string): string => {
+  return s.replace(
+    /[\u001b\u009b][[()#;?]*(?:[0-9]{1,4}(?:;[0-9]{0,4})*)?[0-9A-ORZcf-nqry=><]/g,
+    ''
+  );
+};
+/* eslint-enable no-control-regex */
 
 const potSource = './test/examples/text-domain.pot';
 // const potSources = './test/examples/*.pot';
@@ -28,7 +56,7 @@ const expected_po_no_domain = fs.readFileSync(`${expected_dir}nl_NL.po`);
  * @return {void}
  */
 function clearOutputFolder() {
-  let files = matchedSync([`${test_dir}*`]);
+  const files = matchedSync([`${test_dir}*`]);
   files.sort((a, b) => {
     const a_len = a.split(/\//);
     const b_len = b.split(/\//);
@@ -54,7 +82,7 @@ describe('async.js - single POT', () => {
 
   test('auto domain PO - no write', (done) => {
     folder_i++;
-    let folder_path = `${test_dir}${folder_i}`;
+    const folder_path = `${test_dir}${folder_i}`;
     if (!fs.existsSync(folder_path)) {
       fs.mkdirSync(folder_path, { recursive: true });
     }
@@ -93,12 +121,13 @@ describe('async.js - single POT', () => {
       }
     }
 
+    // @_ts-expect-error - Untyped callback
     fillPotPo(cb, options);
   });
 
   test('auto no-domain PO - no write', (done) => {
     folder_i++;
-    let folder_path = `${test_dir}${folder_i}`;
+    const folder_path = `${test_dir}${folder_i}`;
     if (!fs.existsSync(folder_path)) {
       fs.mkdirSync(folder_path, { recursive: true });
     }
@@ -138,12 +167,13 @@ describe('async.js - single POT', () => {
       }
     }
 
+    // @_ts-expect-error - Untyped callback
     fillPotPo(cb, options);
   });
 
   test('manual multiple PO - no write', (done) => {
     folder_i++;
-    let folder_path = `${test_dir}${folder_i}`;
+    const folder_path = `${test_dir}${folder_i}`;
     if (!fs.existsSync(folder_path)) {
       fs.mkdirSync(folder_path, { recursive: true });
     }
@@ -187,12 +217,13 @@ describe('async.js - single POT', () => {
       }
     }
 
+    // @_ts-expect-error - Untyped callback
     fillPotPo(cb, options);
   });
 
   test('auto domain PO - write', (done) => {
     folder_i++;
-    let folder_path = `${test_dir}${folder_i}`;
+    const folder_path = `${test_dir}${folder_i}`;
     if (!fs.existsSync(folder_path)) {
       fs.mkdirSync(folder_path, { recursive: true });
     }
@@ -236,12 +267,13 @@ describe('async.js - single POT', () => {
       }
     }
 
+    // @_ts-expect-error - Untyped callback
     fillPotPo(cb, options);
   });
 
   test('auto no-domain PO - write', (done) => {
     folder_i++;
-    let folder_path = `${test_dir}${folder_i}`;
+    const folder_path = `${test_dir}${folder_i}`;
     if (!fs.existsSync(folder_path)) {
       fs.mkdirSync(folder_path, { recursive: true });
     }
@@ -286,12 +318,13 @@ describe('async.js - single POT', () => {
       }
     }
 
+    // @_ts-expect-error - Untyped callback
     fillPotPo(cb, options);
   });
 
   test('manual multiple PO - write', (done) => {
     folder_i++;
-    let folder_path = `${test_dir}${folder_i}`;
+    const folder_path = `${test_dir}${folder_i}`;
     if (!fs.existsSync(folder_path)) {
       fs.mkdirSync(folder_path, { recursive: true });
     }
@@ -346,12 +379,13 @@ describe('async.js - single POT', () => {
       }
     }
 
+    // @_ts-expect-error - Untyped callback
     fillPotPo(cb, options);
   });
 
   test('manual empty PO array', (done) => {
     folder_i++;
-    let folder_path = `${test_dir}${folder_i}`;
+    const folder_path = `${test_dir}${folder_i}`;
     if (!fs.existsSync(folder_path)) {
       fs.mkdirSync(folder_path, { recursive: true });
     }
@@ -362,7 +396,7 @@ describe('async.js - single POT', () => {
       .mockName('console.log')
       .mockImplementation((...args) => {
         return args
-          .map((v) => String(v).trim().replaceAll(/\s+/g, ' '))
+          .map((v) => stripANSIColors(String(v).trim().replaceAll(/\s+/g, ' ')))
           .join(' ');
       });
 
@@ -392,11 +426,9 @@ describe('async.js - single POT', () => {
         // Check if results were logged
         expect(consoleSpy).toHaveBeenCalledTimes(4);
         const logs = consoleSpy.mock.results.slice();
-        expect(logs[0].value + logs[3].value).toEqual('');
-        expect(logs[1].value).toMatch(
-          new RegExp('■ ' + potSource.split('/').slice(-1)[0])
-        );
-        expect(logs[2].value).toMatch(new RegExp('No PO files found.'));
+        expect(`${logs[0].value}${logs[3].value}`).toEqual('');
+        expect(logs[1].value).toEqual('■ ' + potSource.split('/').slice(-1)[0]);
+        expect(logs[2].value).toEqual('No PO files found.');
 
         // Restore the console.log function
         consoleSpy.mockRestore();
@@ -407,12 +439,13 @@ describe('async.js - single POT', () => {
       }
     }
 
+    // @_ts-expect-error - Untyped callback
     fillPotPo(cb, options);
   });
 
   test('auto domain PO - write - return POT', (done) => {
     folder_i++;
-    let folder_path = `${test_dir}${folder_i}`;
+    const folder_path = `${test_dir}${folder_i}`;
     if (!fs.existsSync(folder_path)) {
       fs.mkdirSync(folder_path, { recursive: true });
     }
@@ -460,6 +493,7 @@ describe('async.js - single POT', () => {
       }
     }
 
+    // @_ts-expect-error - Untyped callback
     fillPotPo(cb, options);
   });
 
@@ -496,12 +530,13 @@ describe('async.js - single POT', () => {
       }
     }
 
+    // @_ts-expect-error - Untyped callback
     fillPotPo(cb, options);
   });
 
   test('auto domain PO - write - return POT - input POT Vinyl', (done) => {
     folder_i++;
-    let folder_path = `${test_dir}${folder_i}`;
+    const folder_path = `${test_dir}${folder_i}`;
     if (!fs.existsSync(folder_path)) {
       fs.mkdirSync(folder_path, { recursive: true });
     }
@@ -552,12 +587,13 @@ describe('async.js - single POT', () => {
       }
     }
 
+    // @_ts-expect-error - Untyped callback
     fillPotPo(cb, options);
   });
 
   test('extras - auto domain PO - write - content optionals', (done) => {
     folder_i++;
-    let folder_path = `${test_dir}${folder_i}`;
+    const folder_path = `${test_dir}${folder_i}`;
 
     // Mock the console.log function
     const consoleSpy = jest
@@ -565,7 +601,7 @@ describe('async.js - single POT', () => {
       .mockName('console.log')
       .mockImplementation((...args) => {
         return args
-          .map((v) => String(v).trim().replaceAll(/\s+/g, ' '))
+          .map((v) => stripANSIColors(String(v).trim().replaceAll(/\s+/g, ' ')))
           .join(' ');
       });
 
@@ -613,14 +649,10 @@ describe('async.js - single POT', () => {
         // Check if results were logged
         expect(consoleSpy).toHaveBeenCalledTimes(4);
         const logs = consoleSpy.mock.results.slice();
-        expect(logs[0].value + logs[3].value).toEqual('');
-        expect(logs[1].value).toMatch(
-          new RegExp('■ ' + potSource.split('/').slice(-1)[0])
-        );
-        expect(logs[2].value).toMatch(
-          new RegExp(
-            `${input_dir}text-domain-nl_NL.po —► ${folder_path}/text-domain-nl_NL.po`
-          )
+        expect(`${logs[0].value}${logs[3].value}`).toEqual('');
+        expect(logs[1].value).toEqual(`■ ${potSource.split('/').slice(-1)[0]}`);
+        expect(logs[2].value).toEqual(
+          `${input_dir}text-domain-nl_NL.po —► ${folder_path}/text-domain-nl_NL.po`
         );
 
         // Restore the console.log function
@@ -632,6 +664,7 @@ describe('async.js - single POT', () => {
       }
     }
 
+    // @_ts-expect-error - Untyped callback
     fillPotPo(cb, options);
   });
 
@@ -660,6 +693,7 @@ describe('async.js - single POT', () => {
       }
     }
 
+    // @_ts-expect-error - Untyped callback
     fillPotPo(cb, options);
   });
 
@@ -668,9 +702,10 @@ describe('async.js - single POT', () => {
     const readFileSpy = jest
       .spyOn(fs, 'readFile')
       .mockName('fs.readFile')
-      .mockImplementation((path, cb) => {
+      .mockImplementation((_path, cb) => {
         // first: *.pot
         // then: *.po
+        // @ts-expect-error - Incomplete error object
         cb({ message: 'POT_MOCK_FS_READFILE_ERROR' }, '');
       });
 
@@ -700,6 +735,7 @@ describe('async.js - single POT', () => {
       }
     }
 
+    // @_ts-expect-error - Untyped callback
     fillPotPo(cb, options);
   });
 
@@ -709,13 +745,14 @@ describe('async.js - single POT', () => {
     const readFileSpy = jest
       .spyOn(fs, 'readFile')
       .mockName('fs.readFile')
-      .mockImplementation((path, cb) => {
+      .mockImplementation((path: string, cb) => {
         // first *.pot
         if (path.match(/\.pot$/i)) {
           origReadFile(path, cb);
           return;
         }
         // then *.po
+        // @ts-expect-error - Incomplete error object
         cb({ message: 'PO_MOCK_FS_READFILE_ERROR' }, '');
       });
 
@@ -745,6 +782,7 @@ describe('async.js - single POT', () => {
       }
     }
 
+    // @_ts-expect-error - Untyped callback
     fillPotPo(cb, options);
   });
 
@@ -752,6 +790,7 @@ describe('async.js - single POT', () => {
 
   test('fillPotPo requires a callback', () => {
     expect(() => {
+      // @ts-expect-error - Missing argument
       fillPotPo();
     }).toThrow(/fillPotPo\(\) requires a callback function as first parameter/);
   });
