@@ -6,9 +6,10 @@
 [![Downloads][downloads-image]][npm-url]
 
 > Generate pre-filled PO files from POT file, using source PO files.
-> 
-> *Based on the POT filename or set options, it looks for source PO files. For each PO file, it will create a new one, based on the contents of the POT file. The source PO file is used to fill in the matching translated strings.*
-
+>
+> _Based on the POT filename or set options, it looks for source PO files. For each PO file, it will create a new one, based on the contents of the POT file. The source PO file is used to fill in the matching translated strings._
+>
+> ✨ **_This package now supports both ESM and CommonJS_** 🎉
 
 ## Use case
 
@@ -18,13 +19,11 @@ In this case, you can use this module to auto-create new PO files based on the n
 
 For Gulp, there is a wrapper plugin [**gulp-fill-pot-po**](https://github.com/vHeemstra/gulp-fill-pot-po/).
 
-
 ## Install
 
 ```bash
 npm install --save-dev fill-pot-po
 ```
-
 
 ## Usage
 
@@ -54,16 +53,28 @@ Processes the POT files and found PO files in parallel.
     </tr>
 </table>
 
-#### Example
+#### Example (CommonJS)
 
 ```js
 const fillPotPo = require('fill-pot-po');
 
-const cb = results => {
-    // ...
+const cb = (results) => {
+  // ...
 };
 
-fillPotPo( cb, options );
+fillPotPo(cb, options);
+```
+
+#### Example (ESM)
+
+```js
+import fillPotPo from 'fill-pot-po';
+
+const cb = (results) => {
+  // ...
+};
+
+fillPotPo(cb, options);
 ```
 
 ### 2. Synchronous
@@ -91,70 +102,72 @@ Processes the POT files and found PO files in series (slower).
     </tr>
 </table>
 
-#### Example
+#### Example (CommonJS)
 
 ```js
 const fillPotPoSync = require('fill-pot-po').sync;
 
 try {
-    const results = fillPotPoSync( options );
+  const results = fillPotPoSync(options);
 
-    //...
-} catch ( error ) {
-    console.log( error );
+  //...
+} catch (error) {
+  console.log(error);
 }
-
 ```
 
+#### Example (ESM)
+
+```js
+import { sync as fillPotPoSync } from 'fill-pot-po';
+
+try {
+  const results = fillPotPoSync(options);
+
+  //...
+} catch (error) {
+  console.log(error);
+}
+```
 
 ## Locating PO files for each POT file
+
 For each POT file that is processed, the module will try to locate the proper PO files.
 
 This is the algorithm in pseudo-code:
+
 ```js
-if ( options.poSources ) {
-
-    po_search_glob = options.poSources
-
+if (options.poSources) {
+  po_search_glob = options.poSources;
 } else {
+  source_dir = options.srcDir || pot_file_directory;
 
-    source_dir = options.srcDir || pot_file_directory
+  if (options.domainInPOPath) {
+    if (options.domainFromPOTPath) {
+      // NOTE: If the POT file is an unnamed Vinyl object, an error will be thrown now.
 
-    if ( options.domainInPOPath ) {
-
-        if ( options.domainFromPOTPath ) {
-
-            // NOTE: If the POT file is an unnamed Vinyl object, an error will be thrown now.
-
-            po_search_glob = `${source_dir}/${pot_file_basename_without_ext}-${any_locale}.po`
-
-        } else {
-
-            // NOTE: If options.domain is empty, an error will be thrown now.
-
-            po_search_glob = `${source_dir}/${options.domain}-${any_locale}.po`
-
-        }
-
+      po_search_glob = `${source_dir}/${pot_file_basename_without_ext}-${any_locale}.po`;
     } else {
+      // NOTE: If options.domain is empty, an error will be thrown now.
 
-        po_search_glob = `${source_dir}/${any_locale}.po`
-
+      po_search_glob = `${source_dir}/${options.domain}-${any_locale}.po`;
     }
-
+  } else {
+    po_search_glob = `${source_dir}/${any_locale}.po`;
+  }
 }
 
 // NOTE: For all glob searches, options.srcGlobOptions will be used.
-
 ```
+
 For actual source code, see [**`getPOFilepaths()`**](https://github.com/vHeemstra/fill-pot-po/blob/main/src/shared.js#L50) in **src/shared.js**.
 
 See also options [`poSources`](#posources), [`srcDir`](#srcdir), [`domainInPOPath`](#domaininpopath), [`domainFromPOTPath`](#domainfrompotpath) and [`domain`](#domain).
 
-
 ## Options
 
-### *Overview of all defaults*
+### _Overview of all defaults_
+
 ```js
 {
     // Input-related
@@ -182,7 +195,9 @@ See also options [`poSources`](#posources), [`srcDir`](#srcdir), [`domainInPOPat
 ```
 
 ### potSources
+
 `string|Vinyl|array`
+
 > The POT files to process. Can be a path or glob string, a Vinyl object, an array of strings or an array of Vinyl objects.
 
 Default: `['**/*.pot', '!node_modules/**']`
@@ -190,61 +205,73 @@ Default: `['**/*.pot', '!node_modules/**']`
 ### Options related to locating PO files
 
 #### poSources
+
 `string|array`
+
 > The PO source files to use. Can be a path or glob string, or an array of paths/globs.
-> 
+>
 > By default, or if falsy, the module will look for PO files with filenames like `{text-domain}-{locale}.po` or `{locale}.po` if [`domainInPOPath`](#domaininpopath) is set to false.
-> 
+>
 > `{text-domain}` is either the POT filename or the value set in the [`domain`](#domain) option.
-> 
+>
 > See [**Locating PO files for each POT file**](#locating-po-files-for-each-pot-file) for more info.
 
 Default: `null`
 
 #### srcDir
+
 `string`
+
 > Relative path from current working directory or absolute path to folder where source PO files can be found.
-> 
+>
 > By default, the same folder as the POT file will be used.
-> 
+>
 > See [**Locating PO files for each POT file**](#locating-po-files-for-each-pot-file) for more info.
 
 Default: `''`
 
 #### domainInPOPath
+
 `boolean`
+
 > Match source PO files with the text domain name in the filename.
-> 
+>
 > For example: `text-domain-en_EN.po` and `text-domain-nl_NL.po`.
-> 
+>
 > See [**Locating PO files for each POT file**](#locating-po-files-for-each-pot-file) for more info.
 
 Default: `true`
 
 #### domainFromPOTPath
+
 `boolean`
+
 > Whether or not to get the text domain from the POT filename (excluding extension).
-> 
+>
 > If set to `false` and [`domainInPOPath`](#domaininpopath) is `true`, a text domain must be set using the [`domain`](#domain) option.
-> 
+>
 > See [**Locating PO files for each POT file**](#locating-po-files-for-each-pot-file) for more info.
 
 Default: `true`
 
 #### domain
+
 `string`
+
 > The text domain slug, like `text-domain`.
-> 
+>
 > By default this is the POT filename excluding extension and is used to find the right PO source files.
-> 
+>
 > See [**Locating PO files for each POT file**](#locating-po-files-for-each-pot-file) for more info.
 
 Default: `''`
 
 #### srcGlobOptions
+
 `object`
+
 > Glob options used when matching PO source files.
-> 
+>
 > See [**Locating PO files for each POT file**](#locating-po-files-for-each-pot-file) for more info.
 
 Default: `{}`
@@ -252,35 +279,43 @@ Default: `{}`
 ### Options related to output
 
 #### returnPOT
+
 `boolean`
+
 > Whether the plugin should return the source POT file(s) (`true`) or the generated PO file(s) (`false`).
-> 
+>
 > By default, it will return the generated PO files.
-> 
+>
 > _**NOTE**_: If set to `true`, you need to set [`writeFiles`](#writefiles) to `true` as well or else no PO files will be generated and the plugin throws an error.
 
 Default: `false`
 
 #### writeFiles
+
 `boolean`
+
 > Whether or not to write the newly generated PO files to disk.
-> 
+>
 > If you wish to process the results array and content buffers yourself, you could set this to `false`.
-> 
+>
 > _**NOTE**_: When using [**gulp-fill-pot-po**](https://github.com/vHeemstra/gulp-fill-pot-po), the default is `false`, since the resulting buffers will probably be `.pipe( dest() )`'d, which writes them to disk instead.
 
 Default: `true` (for gulp-fill-pot-po: `false`)
 
 #### destDir
+
 `string`
+
 > _Only if [`writeFiles`](#writefiles) is `true`._
-> 
+>
 > Relative path from current working directory or absolute path to the folder where the PO files should be written.
 
 Default: `''`
 
 #### logResults
+
 `boolean`
+
 > Log results to console.
 
 Default: `false`
@@ -288,52 +323,65 @@ Default: `false`
 ### Options related to generating PO content
 
 #### wrapLength
+
 `integer`
+
 > Line wrapping length excluding quotation marks.
-> 
+>
 > This is forwarded as `foldLength` to [`gettext-parser`](https://github.com/smhg/gettext-parser#compile-po-from-a-translation-object).
 
 Default: `77`
 
 #### defaultContextAsFallback
+
 `boolean`
+
 > If a string is not found in the PO source file with a certain context, try searching for the same string without a context and use that.
-> 
+>
 > A flag comment `#, fuzzy` will be added to signal translators to check the translation.
 
 Default: `false`
 
 #### appendNonIncludedFromPO
+
 `boolean`
+
 > Append all translated strings from the source PO file that were not in the POT file.
-> 
+>
 > A translator comment `# DEPRECATED` will be added to them.
 
 Default: `false`
 
 #### includePORevisionDate
+
 `boolean`
+
 > Include a `PO-Revision-Date` header to the PO files with the current timestamp.
 
 Default: `false`
 
 #### includeGenerator
+
 `boolean`
+
 > Include a `X-Generator` header to the PO files.
 
 Default: `true`
 
-
 ## Results
 
 ### Results - Async mode
+
 The first argument of the callback function will be the results array:
 
 #### results[0]
+
 `boolean` True on success, false on error.
 
 #### results[1] (on success)
+
 `array` Array of [Vinyl](https://github.com/gulpjs/vinyl) file objects, depending on the value of [`options.returnPOT`](#returnpot):
+
 <ul><table>
     <tr>
         <td><code>false</code></td>
@@ -347,12 +395,15 @@ The first argument of the callback function will be the results array:
 </ul>
 
 #### results[1] (on error)
+
 `string` Error message.
 
 ### Results - Sync mode
 
 #### On success
+
 `array` Returns an array of [Vinyl](https://github.com/gulpjs/vinyl) file objects, depending on the value of [`options.returnPOT`](#returnpot):
+
 <ul><table>
     <tr>
         <td><code>false</code></td>
@@ -366,8 +417,8 @@ The first argument of the callback function will be the results array:
 </ul>
 
 #### On error
-On error, `fillPotPoSync()` will throw an error.
 
+On error, `fillPotPoSync()` will throw an error.
 
 ## Related
 
@@ -375,6 +426,9 @@ On error, `fillPotPoSync()` will throw an error.
 - [gettext-parser](https://github.com/smhg/gettext-parser) - Parse and compile gettext PO and MO files with NodeJS
 - [gulp-wp-pot](https://github.com/wp-pot/gulp-wp-pot) - Generate POT files in WordPress project in gulp
 
+## Extra
+
+- [Guide for migrating your Gulp set-up from CommonJS to ESM](https://gist.github.com/noraj/007a943dc781dc8dd3198a29205bae04)
 
 ## License
 
@@ -382,24 +436,19 @@ MIT © [Philip van Heemstra](https://github.com/vheemstra)
 
 [release-url]: https://github.com/vHeemstra/fill-pot-po/releases
 [release-image]: https://img.shields.io/github/v/release/vHeemstra/fill-pot-po?sort=semver&logo=github&logoColor=959DA5&labelColor=444D56
-
 [ci-url]: https://github.com/vHeemstra/fill-pot-po/actions/workflows/ci_push_on_main.yml
 [ci-image]: https://img.shields.io/github/actions/workflow/status/vHeemstra/fill-pot-po/ci_push_on_main.yml?branch=main&label=lint%20%26%20test&logo=github&logoColor=959DA5&labelColor=444D56
 [ci-image2]: https://github.com/vHeemstra/fill-pot-po/actions/workflows/ci_push_on_main.yml/badge.svg
 [ci-image3]: https://img.shields.io/static/v1?logo=github&logoColor=959DA5&label=lint%20%26%20tests&labelColor=444D56&message=passing&color=34D058
 [ci-image4]: https://img.shields.io/github/workflow/status/vHeemstra/fill-pot-po/Lint%20%7C%20Test%20%7C%20Release?label=lint%20%26%20test&logo=github&logoColor=959DA5&labelColor=444D56
-
 [coverage-url]: https://coveralls.io/github/vHeemstra/fill-pot-po?branch=main
 [coverage-image]: https://img.shields.io/coveralls/github/vHeemstra/fill-pot-po?logo=coveralls&logoColor=959DA5&labelColor=444D56
 [coverage-image_]: https://coveralls.io/repos/github/vHeemstra/fill-pot-po/badge.svg?branch=main
-
 [coverage-url2]: https://codecov.io/gh/vHeemstra/fill-pot-po
 [coverage-image2]: https://codecov.io/gh/vHeemstra/fill-pot-po/branch/main/graph/badge.svg?token=sZaKGStMXg
-
 [deps-url]: https://libraries.io/npm/fill-pot-po
 [deps-image]: https://img.shields.io/librariesio/release/npm/fill-pot-po?logo=libraries.io&logoColor=959DA5&labelColor=444D56
 [deps-image2]: https://img.shields.io/librariesio/github/vHeemstra/fill-pot-po?logo=libraries.io&logoColor=959DA5&labelColor=444D56
-
 [npm-url]: https://www.npmjs.com/package/fill-pot-po
 [npm-image]: https://img.shields.io/npm/v/fill-pot-po.svg?color=cb0000&labelColor=444D56&logo=data:image/svg+xml;base64,PHN2ZyByb2xlPSJpbWciIHZpZXdCb3g9IjAgMCAyNCAyNCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBmaWxsPSIjOTU5REE1IiBkPSJNMS43NjMgMEMuNzg2IDAgMCAuNzg2IDAgMS43NjN2MjAuNDc0QzAgMjMuMjE0Ljc4NiAyNCAxLjc2MyAyNGgyMC40NzRjLjk3NyAwIDEuNzYzLS43ODYgMS43NjMtMS43NjNWMS43NjNDMjQgLjc4NiAyMy4yMTQgMCAyMi4yMzcgMHpNNS4xMyA1LjMyM2wxMy44MzcuMDE5LS4wMDkgMTMuODM2aC0zLjQ2NGwuMDEtMTAuMzgyaC0zLjQ1NkwxMi4wNCAxOS4xN0g1LjExM3oiPjwvcGF0aD48L3N2Zz4=
 [downloads-image]: https://img.shields.io/npm/dm/fill-pot-po.svg?labelColor=444D56&logo=data:image/svg+xml;base64,PHN2ZyByb2xlPSJpbWciIHZpZXdCb3g9IjAgMCAyNCAyNCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBmaWxsPSIjOTU5REE1IiBkPSJNMS43NjMgMEMuNzg2IDAgMCAuNzg2IDAgMS43NjN2MjAuNDc0QzAgMjMuMjE0Ljc4NiAyNCAxLjc2MyAyNGgyMC40NzRjLjk3NyAwIDEuNzYzLS43ODYgMS43NjMtMS43NjNWMS43NjNDMjQgLjc4NiAyMy4yMTQgMCAyMi4yMzcgMHpNNS4xMyA1LjMyM2wxMy44MzcuMDE5LS4wMDkgMTMuODM2aC0zLjQ2NGwuMDEtMTAuMzgyaC0zLjQ1NkwxMi4wNCAxOS4xN0g1LjExM3oiPjwvcGF0aD48L3N2Zz4=
