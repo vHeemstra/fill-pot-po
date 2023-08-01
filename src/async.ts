@@ -111,7 +111,7 @@ type ProcessPotResolveCallback = (value: [PoObject, string[]] | null) => void;
 type ProcessPotRejectCallback = (reason?: NodeJS.ErrnoException) => void;
 
 type AsyncCallbackResult = [true, Vinyl[]] | [false, string];
-type AsyncCallback = (result: AsyncCallbackResult) => unknown;
+export type AsyncCallback = (result: AsyncCallbackResult) => unknown;
 export default (cb: AsyncCallback, options: Options) => {
   if (typeof cb !== 'function') {
     throw new PluginError(
