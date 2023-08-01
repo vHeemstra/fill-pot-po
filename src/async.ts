@@ -21,9 +21,6 @@ import {
   Source,
 } from './shared';
 
-let pot_input_files: Vinyl[] = [];
-let po_input_files: string[][] = [];
-
 /**
  * Reads and parses PO file.
  *
@@ -83,7 +80,7 @@ export const processPOT = (
   if (po_filepaths.length) {
     if (isVinyl) {
       if (options.returnPOT) {
-        pot_input_files.push(pot_file);
+        options._pot_input_files.push(pot_file);
       }
 
       const pot_object: PoObject = gettextParser.po.parse(pot_file.contents);
@@ -94,7 +91,7 @@ export const processPOT = (
         if (err) reject(err);
 
         if (options.returnPOT) {
-          pot_input_files.push(
+          options._pot_input_files.push(
             new Vinyl({
               contents: Buffer.from(pot_content),
               path: pot_filepath,
@@ -132,8 +129,8 @@ export default (cb: AsyncCallback, options: Options) => {
   }
 
   // Reset
-  pot_input_files = [];
-  po_input_files = [];
+  resolvedOptions._pot_input_files = [];
+  resolvedOptions._po_input_files = [];
 
   // Process all POT files
   Promise.all(
@@ -152,14 +149,14 @@ export default (cb: AsyncCallback, options: Options) => {
       )
         .then(async (value) => {
           if (!value) {
-            po_input_files.push([]);
+            resolvedOptions._po_input_files.push([]);
             return [];
           }
 
           // Process all PO files
           const pot_object = value[0];
           const po_files: string[] = value[1];
-          po_input_files.push(po_files);
+          resolvedOptions._po_input_files.push(po_files);
           const po_results = await Promise.all(
             po_files.map((po_file) => {
               return new Promise(
@@ -201,14 +198,14 @@ export default (cb: AsyncCallback, options: Options) => {
       if (resolvedOptions.logResults) {
         logResults(
           resolvedOptions._potFilenames,
-          po_input_files,
+          resolvedOptions._po_input_files,
           po_output_files,
           resolvedOptions.destDir
         );
       }
 
       if (resolvedOptions.returnPOT) {
-        cb([true, pot_input_files]);
+        cb([true, resolvedOptions._pot_input_files]);
         return;
       }
 
@@ -217,6 +214,11 @@ export default (cb: AsyncCallback, options: Options) => {
     })
     .catch((error) => {
       cb([false, error.toString()]);
+    })
+    .finally(() => {
+      // Clear memory
+      resolvedOptions._pot_input_files = [];
+      resolvedOptions._po_input_files = [];
     });
 
   return;
