@@ -160,7 +160,7 @@ if (options.poSources) {
 // NOTE: For all glob searches, options.srcGlobOptions will be used.
 ```
 
-For actual source code, see [**`getPOFilepaths()`**](https://github.com/vHeemstra/fill-pot-po/blob/main/src/shared.js#L50) in **src/shared.js**.
+For actual source code, see [**`getPOFilepaths()`**](https://github.com/vHeemstra/fill-pot-po/blob/main/src/shared.ts#L134) in **src/shared.js**.
 
 See also options [`poSources`](#posources), [`srcDir`](#srcdir), [`domainInPOPath`](#domaininpopath), [`domainFromPOTPath`](#domainfrompotpath) and [`domain`](#domain).
 

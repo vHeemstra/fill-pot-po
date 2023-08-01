@@ -199,7 +199,10 @@ export const sanitizeAndStandardizeOptionsInput = (
  *
  * @return {object}
  */
-export default (options: Options): PreparedOptions => {
+export default (
+  options: Options,
+  defaultWriteFiles = true
+): PreparedOptions => {
   // Validate/check options
   options = validateOptionsInput(options);
 
@@ -225,7 +228,7 @@ export default (options: Options): PreparedOptions => {
 
     // Output-related
     returnPOT: false,
-    writeFiles: true,
+    writeFiles: Boolean(defaultWriteFiles),
     destDir: '',
     logResults: false,
 
