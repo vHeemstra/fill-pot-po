@@ -1,5 +1,6 @@
 import fillPotPo from './async';
 import fillPotPoSync from './sync';
+export type { AsyncCallback } from './async';
 import prepareOptions from './options';
 
 /*
