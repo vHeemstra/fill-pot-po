@@ -34,8 +34,6 @@ class OptionsError extends PluginError {
   }
 }
 
-let cwd = './';
-
 /**
  * Validate user supplied options.
  *
@@ -142,6 +140,8 @@ export const validateOptionsInput = (options: Options): ValidatedOptions => {
 export const sanitizeAndStandardizeOptionsInput = (
   options: ValidatedOptions
 ): StandardizedOptions => {
+  const cwd = resolve();
+
   if (typeof options.potSources !== 'undefined') {
     if (!isArray(options.potSources)) {
       options.potSources = [options.potSources];
@@ -200,8 +200,6 @@ export const sanitizeAndStandardizeOptionsInput = (
  * @return {object}
  */
 export default (options: Options): PreparedOptions => {
-  cwd = resolve();
-
   // Validate/check options
   options = validateOptionsInput(options);
 
@@ -230,6 +228,10 @@ export default (options: Options): PreparedOptions => {
     writeFiles: true,
     destDir: '',
     logResults: false,
+
+    // Internals
+    _pot_input_files: [],
+    _po_input_files: [],
   };
 
   // Merge with defaults: PreparedOptions

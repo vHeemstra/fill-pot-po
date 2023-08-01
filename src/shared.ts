@@ -52,6 +52,8 @@ export type StandardizedOptions = Omit<
 > & {
   potSources?: Source[];
   poSources?: string[] | null;
+  _pot_input_files?: Vinyl[];
+  _po_input_files?: string[][];
 };
 
 export type PreparedOptions = Required<StandardizedOptions>;
