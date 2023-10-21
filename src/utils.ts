@@ -1,6 +1,5 @@
 import Vinyl from 'vinyl';
-// // import { Buffer } from 'node:buffer';
-// import { Buffer } from 'safe-buffer';
+// import { Buffer } from 'node:buffer';
 
 /**
  * Escape string for literal match in regex.

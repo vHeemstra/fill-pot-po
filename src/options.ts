@@ -1,7 +1,6 @@
 import { resolve, relative } from 'node:path';
 import Vinyl from 'vinyl';
-// // import { Buffer } from 'node:buffer';
-// import { Buffer } from 'safe-buffer';
+// import { Buffer } from 'node:buffer';
 import PluginError from './plugin-error';
 import {
   isArray,

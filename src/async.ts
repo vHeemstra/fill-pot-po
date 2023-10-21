@@ -1,7 +1,6 @@
 import * as fs from 'node:fs';
 import Vinyl from 'vinyl';
-// import { Buffer } from 'node:buffer';
-import { Buffer } from 'safe-buffer';
+import { Buffer } from 'node:buffer';
 import gettextParser from 'gettext-parser';
 import c from 'ansi-colors';
 import cs from 'color-support';
