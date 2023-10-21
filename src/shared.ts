@@ -315,8 +315,8 @@ const fillPO = (
                       ?.translator
                   )
                     ? 'DEPRECATED\n' +
-                      (new_po_object.translations[ctxt][msgid].comments
-                        ?.translator ?? '')
+                      new_po_object.translations[ctxt][msgid].comments
+                        .translator
                     : 'DEPRECATED',
                 }),
           };
