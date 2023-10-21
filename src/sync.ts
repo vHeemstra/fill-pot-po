@@ -1,6 +1,5 @@
 import * as fs from 'node:fs';
-// // import { Buffer } from 'node:buffer';
-// import { Buffer } from 'safe-buffer';
+// import { Buffer } from 'node:buffer';
 import Vinyl from 'vinyl';
 import gettextParser from 'gettext-parser';
 
@@ -78,7 +77,7 @@ export const processPOT = (pot_file: Source, options: ResolvedOptions) => {
         pot_input_files.push(pot_file);
       }
 
-      pot_content = pot_file.contents;
+      pot_content = pot_file.contents.toString();
     } else {
       // Sync - Read POT file
       const pot_content_buffer = fs.readFileSync(pot_filepath);

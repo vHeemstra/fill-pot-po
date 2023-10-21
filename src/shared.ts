@@ -1,7 +1,6 @@
 import type { Omit } from 'utility-types';
 import { basename, dirname } from 'node:path';
-// import { Buffer } from 'node:buffer';
-import { Buffer } from 'safe-buffer';
+import { Buffer } from 'node:buffer';
 import { sync as matchedSync } from 'matched';
 import { existsSync, mkdirSync, writeFileSync } from 'node:fs';
 import gettextParser from 'gettext-parser';
@@ -10,13 +9,14 @@ import c from 'ansi-colors';
 import cs from 'color-support';
 import { isArray, isString, pathLineSort } from './utils';
 import PluginError from './plugin-error';
+import packageJSON from '../package.json';
 
 c.enabled = Boolean(cs().hasBasic);
 
-import { readFileSync } from 'node:fs';
-const packageJSON = JSON.parse(
-  readFileSync(new URL('../package.json', import.meta.url), 'utf-8')
-);
+// import { readFileSync } from 'node:fs';
+// const packageJSON = JSON.parse(
+//   readFileSync(new URL('../package.json', import.meta.url), 'utf-8')
+// );
 
 export type Source = string | Vinyl; // | Buffer;
 
