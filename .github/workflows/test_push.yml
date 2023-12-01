@@ -27,7 +27,7 @@ jobs:
 
       - name: Check commits
         id: check-commits
-        uses: actions/github-script@v6
+        uses: actions/github-script@v7
         env:
           COMMITS_JSON: ${{ toJSON( github.event.commits ) }}
           TITLE_REGEX: '^Something: ' # Regex without the '/' boundary characters
