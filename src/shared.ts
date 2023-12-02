@@ -339,9 +339,8 @@ const fillPO = (
   }
 
   if (options.includeGenerator) {
-    new_po_object.headers[
-      'X-Generator'
-    ] = `${packageJSON.name}/${packageJSON.version}`;
+    new_po_object.headers['X-Generator'] =
+      `${packageJSON.name}/${packageJSON.version}`;
   }
 
   return new_po_object;
