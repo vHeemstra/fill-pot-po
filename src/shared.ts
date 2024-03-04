@@ -4,6 +4,7 @@ import { Buffer } from 'node:buffer';
 import { sync as matchedSync } from 'matched';
 import { existsSync, mkdirSync, writeFileSync } from 'node:fs';
 import gettextParser from 'gettext-parser';
+import { GetTextTranslations } from 'gettext-parser';
 import Vinyl from 'vinyl';
 import c from 'ansi-colors';
 import cs from 'color-support';
@@ -62,28 +63,29 @@ export type ResolvedOptions = PreparedOptions & {
   _potFilenames: string[];
 };
 
-export type PoObject = {
-  charset: string;
-  headers: {
-    [key: string]: string;
-  };
-  translations: {
-    [key: string]: {
-      [key: string]: {
-        msgctxt?: string; // Context
-        msgid: string; // Untranslated (single) string
-        msgid_plural?: string; // Untranslated plural string
-        msgstr: string[]; // Translated strings (single, plural)
-        comments?: {
-          [key: string]: string;
-          // translator?: string;
-          // reference?: string;
-          // flag?: string;
-        };
-      };
-    };
-  };
-};
+export type PoObject = GetTextTranslations;
+// export type PoObject = {
+//   charset: string;
+//   headers: {
+//     [key: string]: string;
+//   };
+//   translations: {
+//     [key: string]: {
+//       [key: string]: {
+//         msgctxt?: string; // Context
+//         msgid: string; // Untranslated (single) string
+//         msgid_plural?: string; // Untranslated plural string
+//         msgstr: string[]; // Translated strings (single, plural)
+//         comments?: {
+//           [key: string]: string;
+//           // translator?: string;
+//           // reference?: string;
+//           // flag?: string;
+//         };
+//       };
+//     };
+//   };
+// };
 
 /**
  * Resolve POT sources globs to filepaths.
@@ -266,6 +268,10 @@ const fillPO = (
 
         // Set/add fuzzy flag comment
         new_po_object.translations[ctxt][msgid].comments = {
+          translator: '',
+          reference: '',
+          extracted: '',
+          previous: '',
           ...(new_po_object.translations[ctxt][msgid]?.comments ?? {}),
           flag: [
             'fuzzy',
@@ -278,6 +284,10 @@ const fillPO = (
         // Set translator comment to flag re-usage in case of deprecation
         // NOTE: comment set on PO object, so it's only included if appended as deprecated.
         po_object.translations[''][msgid].comments = {
+          reference: '',
+          extracted: '',
+          flag: '',
+          previous: '',
           ...(po_object.translations[''][msgid]?.comments ?? {}),
           translator: [
             `NOTE: re-used for same message, but with context '${ctxt}'`,
@@ -305,6 +315,11 @@ const fillPO = (
 
           // Add translator comment "DEPRECATED"
           new_po_object.translations[ctxt][msgid].comments = {
+            translator: '',
+            reference: '',
+            extracted: '',
+            flag: '',
+            previous: '',
             ...(new_po_object.translations[ctxt][msgid]?.comments ?? {}),
             ...(new_po_object.translations[ctxt][msgid]?.comments?.translator &&
             entry?.comments?.translator.match(/^DEPRECATED$/gm)

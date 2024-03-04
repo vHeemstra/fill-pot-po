@@ -82,7 +82,9 @@ export const processPOT = (
         options._pot_input_files.push(pot_file);
       }
 
-      const pot_object: PoObject = gettextParser.po.parse(pot_file.contents);
+      const pot_object: PoObject = gettextParser.po.parse(
+        pot_file.contents as Buffer
+      );
       resolve([pot_object, po_filepaths]);
     } else {
       // Async - Read and parse POT file
