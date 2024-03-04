@@ -6,7 +6,7 @@ import * as fs from 'node:fs';
 import { relative } from 'node:path';
 import Vinyl from 'vinyl';
 
-// import {jest} from '@jest/globals';
+import { jest } from '@jest/globals';
 // jest.mock('node:fs', () => ({
 //   rmSync: jest.fn(jest.requireActual('node:fs').rmSync),
 //   existsSync: jest.fn(jest.requireActual('node:fs').existsSync),
@@ -15,10 +15,13 @@ import Vinyl from 'vinyl';
 //   writeFileSync: jest.fn(jest.requireActual('node:fs').writeFileSync),
 //   readFile: jest.fn(jest.requireActual('node:fs').readFile),
 // }));
-jest.mock('node:fs', () => ({
-  __esModule: true,
-  ...jest.requireActual('node:fs'),
-}));
+jest.mock('node:fs', () => {
+  const originalModule = jest.requireActual('node:fs') as object;
+  return {
+    __esModule: true,
+    ...originalModule,
+  };
+});
 
 // jest.mock('console', () => ({
 //   log: jest.fn(jest.requireActual('console').log),
