@@ -3,7 +3,7 @@
   "version": "4.0.1",
   "description": "Create pre-filled PO files from POT file, using previous PO files.",
   "type": "module",
-  "main": "./dist/index.mjs",
+  "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "scripts": {
     "dev": "npm run build -- --watch src",
