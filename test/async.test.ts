@@ -1,5 +1,5 @@
-import fillPotPo from '../src/async';
-import { testOptions } from '../src/index';
+import fillPotPo from '../src/async.js';
+import { testOptions } from '../src/index.js';
 
 import { sync as matchedSync } from 'matched';
 import * as fs from 'node:fs';
@@ -696,7 +696,7 @@ describe('async.js - single POT', () => {
       }
     }
 
-    // @_ts-expect-error - Untyped callback
+    // @ts-expect-error - Type '...' is not assignable to type 'Source | Source[]'.
     fillPotPo(cb, options);
   });
 

@@ -6,7 +6,7 @@ import {
   isArrayOfStrings,
   isArrayOfVinyls,
   pathLineSort,
-} from '../src/utils';
+} from '../src/utils.js';
 import Vinyl from 'vinyl';
 
 const vinyl_file = new Vinyl({

@@ -5,10 +5,12 @@ import gettextParser from 'gettext-parser';
 import c from 'ansi-colors';
 import cs from 'color-support';
 
-c.enabled = Boolean(cs().hasBasic);
+const colorSupport = cs();
+/* istanbul ignore next */
+c.enabled = colorSupport && colorSupport.hasBasic;
 
-import PluginError from './plugin-error';
-import prepareOptions from './options';
+import PluginError from './plugin-error.js';
+import prepareOptions from './options.js';
 import {
   resolvePOTFilepaths,
   getPOFilepaths,
@@ -18,7 +20,7 @@ import {
   ResolvedOptions,
   PoObject,
   Source,
-} from './shared';
+} from './shared.js';
 
 /**
  * Reads and parses PO file.

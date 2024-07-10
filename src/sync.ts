@@ -3,7 +3,7 @@ import * as fs from 'node:fs';
 import Vinyl from 'vinyl';
 import gettextParser from 'gettext-parser';
 
-import prepareOptions from './options';
+import prepareOptions from './options.js';
 import {
   resolvePOTFilepaths,
   getPOFilepaths,
@@ -13,7 +13,7 @@ import {
   Source,
   ResolvedOptions,
   PoObject,
-} from './shared';
+} from './shared.js';
 
 let pot_input_files: Vinyl[] = [];
 let po_input_files: string[][] = [];

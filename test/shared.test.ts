@@ -1,5 +1,5 @@
-import { resolvePOTFilepaths } from '../src/shared';
-import prepareOptions from '../src/options';
+import { resolvePOTFilepaths } from '../src/shared.js';
+import prepareOptions from '../src/options.js';
 
 import Vinyl from 'vinyl';
 

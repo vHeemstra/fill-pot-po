@@ -1,4 +1,4 @@
-import PluginError from '../src/plugin-error';
+import PluginError from '../src/plugin-error.js';
 import * as util from 'node:util';
 
 describe('plugin-error.js', () => {

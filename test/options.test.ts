@@ -1,6 +1,6 @@
-import prepareOptions from '../src/options';
+import prepareOptions from '../src/options.js';
 
-import { escapeRegExp } from '../src/utils';
+import { escapeRegExp } from '../src/utils.js';
 import Vinyl from 'vinyl';
 
 function reOptionError(k: string) {
@@ -118,12 +118,15 @@ describe('options.js - validate', () => {
       prepareOptions({ [k]: null });
     }).toThrow(re);
     expect(() => {
+      // @ts-expect-error - Type '...' is not assignable to type 'Source | Source[]'.
       prepareOptions({ [k]: false });
     }).toThrow(re);
     expect(() => {
+      // @ts-expect-error - Type '...' is not assignable to type 'Source | Source[]'.
       prepareOptions({ [k]: true });
     }).toThrow(re);
     expect(() => {
+      // @ts-expect-error - Type '...' is not assignable to type 'Source | Source[]'.
       prepareOptions({ [k]: 1 });
     }).toThrow(re);
     expect(() => {
@@ -133,6 +136,7 @@ describe('options.js - validate', () => {
       prepareOptions({ [k]: [] });
     }).not.toThrow(re);
     expect(() => {
+      // @ts-expect-error - Type '...' is not assignable to type 'Source | Source[]'.
       prepareOptions({ [k]: {} });
     }).toThrow(re);
     expect(() => {

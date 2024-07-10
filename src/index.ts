@@ -1,7 +1,7 @@
-import fillPotPo from './async';
-import fillPotPoSync from './sync';
-export type { AsyncCallback } from './async';
-import prepareOptions from './options';
+import fillPotPo from './async.js';
+import fillPotPoSync from './sync.js';
+export type { AsyncCallback } from './async.js';
+import prepareOptions from './options.js';
 
 /*
  * Default content-related options for generating PO files.
