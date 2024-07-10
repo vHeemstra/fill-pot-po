@@ -1,13 +1,11 @@
 import * as util from 'node:util';
 import c from 'ansi-colors';
 import cs from 'color-support';
+import packageJSON from '../package.json';
 
-c.enabled = Boolean(cs().hasBasic);
-
-import { readFileSync } from 'node:fs';
-const packageJSON = JSON.parse(
-  readFileSync(new URL('../package.json', import.meta.url), 'utf-8')
-);
+const colorSupport = cs();
+/* istanbul ignore next */
+c.enabled = colorSupport && colorSupport.hasBasic;
 
 class PluginError {
   public message: string;

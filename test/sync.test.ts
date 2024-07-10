@@ -1,5 +1,5 @@
-import fillPotPo from '../src/sync';
-import { testOptions } from '../src/index';
+import fillPotPo from '../src/sync.js';
+import { testOptions } from '../src/index.js';
 
 import { sync as matchedSync } from 'matched';
 import { rmSync, existsSync, mkdirSync, readFileSync } from 'node:fs';

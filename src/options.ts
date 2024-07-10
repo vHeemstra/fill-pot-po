@@ -1,7 +1,7 @@
 import { resolve, relative } from 'node:path';
 import Vinyl from 'vinyl';
 // import { Buffer } from 'node:buffer';
-import PluginError from './plugin-error';
+import PluginError from './plugin-error.js';
 import {
   isArray,
   isObject,
@@ -11,7 +11,7 @@ import {
   isArrayOfVinyls,
   // isArrayOfBuffers,
   // isArrayOfVinylsOrBuffers,
-} from './utils';
+} from './utils.js';
 
 import type {
   ValidatedOptions,
@@ -19,10 +19,10 @@ import type {
   StandardizedOptions,
   Source,
   PreparedOptions,
-} from './shared';
+} from './shared.js';
 
 // import { sync: matchedSync } from 'matched';
-// import { pathLineSort } from './utils';
+// import { pathLineSort } from './utils.js';
 
 /**
  * Wrapper for PluginError for all errors with options.
