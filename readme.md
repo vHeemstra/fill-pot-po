@@ -9,7 +9,7 @@
 >
 > _Based on the POT filename or set options, it looks for source PO files. For each PO file, it will create a new one, based on the contents of the POT file. The source PO file is used to fill in the matching translated strings._
 >
-> ✨ **_This package now supports both ESM and CommonJS_** 🎉
+> ✨ **_This package now only supports ESM. For CommonJS use version 3._** 🎉
 
 ## Use case
 
@@ -53,10 +53,10 @@ Processes the POT files and found PO files in parallel.
     </tr>
 </table>
 
-#### Example (CommonJS)
+#### Example (ESM)
 
 ```js
-const fillPotPo = require('fill-pot-po');
+import fillPotPo from "fill-pot-po";
 
 const cb = (results) => {
   // ...
@@ -65,10 +65,10 @@ const cb = (results) => {
 fillPotPo(cb, options);
 ```
 
-#### Example (ESM)
+#### Example (CommonJS - only with versions <= 3)
 
 ```js
-import fillPotPo from 'fill-pot-po';
+const fillPotPo = require("fill-pot-po");
 
 const cb = (results) => {
   // ...
@@ -102,10 +102,10 @@ Processes the POT files and found PO files in series (slower).
     </tr>
 </table>
 
-#### Example (CommonJS)
+#### Example (ESM)
 
 ```js
-const fillPotPoSync = require('fill-pot-po').sync;
+import { sync as fillPotPoSync } from "fill-pot-po";
 
 try {
   const results = fillPotPoSync(options);
@@ -116,10 +116,10 @@ try {
 }
 ```
 
-#### Example (ESM)
+#### Example (CommonJS - only with versions <= 3)
 
 ```js
-import { sync as fillPotPoSync } from 'fill-pot-po';
+const fillPotPoSync = require("fill-pot-po").sync;
 
 try {
   const results = fillPotPoSync(options);
